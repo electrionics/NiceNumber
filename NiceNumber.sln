@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber", "NiceNumber\NiceNumber.csproj", "{C6EC661B-A2ED-498C-8118-A857AFBFA95B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber.UnitTests", "NiceNumber.UnitTests\NiceNumber.UnitTests.csproj", "{A7CCB007-2D94-4830-9C99-BF5AA0D9B028}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6EC661B-A2ED-498C-8118-A857AFBFA95B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6EC661B-A2ED-498C-8118-A857AFBFA95B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6EC661B-A2ED-498C-8118-A857AFBFA95B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6EC661B-A2ED-498C-8118-A857AFBFA95B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7CCB007-2D94-4830-9C99-BF5AA0D9B028}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7CCB007-2D94-4830-9C99-BF5AA0D9B028}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7CCB007-2D94-4830-9C99-BF5AA0D9B028}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7CCB007-2D94-4830-9C99-BF5AA0D9B028}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
