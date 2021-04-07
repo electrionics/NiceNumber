@@ -1,2 +1,2 @@
 ﻿Different types intersection resolving for UI display (type-type pairs with rules of intersection and resolving)
-mirror numbers
+generate nice number

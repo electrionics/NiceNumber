@@ -11,7 +11,7 @@ namespace NiceNumber.Regularities
         {
         }
         
-        protected override RegularityType Type => RegularityType.ArithmeticProgressionAtAnyPosition;
+        public override RegularityType Type => RegularityType.ArithmeticProgressionAtAnyPosition;
         protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
         {
             return null;

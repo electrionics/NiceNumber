@@ -10,7 +10,7 @@ namespace NiceNumber.Regularities
         {
         }
         
-        protected override RegularityType Type => RegularityType.SameDigitsWithFixedGap;
+        public override RegularityType Type => RegularityType.SameDigitsWithFixedGap;
 
         protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte firstPosition = 0)
         {

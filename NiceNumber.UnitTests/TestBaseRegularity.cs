@@ -155,7 +155,7 @@ namespace NiceNumber.UnitTests
         {
         }
         
-        protected override RegularityType Type => throw new NotImplementedException();
+        public override RegularityType Type => throw new NotImplementedException();
         protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             throw new NotImplementedException();

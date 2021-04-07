@@ -10,7 +10,7 @@ namespace NiceNumber.Regularities
         {
         }
         
-        protected override RegularityType Type => RegularityType.ArithmeticProgressionWithFixedGap;
+        public override RegularityType Type => RegularityType.ArithmeticProgressionWithFixedGap;
         protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte firstPosition = 0)
         {
             var start = number[0];

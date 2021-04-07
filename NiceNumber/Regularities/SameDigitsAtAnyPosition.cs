@@ -11,7 +11,7 @@ namespace NiceNumber.Regularities
         {
         }
         
-        protected override RegularityType Type => RegularityType.SameDigitsAtAnyPosition;
+        public override RegularityType Type => RegularityType.SameDigitsAtAnyPosition;
         protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
         {
             return null;

@@ -10,7 +10,7 @@ namespace NiceNumber.Regularities
         {
         }
         
-        protected override RegularityType Type => RegularityType.SameDigitsSequential;
+        public override RegularityType Type => RegularityType.SameDigitsSequential;
 
         protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {

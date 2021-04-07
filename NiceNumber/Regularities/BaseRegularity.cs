@@ -11,7 +11,7 @@ namespace NiceNumber.Regularities
     {
         #region Base Members
         
-        protected abstract RegularityType Type { get; }
+        public abstract RegularityType Type { get; }
 
         protected BaseRegularity()
         {
@@ -197,6 +197,7 @@ namespace NiceNumber.Regularities
 
     public interface IRegularity
     {
+        RegularityType Type { get; }
         List<RegularityDetectResult> Process(long number);
     }
 }
