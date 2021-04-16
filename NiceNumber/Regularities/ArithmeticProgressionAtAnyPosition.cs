@@ -12,7 +12,15 @@ namespace NiceNumber.Regularities
         }
         
         public override RegularityType Type => RegularityType.ArithmeticProgressionAtAnyPosition;
+        
+        protected override bool UseSubNumbers => true;
+        
         protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
+        {
+            return null;
+        }
+
+        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte[] lengths, byte firstPosition)
         {
             return null;
         }
@@ -57,6 +65,11 @@ namespace NiceNumber.Regularities
             }
 
             return result;
+        }
+
+        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number, byte[] lengths)
+        {
+            return null;
         }
 
         protected override bool Include(RegularityDetectResultWithPositions first, RegularityDetectResultWithPositions second)

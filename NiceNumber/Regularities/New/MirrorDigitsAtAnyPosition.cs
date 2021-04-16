@@ -11,7 +11,17 @@ namespace NiceNumber.Regularities
             throw new System.NotImplementedException();
         }
 
+        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number, byte[] lengths)
         {
             throw new System.NotImplementedException();
         }

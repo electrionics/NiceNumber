@@ -35,7 +35,17 @@ namespace NiceNumber.Regularities
 
         }
 
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        {
+            return null;
+        }
+
         protected override List<RegularityDetectResult> DetectAll(byte[] number)
+        {
+            return null;
+        }
+
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             return null;
         }

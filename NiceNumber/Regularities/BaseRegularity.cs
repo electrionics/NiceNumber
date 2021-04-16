@@ -24,6 +24,13 @@ namespace NiceNumber.Regularities
         }
 
         protected byte MinLength { get; }
+
+        protected virtual bool UseSubNumbers => false;
+
+        protected virtual byte[][] FilterLengths(byte[][] lengths)
+        {
+            return lengths;
+        }
         
         /// <summary>
         /// алгоритм 1 разбить 7-значное число на 5 3-х значных, 4 4-х значных, 3 5-ти значных, и т.д. и проверить каждое на то, является ли оно закономерностью данного типа
@@ -34,6 +41,8 @@ namespace NiceNumber.Regularities
         /// <returns>null, if no regularity of specified type</returns>
         protected abstract List<TResult> Detect(byte[] number, byte firstPosition = 0);
 
+        protected abstract List<TResult> Detect(byte[] number, byte[] lengths, byte firstPosition);
+
         /// <summary>
         /// алгоритм 2: найти все закономерности данного типа в числе
         /// (оптимальнее по потребляемой памяти с скорости)
@@ -41,6 +50,8 @@ namespace NiceNumber.Regularities
         /// <param name="number">digit representation of number</param>
         /// <returns>null if not supported, all regularities of specified type</returns>
         protected abstract List<TResult> DetectAll(byte[] number);
+
+        protected abstract List<TResult> DetectAll(byte[] number, byte[] lengths);
 
         /// <summary>
         /// filter out result of detecting all regularities from regularities which included in other or equals, so only "largest" regularities left
@@ -75,22 +86,52 @@ namespace NiceNumber.Regularities
         public List<RegularityDetectResult> Process(long number)
         {
             var converted = ConvertNumberToDigitsRepresentation(number);
-            
-            var result = DetectAll(converted);
-            if (result == null) // detect all not supported
+            List<TResult> result;
+            if (UseSubNumbers)
             {
-                var split = SplitNumberToDigitSequences(converted, out var firstPositions);
                 result = new List<TResult>();
-                
-                for (var i = 0; i < split.Length; i++)
+                var allLengths = GetAllSubNumberLengths(converted.Length);
+                foreach (var lengths in allLengths)
                 {
-                    var detected = Detect(split[i], firstPositions[i]);
-                    if (detected != null)
+                    var subResult = DetectAll(converted, lengths);
+                    if (subResult == null) // detect all not supported
                     {
-                        result.AddRange(detected);
+                        var split = SplitNumberToDigitSequences(converted, out var firstPositions);
+
+                        for (var i = 0; i < split.Length; i++)
+                        {
+                            var detected = Detect(split[i], lengths, firstPositions[i]);
+                            if (detected != null)
+                            {
+                                result.AddRange(detected);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        result.AddRange(subResult);
                     }
                 }
             }
+            else
+            {
+                result = DetectAll(converted);
+                if (result == null) // detect all not supported
+                {
+                    var split = SplitNumberToDigitSequences(converted, out var firstPositions);
+                    result = new List<TResult>();
+                
+                    for (var i = 0; i < split.Length; i++)
+                    {
+                        var detected = Detect(split[i], firstPositions[i]);
+                        if (detected != null)
+                        {
+                            result.AddRange(detected);
+                        }
+                    }
+                }
+            }
+            
             
             foreach (var detected in result)
             {
@@ -141,6 +182,23 @@ namespace NiceNumber.Regularities
         }
         
         #region Merge Digits To Numbers
+
+        protected int[] GetSubNumbers(byte[] number, byte[] lengths)
+        {
+            var result = new int[lengths.Length];
+            var index = 0;
+            for (var i = 0; i < lengths.Length; i++)
+            {
+                var length = lengths[i];
+                for (var j = 0; j < length; j++)
+                {
+                    result[i] = result[i] * 10 + number[index];
+                    index++;
+                }
+            }
+
+            return result;
+        }
         
         protected byte[][] GetAllSubNumberLengths(int len)
         {

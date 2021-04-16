@@ -56,7 +56,17 @@ namespace NiceNumber.Regularities
             };
         }
 
+        protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        {
+            return null;
+        }
+
         protected override List<RegularityDetectResultWithGap> DetectAll(byte[] number)
+        {
+            return null;
+        }
+
+        protected override List<RegularityDetectResultWithGap> DetectAll(byte[] number, byte[] lengths)
         {
             return null;
         }

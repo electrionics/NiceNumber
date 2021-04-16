@@ -12,7 +12,12 @@ namespace NiceNumber.Regularities
         }
         
         public override RegularityType Type => RegularityType.SameDigitsAtAnyPosition;
+
         protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
+        {
+            return null;
+        }
+        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte[] lengths, byte firstPosition = 0)
         {
             return null;
         }
@@ -65,6 +70,11 @@ namespace NiceNumber.Regularities
             }
 
             return result;
+        }
+
+        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number, byte[] lengths)
+        {
+            return null;
         }
 
         protected override List<RegularityDetectResultWithPositions> FilterOut(List<RegularityDetectResultWithPositions> nonPrioritized)

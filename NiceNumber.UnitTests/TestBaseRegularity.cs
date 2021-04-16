@@ -145,6 +145,26 @@ namespace NiceNumber.UnitTests
                 Assert.IsFalse(res);
             }
         }
+
+        [Test]
+        public void TestGetSubNumbers_CommonCase()
+        {
+            const byte minLen = 3;
+            var regularity = new BaseRegularityTestable(minLen);
+
+            var number = new byte[] {1, 2, 3, 4, 5, 6, 7, 8};
+            var lens = new byte[] {1, 3, 1, 2, 1};
+
+            var res = regularity.GetSubNumbers(number, lens);
+            
+            Assert.AreEqual(lens.Length, res.Length);
+            
+            Assert.AreEqual(1, res[0]);
+            Assert.AreEqual(234, res[1]);
+            Assert.AreEqual(5, res[2]);
+            Assert.AreEqual(67, res[3]);
+            Assert.AreEqual(8, res[4]);
+        }
     }
 
     internal class BaseRegularityTestable:BaseRegularity<RegularityDetectResult>
@@ -161,7 +181,17 @@ namespace NiceNumber.UnitTests
             throw new NotImplementedException();
         }
 
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override List<RegularityDetectResult> DetectAll(byte[] number)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             throw new NotImplementedException();
         }
@@ -172,6 +202,11 @@ namespace NiceNumber.UnitTests
         }
         
         #endregion
+
+        public new int[] GetSubNumbers(byte[] number, byte[] lengths)
+        {
+            return base.GetSubNumbers(number, lengths);
+        }
 
         public new byte[][] SplitNumberToDigitSequences(byte[] number, out byte[] firstPositions)
         {

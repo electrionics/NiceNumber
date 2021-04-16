@@ -66,5 +66,7 @@ namespace NiceNumber.Results
         public int Length { get; set; } // required, min = 3
         
         public int RegularityNumber { get; set; } // number of regularity TODO: remove here and add in other special class
+        
+        public byte[] SubNumberLengths { get; set; }
     }
 }

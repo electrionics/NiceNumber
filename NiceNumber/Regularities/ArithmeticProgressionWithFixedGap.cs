@@ -11,6 +11,9 @@ namespace NiceNumber.Regularities
         }
         
         public override RegularityType Type => RegularityType.ArithmeticProgressionWithFixedGap;
+        
+        protected override bool UseSubNumbers => true;
+        
         protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte firstPosition = 0)
         {
             var start = number[0];
@@ -58,14 +61,24 @@ namespace NiceNumber.Regularities
             return res;
         }
 
+        protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        {
+            return null;
+        }
+
         protected override List<RegularityDetectResultWithGap> DetectAll(byte[] number)
+        {
+            return null;
+        }
+
+        protected override List<RegularityDetectResultWithGap> DetectAll(byte[] number, byte[] lengths)
         {
             return null;
         }
 
         protected override bool Include(RegularityDetectResultWithGap first, RegularityDetectResultWithGap second)
         {
-            return second.RegularityNumber % first.RegularityNumber == 0 && // TODO: match positions
+            return second.RegularityNumber % first.RegularityNumber == 0 &&
                    first.FirstPosition <= second.FirstPosition &&
                    (second.Gap + 1) % (first.Gap + 1) == 0 &&
                    first.FirstPosition + (first.Gap + 1) * first.Length >= second.FirstPosition + (second.Gap + 1) * second.Length;
