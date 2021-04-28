@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using NiceNumber.Results;
+using NiceNumber.Core.Results;
 
-namespace NiceNumber.Regularities
+namespace NiceNumber.Core.Regularities.New
 {
     public class MirrorDigitsAtAnyPosition:BaseRegularity<RegularityDetectResultWithPositions>
     {

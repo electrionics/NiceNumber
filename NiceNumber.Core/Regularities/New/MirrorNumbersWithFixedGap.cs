@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using NiceNumber.Results;
 
-namespace NiceNumber.Regularities
+namespace NiceNumber.Core.Regularities.New
 {
-    public class MirrorNumbersWithBetweenGap:BaseRegularity<RegularityDetectResultWithGap>
+    public class MirrorNumbersWithFixedGap: BaseRegularity<RegularityDetectResultWithGap>
     {
-        public override RegularityType Type => RegularityType.MirrorNumbersWithBetweenGap;
+        public override RegularityType Type => RegularityType.MirrorNumbersWithFixedGap;
         
         protected override bool UseSubNumbers => true;
         

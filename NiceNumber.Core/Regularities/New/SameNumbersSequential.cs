@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NiceNumber.Results;
 
-namespace NiceNumber.Regularities
+namespace NiceNumber.Core.Regularities.New
 {
     public class SameNumbersSequential:BaseRegularity<RegularityDetectResult>
     {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NiceNumber.Core.Regularities;
 using NiceNumber.Helpers;
-using NiceNumber.Regularities;
 using NiceNumber.Results;
 using NUnit.Framework;
 
@@ -165,6 +165,27 @@ namespace NiceNumber.UnitTests
             Assert.AreEqual(67, res[3]);
             Assert.AreEqual(8, res[4]);
         }
+
+        [Test]
+        public void TestGetSubNumberPositions_CommonCase()
+        {
+            const byte minLen = 3;
+            var regularity = new BaseRegularityTestable(minLen);
+            
+            var lens = new byte[] {1, 3, 1, 2, 1};
+
+            var expectedPoss = new byte[] {0, 1, 4, 5, 7};
+            var poss = regularity.GetSubNumberPositions(lens);
+            
+            Assert.NotNull(poss);
+            Assert.AreEqual(expectedPoss.Length, poss.Length);
+            
+            Assert.AreEqual(expectedPoss[0], poss[0]);
+            Assert.AreEqual(expectedPoss[1], poss[1]);
+            Assert.AreEqual(expectedPoss[2], poss[2]);
+            Assert.AreEqual(expectedPoss[3], poss[3]);
+            Assert.AreEqual(expectedPoss[4], poss[4]);
+        }
     }
 
     internal class BaseRegularityTestable:BaseRegularity<RegularityDetectResult>
@@ -206,6 +227,11 @@ namespace NiceNumber.UnitTests
         public new int[] GetSubNumbers(byte[] number, byte[] lengths)
         {
             return base.GetSubNumbers(number, lengths);
+        }
+
+        public new byte[] GetSubNumberPositions(byte[] lengths)
+        {
+            return base.GetSubNumberPositions(lengths);
         }
 
         public new byte[][] SplitNumberToDigitSequences(byte[] number, out byte[] firstPositions)

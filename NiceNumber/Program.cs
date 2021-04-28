@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using NiceNumber.Core.Regularities;
+using NiceNumber.Core.Regularities.Deprecated;
 using NiceNumber.Regularities;
 using NiceNumber.Results;
 
@@ -11,6 +13,32 @@ namespace NiceNumber
     {
         static void Main(string[] args)
         {
+            Test2();
+            //Test1();
+        }
+
+        static void Test2()
+        {
+            Console.WriteLine("Hello");
+            
+            var number = 8972345798034;//11
+            var regularity = new ArithmeticProgressionAtAnyPosition();
+            
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var result = regularity.Process(number);
+            
+            sw.Stop();
+            var time = sw.ElapsedMilliseconds;
+            var seconds = time / (double)1000;
+            
+            Console.WriteLine($"Time: {seconds} s");
+            Console.ReadKey();
+        }
+        
+        static void Test1()
+        {
             Console.WriteLine("Hello World!");
             var minNumber = 1000000;
             var maxNumber = 9999999;
@@ -19,11 +47,11 @@ namespace NiceNumber
             
             var regularities = new List<IRegularity>
             {
-                // new SameDigitsSequential(),
-                // new SameDigitsWithFixedGap(),
-                // new SameDigitsAtAnyPosition(),
-                // new ArithmeticProgressionSequential(),
-                // new ArithmeticProgressionWithFixedGap(),
+                new SameDigitsSequential(),
+                new SameDigitsWithFixedGap(),
+                new SameDigitsAtAnyPosition(),
+                new ArithmeticProgressionSequential(),
+                new ArithmeticProgressionWithFixedGap(),
                 new ArithmeticProgressionAtAnyPosition()
             };
 

@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 using NiceNumber.Results;
 
-namespace NiceNumber.Regularities
+namespace NiceNumber.Core.Regularities.New
 {
-    public class MirrorNumbersWithFixedGap: BaseRegularity<RegularityDetectResultWithGap>
+    public class MirrorDigitsWithFixedGap:BaseRegularity<RegularityDetectResultWithGap>
     {
-        public override RegularityType Type => RegularityType.MirrorNumbersWithFixedGap;
-        
-        protected override bool UseSubNumbers => true;
-        
+        public override RegularityType Type => RegularityType.MirrorDigitsWithFixedGap;
         protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte firstPosition = 0)
         {
             throw new System.NotImplementedException();

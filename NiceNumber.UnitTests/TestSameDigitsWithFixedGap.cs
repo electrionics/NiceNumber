@@ -1,4 +1,6 @@
-﻿using NiceNumber.Regularities;
+﻿using NiceNumber.Core;
+using NiceNumber.Core.Regularities.Deprecated;
+using NiceNumber.Core.Results;
 using NiceNumber.Results;
 using NUnit.Framework;
 

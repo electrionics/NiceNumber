@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using NiceNumber.Results;
+using NiceNumber.Core.Results;
 
-namespace NiceNumber.Regularities
+namespace NiceNumber.Core.Regularities.New
 {
-    public class SameNumbersAtAnyPosition:BaseRegularity<RegularityDetectResultWithPositions>
+    public class SameNumbersWithFixedGap: BaseRegularity<RegularityDetectResultWithPositions>
     {
-        public override RegularityType Type => RegularityType.SameNumbersAtAnyPosition;
+        public override RegularityType Type => RegularityType.SameNumbersWithFixedGap;
         
         protected override bool UseSubNumbers => true;
         
