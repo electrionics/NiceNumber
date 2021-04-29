@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using NiceNumber.Core.Helpers;
+using NiceNumber.Core.Regularities;
 
 namespace NiceNumber.Results
 {
@@ -13,7 +15,7 @@ namespace NiceNumber.Results
                    FirstNumber == other.FirstNumber &&
                    FirstPosition == other.FirstPosition &&
                    Length == other.Length &&
-                   RegularityNumber == other.RegularityNumber &&
+                   RegularityNumber.EqualTo(other.RegularityNumber, RegularityConstants.DoubleRegularityNumberAccuracy) &&
                    SubNumberLengths == other.SubNumberLengths ||
                    (SubNumberLengths != null && SubNumberLengths.SequenceEqual(other.SubNumberLengths));
         }
@@ -34,7 +36,7 @@ namespace NiceNumber.Results
                 hashCode = (hashCode * 397) ^ FirstNumber;
                 hashCode = (hashCode * 397) ^ FirstPosition;
                 hashCode = (hashCode * 397) ^ Length;
-                hashCode = (hashCode * 397) ^ RegularityNumber;
+                hashCode = (hashCode * 397) ^ (int)RegularityNumber.RoundTo(0);
                 return hashCode;
             }
         }
@@ -72,7 +74,7 @@ namespace NiceNumber.Results
         
         public int Length { get; set; } // required, min = 3
         
-        public int RegularityNumber { get; set; } // number of regularity TODO: remove here and add in other special class
+        public double RegularityNumber { get; set; } // number of regularity TODO: remove here and add in other special class
         
         public byte[] SubNumberLengths { get; set; }
     }

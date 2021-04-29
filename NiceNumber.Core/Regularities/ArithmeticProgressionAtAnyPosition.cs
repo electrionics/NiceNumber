@@ -239,6 +239,11 @@ namespace NiceNumber.Core.Regularities
         {
             var subNumbers = GetSubNumbers(number, lengths);
             var subNumberPositions = GetSubNumberPositions(lengths);
+
+            if (lengths.Where((len, i) => len > 1 && subNumbers[i] < Math.Pow(10, len - 1)).Any())
+            {
+                return new List<RegularityDetectResultWithPositions>();
+            }
             
             var result = new List<RegularityDetectResultWithPositions>();
             
@@ -326,7 +331,7 @@ namespace NiceNumber.Core.Regularities
                         RegularityNumber = subNumbers[indexes[1]] - subNumbers[indexes[0]],
                         Positions = indexes.Select(x => subNumberPositions[x]).ToArray(),
                         SubNumberLengths = indexes.Select(x => lengths[x]).ToArray()
-                    };
+                    }; //TODO: eliminate numbers that starts from 0 (one or more zero leads to number)
                     
                     result.Add(res);
                 }
