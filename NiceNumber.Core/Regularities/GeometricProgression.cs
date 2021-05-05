@@ -6,9 +6,9 @@ using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities
 {
-    public class GeometricProgressionAtAnyPosition:BaseRegularity<RegularityDetectResultWithPositions>
+    public class GeometricProgression:BaseRegularity<RegularityDetectResultWithPositions>
     {
-        public GeometricProgressionAtAnyPosition(byte minLength = 3):base(minLength)
+        public GeometricProgression(byte minLength = 3):base(minLength)
         {
         }
         

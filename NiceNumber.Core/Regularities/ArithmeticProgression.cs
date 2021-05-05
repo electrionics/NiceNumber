@@ -5,9 +5,9 @@ using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities
 {
-    public class ArithmeticProgressionAtAnyPosition:BaseRegularity<RegularityDetectResultWithPositions>
+    public class ArithmeticProgression:BaseRegularity<RegularityDetectResultWithPositions>
     {
-        public ArithmeticProgressionAtAnyPosition(byte minLength = 3):base(minLength)
+        public ArithmeticProgression(byte minLength = 3):base(minLength)
         {
         }
         

@@ -22,6 +22,8 @@
         
         GeometricProgressionSequential = 15,
         GeometricProgressionWithFixedGap = 16,
-        GeometricProgressionAtAnyPosition = 17
+        GeometricProgressionAtAnyPosition = 17,
+        
+        MultiplesNumbers = 18
     }
 }

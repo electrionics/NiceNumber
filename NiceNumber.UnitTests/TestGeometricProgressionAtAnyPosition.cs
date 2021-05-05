@@ -67,7 +67,7 @@ namespace NiceNumber.UnitTests
                 SubNumberLengths = new byte[] {1, 1, 2}
             };
             
-            var regularity = new GeometricProgressionAtAnyPosition(3);
+            var regularity = new GeometricProgression(3);
             
             var detected = regularity.Process(number);
             
@@ -85,7 +85,7 @@ namespace NiceNumber.UnitTests
         public void Test_GeometricProgressionAtAnyPosition_NotCountDoubleQ()
         {
             const long number = 2718128; // q = 2/3
-            var regularity = new GeometricProgressionAtAnyPosition(3);
+            var regularity = new GeometricProgression(3);
             
             var detected = regularity.Process(number);
             

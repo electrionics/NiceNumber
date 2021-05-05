@@ -13,8 +13,29 @@ namespace NiceNumber
     {
         static void Main(string[] args)
         {
-            Test2();
+            Test3();
+            //Test2();
             //Test1();
+        }
+        
+        static void Test3()
+        {
+            Console.WriteLine("Hello");
+            
+            var number = 1024595542219;//11
+            var regularity = new MirrorDigits();
+            
+            var sw = new Stopwatch();
+            sw.Start();
+
+            var result = regularity.Process(number);
+            
+            sw.Stop();
+            var time = sw.ElapsedMilliseconds;
+            var seconds = time / (double)1000;
+            
+            Console.WriteLine($"Time: {seconds} s");
+            Console.ReadKey();
         }
 
         static void Test2()
@@ -22,7 +43,7 @@ namespace NiceNumber
             Console.WriteLine("Hello");
             
             var number = 8972345798034;//11
-            var regularity = new ArithmeticProgressionAtAnyPosition();
+            var regularity = new ArithmeticProgression();
             
             var sw = new Stopwatch();
             sw.Start();
@@ -52,7 +73,7 @@ namespace NiceNumber
                 new SameDigitsAtAnyPosition(),
                 new ArithmeticProgressionSequential(),
                 new ArithmeticProgressionWithFixedGap(),
-                new ArithmeticProgressionAtAnyPosition()
+                new ArithmeticProgression()
             };
 
             foreach (var regularity in regularities)

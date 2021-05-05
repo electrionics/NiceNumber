@@ -90,7 +90,7 @@ namespace NiceNumber.UnitTests
                 SubNumberLengths = new byte[] {1, 1, 1}
             };
             
-            var regularity = new ArithmeticProgressionAtAnyPosition(3);
+            var regularity = new ArithmeticProgression(3);
             
             var detected = regularity.Process(number);
             
@@ -141,7 +141,7 @@ namespace NiceNumber.UnitTests
                 RegularityNumber = 2
             };
             
-            var regularity = new ArithmeticProgressionAtAnyPosition(3);
+            var regularity = new ArithmeticProgression(3);
             
             var detected = regularity.Process(number);
             
