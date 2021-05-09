@@ -1,7 +1,6 @@
 ﻿using NiceNumber.Core;
 using NiceNumber.Core.Regularities.Deprecated;
 using NiceNumber.Core.Results;
-using NiceNumber.Results;
 using NUnit.Framework;
 
 namespace NiceNumber.UnitTests
@@ -18,27 +17,30 @@ namespace NiceNumber.UnitTests
         {
             const long number = 2323233727;
             var regularity = new SameDigitsWithFixedGap();
-            var supposed1 = new RegularityDetectResultWithGap
+            var supposed1 = new RegularityDetectResult
             {
-                Type = RegularityType.SameDigitsWithFixedGap,
+                Type = RegularityType.SameDigits,
+                SequenceType = SequenceType.FixedGap,
                 Length = 3,
                 FirstNumber = 2,
                 FirstPosition = 0,
                 RegularityNumber = 1,
                 Gap = 1
             };
-            var supposed2 = new RegularityDetectResultWithGap
+            var supposed2 = new RegularityDetectResult
             {
-                Type = RegularityType.SameDigitsWithFixedGap,
+                Type = RegularityType.SameDigits,
+                SequenceType = SequenceType.FixedGap,
                 Length = 3,
                 FirstNumber = 3,
                 FirstPosition = 1,
                 RegularityNumber = 1,
                 Gap = 1
             };
-            var supposed3 = new RegularityDetectResultWithGap
+            var supposed3 = new RegularityDetectResult
             {
-                Type = RegularityType.SameDigitsWithFixedGap,
+                Type = RegularityType.SameDigits,
+                SequenceType = SequenceType.FixedGap,
                 Length = 3,
                 FirstNumber = 2,
                 FirstPosition = 0,

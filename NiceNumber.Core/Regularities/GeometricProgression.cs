@@ -6,27 +6,27 @@ using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities
 {
-    public class GeometricProgression:BaseRegularity<RegularityDetectResultWithPositions>
+    public class GeometricProgression:BaseRegularity<RegularityDetectResult>
     {
         public GeometricProgression(byte minLength = 3):base(minLength)
         {
         }
         
-        public override RegularityType Type => RegularityType.GeometricProgressionAtAnyPosition;
+        public override RegularityType MainType => RegularityType.GeometricProgression;
         
         protected override bool UseSubNumbers => true;
         
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition)
         {
             return null;
         }
         
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number)
         {
             return null;
         }
@@ -35,17 +35,17 @@ namespace NiceNumber.Core.Regularities
 
         private const byte Accuracy = RegularityConstants.DoubleRegularityNumberAccuracy;
         
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number, byte[] lengths)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             var subNumbers = GetSubNumbers(number, lengths);
             var subNumberPositions = GetSubNumberPositions(lengths);
 
             if (lengths.Where((len, i) => subNumbers[i] < Math.Pow(10, len - 1)).Any())
             {
-                return new List<RegularityDetectResultWithPositions>();
+                return new List<RegularityDetectResult>();
             }
             
-            var result = new List<RegularityDetectResultWithPositions>();
+            var result = new List<RegularityDetectResult>();
             
             var qIndexes = new Dictionary<double, List<Tuple<byte, byte>>>(new DoubleEqualityComparer(Accuracy)); // q - list of position pairs
             
@@ -58,6 +58,7 @@ namespace NiceNumber.Core.Regularities
                     if (subNumbers[i] == 0) continue; // eliminates divide by zero exception
                     
                     var q = (double)subNumbers[j] / subNumbers[i];
+                    if (q.EqualTo(1, Accuracy)) continue; // no same numbers count as geometric progression
 
                     if (!qIndexes.ContainsKey(q))
                     {
@@ -128,9 +129,9 @@ namespace NiceNumber.Core.Regularities
                         .OrderBy(x => x)
                         .ToList();
                     
-                    var res = new RegularityDetectResultWithPositions
+                    var res = new RegularityDetectResult
                     {
-                        Type = RegularityType.ArithmeticProgressionAtAnyPosition,
+                        Type = RegularityType.GeometricProgression,
                         FirstNumber = subNumbers[indexes[0]],
                         FirstPosition = subNumberPositions[indexes[0]],
                         Length = indexes.Count,
@@ -150,7 +151,7 @@ namespace NiceNumber.Core.Regularities
 
         #endregion
         
-        protected override bool Include(RegularityDetectResultWithPositions first, RegularityDetectResultWithPositions second)
+        protected override bool Include(RegularityDetectResult first, RegularityDetectResult second)
         {
             if (second.Positions.Length > first.Positions.Length)
             {
@@ -172,7 +173,19 @@ namespace NiceNumber.Core.Regularities
             return res;
         }
 
-        protected override IEqualityComparer<RegularityDetectResultWithPositions> Comparer =>
-            RegularityDetectResultWithPositions.Comparer;
+        protected override IEqualityComparer<RegularityDetectResult> Comparer =>
+            RegularityDetectResult.Comparer;
+        
+        protected override void SetTypes(RegularityDetectResult result)
+        {
+            base.SetTypes(result);
+
+            if ((int)result.RegularityNumber.RoundTo(0) == 1)
+            {
+                result.Type = result.SubNumberLengths.All(x => x == 1) 
+                    ? RegularityType.SameDigits
+                    : RegularityType.SameNumbers;
+            }
+        }
     }
 }

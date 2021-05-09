@@ -5,9 +5,9 @@ using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities
 {
-    public class Multiples:BaseRegularity<RegularityDetectResultWithPositions>
+    public class Multiples:BaseRegularity<RegularityDetectResult>
     {
-        public override RegularityType Type => RegularityType.MultiplesNumbers;
+        public override RegularityType MainType => RegularityType.MultiplesNumbers;
         
         protected override bool UseSubNumbers => true;
         
@@ -15,32 +15,36 @@ namespace NiceNumber.Core.Regularities
         {
         }
         
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
+        public Multiples(byte minLength):base(minLength)
+        {
+        }
+        
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number, byte[] lengths)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             var subNumbers = GetSubNumbers(number, lengths);
             var subNumberPositions = GetSubNumberPositions(lengths);
 
-            if (lengths.Where((len, i) => len > 1 && subNumbers[i] < Math.Pow(10, len - 1)).Any())
+            if (lengths.Where((len, i) => len > 1 && subNumbers[i] < Math.Pow(10, len - 1)).Any()) // not count sub-numbers with leading zero, because sub-numbers without leading zero give same finaL result
             {
-                return new List<RegularityDetectResultWithPositions>();
+                return new List<RegularityDetectResult>();
             }
             
-            var result = new List<RegularityDetectResultWithPositions>();
+            var result = new List<RegularityDetectResult>();
 
             for (var i = 0; i < subNumbers.Length; i++)
             {
@@ -48,7 +52,7 @@ namespace NiceNumber.Core.Regularities
                 
                 for (var j = 0; j < subNumbers.Length; j++)
                 {
-                    if (i == j || subNumbers[j] < 2) continue;
+                    if (i == j || subNumbers[j] < 2 || subNumbers[i] == subNumbers[j]) continue; // not count same numbers as multiples
 
                     var minNumberIndex = i;
                     var maxNumberIndex = j;
@@ -68,12 +72,12 @@ namespace NiceNumber.Core.Regularities
                         continue;
                     }
 
-                    if (subNumbers[maxNumberIndex] % subNumbers[minNumberIndex] == 0)
+                    if (subNumbers[maxNumberIndex] % subNumbers[minNumberIndex] == 0 && lengths[minNumberIndex] >= MinLength && lengths[maxNumberIndex] >= MinLength)
                     {
                         var firstIndex = Math.Min(minNumberIndex, maxNumberIndex);
                         var lastIndex = Math.Max(minNumberIndex, maxNumberIndex);
                         
-                        result.Add(new RegularityDetectResultWithPositions
+                        result.Add(new RegularityDetectResult
                         {
                             FirstNumber = subNumbers[firstIndex],
                             FirstPosition = subNumberPositions[firstIndex],
@@ -90,7 +94,7 @@ namespace NiceNumber.Core.Regularities
             return result;
         }
         
-        protected override IEqualityComparer<RegularityDetectResultWithPositions> Comparer =>
-            RegularityDetectResultWithPositions.Comparer;
+        protected override IEqualityComparer<RegularityDetectResult> Comparer =>
+            RegularityDetectResult.Comparer;
     }
 }

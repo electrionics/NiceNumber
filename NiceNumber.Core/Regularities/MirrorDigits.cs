@@ -6,25 +6,25 @@ using NiceNumber.Helpers;
 
 namespace NiceNumber.Core.Regularities
 {
-    public class MirrorDigits:BaseRegularity<RegularityDetectResultWithPositions>
+    public class MirrorDigits:BaseRegularity<RegularityDetectResult>
     {
-        public override RegularityType Type => RegularityType.MirrorDigitsAtAnyPosition;
+        public override RegularityType MainType => RegularityType.MirrorDigits;
         
         public MirrorDigits():base(2)
         {
         }
         
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number)
         {
             var mirrorCandidates = number
                 .GroupBy(x => x)
@@ -86,19 +86,19 @@ namespace NiceNumber.Core.Regularities
             }
 
             var firstArrGroups = sources
-                .Where(x => x.Count >= MinLength)
+                .Where(x => x.Count >= MinLength && x.Any(y => number[y] != number[x[0]])) // not count same digit potential mirroring
                 .Select(x => x.ToArray())
                 .GroupBy(x => x.Length)
                 .ToArray();
 
             var secondArrGroups = mirrors
-                .Where(x => x.Count >= MinLength)
+                .Where(x => x.Count >= MinLength && x.Any(y => number[y] != number[x[0]])) // not count same digit potential mirroring
                 .Select(x => x.ToArray())
                 .GroupBy(x => x.Length)
                 .ToArray();
 
             var comparer = new ByteArrayEqualityComparer();
-            var result = new List<RegularityDetectResultWithPositions>();
+            var result = new List<RegularityDetectResult>();
 
             foreach (var firstArrGroup in firstArrGroups)
             {
@@ -141,12 +141,12 @@ namespace NiceNumber.Core.Regularities
 
                         if (!comparer.Equals(firstNumberArr, secondNumberArr)) continue;
                         
-                        var res = new RegularityDetectResultWithPositions
+                        var res = new RegularityDetectResult
                         {
                             FirstNumber = number[firstArr[0]],
                             FirstPosition = firstArr[0],
                             Length = firstArr.Length * 2,
-                            RegularityNumber = secondArr[0] - firstArr[firstArr.Length - 1] - 1,
+                            RegularityNumber = secondArr[secondArr.Length - 1] - firstArr[firstArr.Length - 1] - 1,
                             Positions = firstArr.Concat(secondArr.Reverse()).ToArray()
                         };
                         res.SubNumberLengths = res.Positions.Select(x => (byte)1).ToArray();
@@ -158,15 +158,15 @@ namespace NiceNumber.Core.Regularities
             return result;
         }
 
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number, byte[] lengths)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             return null;
         }
 
-        protected override IEqualityComparer<RegularityDetectResultWithPositions> Comparer =>
-            RegularityDetectResultWithPositions.Comparer;
+        protected override IEqualityComparer<RegularityDetectResult> Comparer =>
+            RegularityDetectResult.Comparer;
 
-        protected override bool Include(RegularityDetectResultWithPositions first, RegularityDetectResultWithPositions second)
+        protected override bool Include(RegularityDetectResult first, RegularityDetectResult second)
         {
             return second.Positions.All(pos => first.Positions.Contains(pos));
         }

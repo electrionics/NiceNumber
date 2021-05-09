@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NiceNumber.Core;
 using NiceNumber.Core.Regularities;
+using NiceNumber.Core.Results;
 using NiceNumber.Helpers;
-using NiceNumber.Results;
 using NUnit.Framework;
 
 namespace NiceNumber.UnitTests
@@ -186,6 +187,52 @@ namespace NiceNumber.UnitTests
             Assert.AreEqual(expectedPoss[3], poss[3]);
             Assert.AreEqual(expectedPoss[4], poss[4]);
         }
+
+        [Test]
+        public void TestSetTypes_CommonCase()
+        {
+            var result1 = new RegularityDetectResult
+            {
+                Positions = new byte[] {1, 2, 3},
+                SubNumberLengths = new byte[] {1, 1, 2}
+            }; // sequential, gap = 0
+            var result2 = new RegularityDetectResult
+            {
+                Positions = new byte[] {2, 4, 5},
+                SubNumberLengths = new byte[] {2, 1, 1}
+            }; // sequential, gap = 0
+            var result3 = new RegularityDetectResult
+            {
+                Positions = new byte[] {1, 3, 5},
+                SubNumberLengths = new byte[]{1, 1, 2}
+            }; // fixed gap, gap = 1
+            var result4 = new RegularityDetectResult
+            {
+                Positions = new byte[] {1, 5, 7},
+                SubNumberLengths = new byte[]{ 2, 1, 3}
+            }; // general, gap = 0
+            
+            var regularity = new BaseRegularityTestable(3);
+            
+            
+            regularity.SetTypesForTest(result1);
+            regularity.SetTypesForTest(result2);
+            regularity.SetTypesForTest(result3);
+            regularity.SetTypesForTest(result4);
+            
+            
+            Assert.AreEqual(result1.SequenceType, SequenceType.Sequential);
+            Assert.AreEqual(result2.SequenceType, SequenceType.Sequential);
+            Assert.AreEqual(result3.SequenceType, SequenceType.FixedGap);
+            Assert.AreEqual(result4.SequenceType, SequenceType.General);
+            
+            Assert.AreEqual(result1.Gap, 0);
+            Assert.AreEqual(result2.Gap, 0);
+            Assert.AreEqual(result3.Gap, 1);
+            Assert.AreEqual(result4.Gap, 0);
+            
+            Assert.Pass();
+        }
     }
 
     internal class BaseRegularityTestable:BaseRegularity<RegularityDetectResult>
@@ -196,7 +243,7 @@ namespace NiceNumber.UnitTests
         {
         }
         
-        public override RegularityType Type => throw new NotImplementedException();
+        public override RegularityType MainType => RegularityType.ArithmeticProgression;
         protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             throw new NotImplementedException();
@@ -247,6 +294,11 @@ namespace NiceNumber.UnitTests
         public new byte[][] GetAllSubNumberLengths(int length)
         {
             return base.GetAllSubNumberLengths(length);
+        }
+
+        public void SetTypesForTest(RegularityDetectResult result)
+        {
+            base.SetTypes(result);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using NiceNumber.Core.Results;
-using NiceNumber.Results;
 
 namespace NiceNumber.Core.Regularities.Deprecated
 {
@@ -10,7 +9,7 @@ namespace NiceNumber.Core.Regularities.Deprecated
         {
         }
         
-        public override RegularityType Type => RegularityType.AriphmeticProgressionSequential;
+        public override RegularityType MainType => RegularityType.ArithmeticProgression;
         
         protected override bool UseSubNumbers => false;
         
@@ -29,7 +28,7 @@ namespace NiceNumber.Core.Regularities.Deprecated
             return new List<RegularityDetectResult>{
                 new RegularityDetectResult
                 {
-                    Type = RegularityType.AriphmeticProgressionSequential,
+                    Type = RegularityType.ArithmeticProgression,
                     FirstNumber = start,
                     FirstPosition = firstPosition,
                     Length = number.Length,

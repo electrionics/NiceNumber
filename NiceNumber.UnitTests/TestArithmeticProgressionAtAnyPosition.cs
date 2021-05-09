@@ -2,7 +2,6 @@
 using NiceNumber.Core;
 using NiceNumber.Core.Regularities;
 using NiceNumber.Core.Results;
-using NiceNumber.Regularities;
 using NUnit.Framework;
 
 namespace NiceNumber.UnitTests
@@ -19,9 +18,10 @@ namespace NiceNumber.UnitTests
         public void Test_ArithmeticProgressionAtAnyPosition_CommonCase()
         {
             const long number = 2446468;
-            var supposed1 = new RegularityDetectResultWithPositions
+            var supposed1 = new RegularityDetectResult
             {
-                Type = RegularityType.ArithmeticProgressionAtAnyPosition,
+                Type = RegularityType.ArithmeticProgression,
+                SequenceType = SequenceType.General,
                 Length = 4,
                 FirstNumber = 2,
                 RegularityNumber = 2,
@@ -29,9 +29,10 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {0, 2, 3, 6},
                 SubNumberLengths = new byte[] {1, 1, 1, 1}
             };
-            var supposed2 = new RegularityDetectResultWithPositions
+            var supposed2 = new RegularityDetectResult
             {
-                Type = RegularityType.ArithmeticProgressionAtAnyPosition,
+                Type = RegularityType.ArithmeticProgression,
+                SequenceType = SequenceType.General,
                 Length = 4,
                 FirstNumber = 2,
                 RegularityNumber = 2,
@@ -39,9 +40,10 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {0, 4, 5, 6},
                 SubNumberLengths = new byte[] {1, 1, 1, 1}
             };
-            var supposed3 = new RegularityDetectResultWithPositions
+            var supposed3 = new RegularityDetectResult
             {
-                Type = RegularityType.ArithmeticProgressionAtAnyPosition,
+                Type = RegularityType.ArithmeticProgression,
+                SequenceType = SequenceType.General,
                 Length = 4,
                 FirstNumber = 2,
                 RegularityNumber = 2,
@@ -49,9 +51,10 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {0, 2, 5, 6},
                 SubNumberLengths = new byte[] {1, 1, 1, 1}
             };
-            var supposed4 = new RegularityDetectResultWithPositions
+            var supposed4 = new RegularityDetectResult
             {
-                Type = RegularityType.ArithmeticProgressionAtAnyPosition,
+                Type = RegularityType.ArithmeticProgression,
+                SequenceType = SequenceType.General,
                 Length = 4,
                 FirstNumber = 2,
                 RegularityNumber = 2,
@@ -59,9 +62,10 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {0, 1, 3, 6},
                 SubNumberLengths = new byte[] {1, 1, 1, 1}
             };
-            var supposed5 = new RegularityDetectResultWithPositions
+            var supposed5 = new RegularityDetectResult
             {
-                Type = RegularityType.ArithmeticProgressionAtAnyPosition,
+                Type = RegularityType.ArithmeticProgression,
+                SequenceType = SequenceType.General,
                 Length = 4,
                 FirstNumber = 2,
                 RegularityNumber = 2,
@@ -69,9 +73,10 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {0, 1, 5, 6},
                 SubNumberLengths = new byte[] {1, 1, 1, 1}
             };
-            var supposed6 = new RegularityDetectResultWithPositions
+            var supposed6 = new RegularityDetectResult
             {
-                Type = RegularityType.ArithmeticProgressionAtAnyPosition,
+                Type = RegularityType.ArithmeticProgression,
+                SequenceType = SequenceType.General,
                 Length = 3,
                 FirstNumber = 24,
                 RegularityNumber = 22,
@@ -79,30 +84,19 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {0, 2, 5},
                 SubNumberLengths = new byte[] {2, 2, 2}
             };
-            var supposed7 = new RegularityDetectResultWithPositions
-            {
-                Type = RegularityType.ArithmeticProgressionAtAnyPosition,
-                Length = 3,
-                FirstNumber = 4,
-                RegularityNumber = 0,
-                FirstPosition = 1,
-                Positions = new byte[] {1, 2, 4},
-                SubNumberLengths = new byte[] {1, 1, 1}
-            };
-            
+
             var regularity = new ArithmeticProgression(3);
             
             var detected = regularity.Process(number);
             
             Assert.NotNull(detected);
-            Assert.AreEqual(detected.Count, 7);
+            Assert.AreEqual(detected.Count, 6);
             Assert.IsTrue(detected.Contains(supposed1));
             Assert.IsTrue(detected.Contains(supposed2));
             Assert.IsTrue(detected.Contains(supposed3));
             Assert.IsTrue(detected.Contains(supposed4));
             Assert.IsTrue(detected.Contains(supposed5));
             Assert.IsTrue(detected.Contains(supposed6));
-            Assert.IsTrue(detected.Contains(supposed7));
             Assert.Pass();
         }
 
@@ -133,9 +127,10 @@ namespace NiceNumber.UnitTests
                 new byte[] {13, 14, 15}
             };
             var total = supposedPositionGroups.Aggregate(1, (res, bytes) => res * bytes.Length);
-            var supposedPrototype = new RegularityDetectResultWithPositions
+            var supposedPrototype = new RegularityDetectResult
             {
-                Type = RegularityType.ArithmeticProgressionAtAnyPosition,
+                Type = RegularityType.ArithmeticProgression,
+                SequenceType = SequenceType.General,
                 Length = supposedPositionGroups.Length,
                 FirstNumber = 1,
                 RegularityNumber = 2
@@ -155,7 +150,7 @@ namespace NiceNumber.UnitTests
                 Assert.AreEqual(supposedPrototype.RegularityNumber, detectResult.RegularityNumber);
                 
                 Assert.IsTrue(supposedPositionGroups.All(supposedPositions => 
-                    ((RegularityDetectResultWithPositions)detectResult).Positions.Any(supposedPositions.Contains)));
+                    detectResult.Positions.Any(supposedPositions.Contains)));
             }
 
             Assert.Pass();

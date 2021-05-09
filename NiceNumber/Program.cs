@@ -4,8 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using NiceNumber.Core.Regularities;
 using NiceNumber.Core.Regularities.Deprecated;
-using NiceNumber.Regularities;
-using NiceNumber.Results;
+using NiceNumber.Core.Results;
 
 namespace NiceNumber
 {
@@ -13,9 +12,66 @@ namespace NiceNumber
     {
         static void Main(string[] args)
         {
-            Test3();
+            Test4();
+            //Test3();
             //Test2();
             //Test1();
+        }
+
+        static void Test4()
+        {
+            //var number = ;
+            var regularities = new List<IRegularity>
+            {
+                new GeometricProgression(),
+                new ArithmeticProgression(),
+                new MirrorDigits(),
+                new Multiples()
+            };
+            
+            Console.WriteLine("Hello");
+
+            var random = new Random();
+            var numbersDigits = Enumerable.Range(1, 10).Select(x =>
+                Enumerable.Range(1, 11)
+                    .Select(y => random.Next(0, 9))
+                    .Prepend(random.Next(1, 9))
+                    .ToArray()).ToArray();
+
+            var numbers = new List<long>();
+            foreach (var numberDigits in numbersDigits)
+            {
+                var number = (long) numberDigits[0];
+                
+                foreach (var digit in numberDigits) number = number * 10 + digit;
+
+                numbers.Add(number);
+            }
+
+            //numbers = new List<long>(){ 1024595542219 }; 
+            
+            foreach (var number in numbers)
+            {
+                Console.WriteLine(number);
+                
+                foreach (var regularity in regularities)
+                {
+                    var sw = new Stopwatch();
+                    sw.Start();
+
+                    var result = regularity.Process(number);
+                
+                    sw.Stop();
+                    var time = sw.ElapsedMilliseconds;
+                    var seconds = time / (double)1000;
+
+                    Console.WriteLine($"'{regularity.GetType().Name}' Detected: {result.Count}. Time: {seconds} s.");
+                }
+                
+                Console.WriteLine();
+            }
+
+            Console.ReadKey();
         }
         
         static void Test3()
@@ -92,7 +148,7 @@ namespace NiceNumber
                 }
                 
                 sw.Stop();
-                time[regularity.Type] = sw.ElapsedMilliseconds;
+                time[regularity.MainType] = sw.ElapsedMilliseconds;
             }
 
             var report1 = result.GroupBy(x => x.Value.Count);

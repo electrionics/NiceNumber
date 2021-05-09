@@ -3,7 +3,7 @@ using System.Linq;
 using NiceNumber.Core.Helpers;
 using NiceNumber.Core.Regularities;
 
-namespace NiceNumber.Results
+namespace NiceNumber.Core.Results
 {
     public class RegularityDetectResult
     {
@@ -16,8 +16,11 @@ namespace NiceNumber.Results
                    FirstPosition == other.FirstPosition &&
                    Length == other.Length &&
                    RegularityNumber.EqualTo(other.RegularityNumber, RegularityConstants.DoubleRegularityNumberAccuracy) &&
-                   SubNumberLengths == other.SubNumberLengths ||
-                   (SubNumberLengths != null && SubNumberLengths.SequenceEqual(other.SubNumberLengths));
+                   Gap == other.Gap &&
+                   (SubNumberLengths == other.SubNumberLengths ||
+                    SubNumberLengths != null && SubNumberLengths.SequenceEqual(other.SubNumberLengths)) && 
+                   (Positions == other.Positions || 
+                    Positions != null && Positions.SequenceEqual(other.Positions));
         }
 
         public override bool Equals(object obj)
@@ -37,6 +40,7 @@ namespace NiceNumber.Results
                 hashCode = (hashCode * 397) ^ FirstPosition;
                 hashCode = (hashCode * 397) ^ Length;
                 hashCode = (hashCode * 397) ^ (int)RegularityNumber.RoundTo(0);
+                hashCode = (hashCode * 397) ^ Gap;
                 return hashCode;
             }
         }
@@ -68,6 +72,8 @@ namespace NiceNumber.Results
         
         public RegularityType Type { get; set; }
         
+        public SequenceType SequenceType { get; set; }
+        
         public int FirstNumber { get; set; } // not required
         
         public int FirstPosition { get; set; } // required
@@ -77,5 +83,9 @@ namespace NiceNumber.Results
         public double RegularityNumber { get; set; } // number of regularity TODO: remove here and add in other special class
         
         public byte[] SubNumberLengths { get; set; }
+
+        public byte[] Positions { get; set; }
+        
+        public byte Gap { get; set; }
     }
 }

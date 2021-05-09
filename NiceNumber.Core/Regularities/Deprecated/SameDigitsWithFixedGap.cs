@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
-using NiceNumber.Results;
+using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities.Deprecated
 {
-    public class SameDigitsWithFixedGap:BaseRegularity<RegularityDetectResultWithGap>
+    public class SameDigitsWithFixedGap:BaseRegularity<RegularityDetectResult>
     {
         public SameDigitsWithFixedGap(byte minLength = 3):base(minLength)
         {
         }
         
-        public override RegularityType Type => RegularityType.SameDigitsWithFixedGap;
+        public override RegularityType MainType => RegularityType.SameDigits;
 
-        protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte firstPosition = 0)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             var start = number[0];
             
@@ -42,9 +42,9 @@ namespace NiceNumber.Core.Regularities.Deprecated
             if (len == 0 || len < MinLength)
                 return null;
 
-            return new List<RegularityDetectResultWithGap>
+            return new List<RegularityDetectResult>
             {
-                new RegularityDetectResultWithGap
+                new RegularityDetectResult
                 {
                     FirstNumber = start,
                     FirstPosition = firstPosition,
@@ -55,25 +55,25 @@ namespace NiceNumber.Core.Regularities.Deprecated
             };
         }
 
-        protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithGap> DetectAll(byte[] number)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithGap> DetectAll(byte[] number, byte[] lengths)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             return null;
         }
 
-        protected override IEqualityComparer<RegularityDetectResultWithGap> Comparer =>
-            RegularityDetectResultWithGap.Comparer;
+        protected override IEqualityComparer<RegularityDetectResult> Comparer =>
+            RegularityDetectResult.Comparer;
 
-        protected override bool Include(RegularityDetectResultWithGap first, RegularityDetectResultWithGap second)
+        protected override bool Include(RegularityDetectResult first, RegularityDetectResult second)
         {
             return first.FirstNumber == second.FirstNumber &&
                    first.FirstPosition <= second.FirstPosition &&

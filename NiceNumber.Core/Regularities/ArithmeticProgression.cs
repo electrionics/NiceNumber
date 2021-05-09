@@ -5,31 +5,31 @@ using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities
 {
-    public class ArithmeticProgression:BaseRegularity<RegularityDetectResultWithPositions>
+    public class ArithmeticProgression:BaseRegularity<RegularityDetectResult>
     {
         public ArithmeticProgression(byte minLength = 3):base(minLength)
         {
         }
         
-        public override RegularityType Type => RegularityType.ArithmeticProgressionAtAnyPosition;
+        public override RegularityType MainType => RegularityType.ArithmeticProgression;
         
         protected override bool UseSubNumbers => true;
         
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition)
         {
             return null;
         }
 
         #region DetectAll(byte[] number)
 
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number)
         {
-            var result = new List<RegularityDetectResultWithPositions>();
+            var result = new List<RegularityDetectResult>();
             
             var startCounts = new Dictionary<byte, byte>(); // start number - count
             var dCounts = new Dictionary<sbyte, byte>(); // d - count
@@ -204,7 +204,7 @@ namespace NiceNumber.Core.Regularities
             IReadOnlyDictionary<Tuple<sbyte, byte>, List<byte>[]> poss, 
             IReadOnlyDictionary<Tuple<sbyte, byte>, byte[]> lens, 
             byte[] number, 
-            ICollection<RegularityDetectResultWithPositions> result,
+            ICollection<RegularityDetectResult> result,
             Tuple<sbyte, byte> currKey)
         {
             var currD = currKey.Item1;
@@ -215,7 +215,7 @@ namespace NiceNumber.Core.Regularities
                 var len = lens[currKey][i];
                 if (len >= MinLength) // found
                 {
-                    var resItem = new RegularityDetectResultWithPositions
+                    var resItem = new RegularityDetectResult
                     {
                         FirstNumber = number[currIndex],
                         FirstPosition = currIndex,
@@ -235,17 +235,17 @@ namespace NiceNumber.Core.Regularities
 
         #region DetectAll(byte[] number, byte[] lengths)
         
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number, byte[] lengths)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             var subNumbers = GetSubNumbers(number, lengths);
             var subNumberPositions = GetSubNumberPositions(lengths);
 
             if (lengths.Where((len, i) => len > 1 && subNumbers[i] < Math.Pow(10, len - 1)).Any())
             {
-                return new List<RegularityDetectResultWithPositions>();
+                return new List<RegularityDetectResult>();
             }
             
-            var result = new List<RegularityDetectResultWithPositions>();
+            var result = new List<RegularityDetectResult>();
             
             var dIndexes = new Dictionary<int, List<Tuple<byte, byte>>>(); // d - list of position pairs
             
@@ -256,6 +256,7 @@ namespace NiceNumber.Core.Regularities
                 for (var j = (byte)(i + 1); j < subNumbers.Length ; j++)
                 {
                     var d = subNumbers[j] - subNumbers[i];
+                    if (d == 0) continue; // no same numbers count as arithmetic progression
 
                     if (!dIndexes.ContainsKey(d)) // && i <= subNumbers.Length - MinLength && j <= subNumbers.Length - MinLength + 1
                     {
@@ -322,16 +323,15 @@ namespace NiceNumber.Core.Regularities
                         .OrderBy(x => x)
                         .ToList();
                     
-                    var res = new RegularityDetectResultWithPositions
+                    var res = new RegularityDetectResult
                     {
-                        Type = RegularityType.ArithmeticProgressionAtAnyPosition,
                         FirstNumber = subNumbers[indexes[0]],
                         FirstPosition = subNumberPositions[indexes[0]],
                         Length = indexes.Count,
                         RegularityNumber = subNumbers[indexes[1]] - subNumbers[indexes[0]],
                         Positions = indexes.Select(x => subNumberPositions[x]).ToArray(),
                         SubNumberLengths = indexes.Select(x => lengths[x]).ToArray()
-                    }; //TODO: eliminate numbers that starts from 0 (one or more zero leads to number)
+                    };
                     
                     result.Add(res);
                 }
@@ -344,7 +344,7 @@ namespace NiceNumber.Core.Regularities
 
         #endregion
 
-        protected override bool Include(RegularityDetectResultWithPositions first, RegularityDetectResultWithPositions second)
+        protected override bool Include(RegularityDetectResult first, RegularityDetectResult second)
         {
             if (second.Positions.Length > first.Positions.Length)
             {
@@ -366,7 +366,19 @@ namespace NiceNumber.Core.Regularities
             return res;
         }
 
-        protected override IEqualityComparer<RegularityDetectResultWithPositions> Comparer =>
-            RegularityDetectResultWithPositions.Comparer;
+        protected override IEqualityComparer<RegularityDetectResult> Comparer =>
+            RegularityDetectResult.Comparer;
+
+        protected override void SetTypes(RegularityDetectResult result)
+        {
+            base.SetTypes(result);
+
+            if ((int) result.RegularityNumber == 0)
+            {
+                result.Type = result.SubNumberLengths.All(x => x == 1) 
+                    ? RegularityType.SameDigits
+                    : RegularityType.SameNumbers;
+            }
+        }
     }
 }

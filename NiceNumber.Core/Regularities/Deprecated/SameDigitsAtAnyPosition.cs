@@ -1,32 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NiceNumber.Core.Regularities;
 using NiceNumber.Core.Results;
-using NiceNumber.Results;
 
-namespace NiceNumber.Regularities
+namespace NiceNumber.Core.Regularities.Deprecated
 {
-    public class SameDigitsAtAnyPosition:BaseRegularity<RegularityDetectResultWithPositions>
+    public class SameDigitsAtAnyPosition:BaseRegularity<RegularityDetectResult>
     {
         public SameDigitsAtAnyPosition(byte minLength = 2):base(minLength)
         {
         }
         
-        public override RegularityType Type => RegularityType.SameDigitsAtAnyPosition;
+        public override RegularityType MainType => RegularityType.SameDigits;
 
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte firstPosition = 0)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             return null;
         }
-        protected override List<RegularityDetectResultWithPositions> Detect(byte[] number, byte[] lengths, byte firstPosition = 0)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition = 0)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number)
         {
-            var result = new List<RegularityDetectResultWithPositions>();
+            var result = new List<RegularityDetectResult>();
             
             var starts = number.ToHashSet(); // TODO: taking into account MinLength
 
@@ -56,7 +54,7 @@ namespace NiceNumber.Regularities
 
                     if (len >= MinLength) // found
                     {
-                        var resItem = new RegularityDetectResultWithPositions
+                        var resItem = new RegularityDetectResult
                         {
                             FirstNumber = number[startIndex],
                             FirstPosition = startIndex,
@@ -74,12 +72,12 @@ namespace NiceNumber.Regularities
             return result;
         }
 
-        protected override List<RegularityDetectResultWithPositions> DetectAll(byte[] number, byte[] lengths)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithPositions> FilterOut(List<RegularityDetectResultWithPositions> nonPrioritized)
+        protected override List<RegularityDetectResult> FilterOut(List<RegularityDetectResult> nonPrioritized)
         {
             return nonPrioritized;
         }

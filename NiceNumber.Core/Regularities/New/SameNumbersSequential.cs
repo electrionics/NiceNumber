@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using NiceNumber.Results;
+using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities.New
 {
     public class SameNumbersSequential:BaseRegularity<RegularityDetectResult>
     {
-        public override RegularityType Type => RegularityType.SameNumbersSequential;
+        public override RegularityType MainType => RegularityType.SameNumbers;
         
         protected override bool UseSubNumbers => true;
         

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NiceNumber.Results;
+using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities.Deprecated
 {
@@ -9,7 +9,7 @@ namespace NiceNumber.Core.Regularities.Deprecated
         {
         }
         
-        public override RegularityType Type => RegularityType.SameDigitsSequential;
+        public override RegularityType MainType => RegularityType.SameDigits;
 
         protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
@@ -24,7 +24,7 @@ namespace NiceNumber.Core.Regularities.Deprecated
             {
                 new RegularityDetectResult
                 {
-                    Type = RegularityType.SameDigitsSequential,
+                    Type = RegularityType.SameDigits,
                     FirstNumber = start,
                     FirstPosition = firstPosition,
                     Length = number.Length,

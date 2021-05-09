@@ -1,7 +1,7 @@
 ﻿using NiceNumber.Core;
+using NiceNumber.Core.Regularities;
 using NiceNumber.Core.Regularities.Deprecated;
 using NiceNumber.Core.Results;
-using NiceNumber.Results;
 using NUnit.Framework;
 
 namespace NiceNumber.UnitTests
@@ -17,22 +17,28 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameDigitsSequential()
         {
             const long number = 3222337;
-            var regularity = new SameDigitsSequential();
+            var regularity = new ArithmeticProgression();
             var supposed1 = new RegularityDetectResult
             {
-                Type = RegularityType.SameDigitsSequential,
+                Type = RegularityType.SameDigits,
+                SequenceType = SequenceType.Sequential,
                 Length = 3,
                 FirstNumber = 2,
                 FirstPosition = 1,
-                RegularityNumber = 0
+                RegularityNumber = 0,
+                Positions = new byte[]{1, 2, 3},
+                SubNumberLengths = new byte[]{ 1, 1, 1}
             };
             var supposed2 = new RegularityDetectResult
             {
-                Type = RegularityType.SameDigitsSequential,
-                Length = 2,
+                Type = RegularityType.SameDigits,
+                SequenceType = SequenceType.General,
+                Length = 3,
                 FirstNumber = 3,
-                FirstPosition = 4,
-                RegularityNumber = 0
+                FirstPosition = 0,
+                RegularityNumber = 0,
+                Positions = new byte[] {0, 4, 5},
+                SubNumberLengths = new byte[]{ 1, 1, 1}
             };
 
             var detected = regularity.Process(number);

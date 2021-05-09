@@ -1,23 +1,24 @@
 ﻿using System.Collections.Generic;
-using NiceNumber.Results;
+using NiceNumber.Core.Helpers;
+using NiceNumber.Core.Results;
 
 namespace NiceNumber.Core.Regularities.Deprecated
 {
-    public class ArithmeticProgressionWithFixedGap:BaseRegularity<RegularityDetectResultWithGap>
+    public class ArithmeticProgressionWithFixedGap:BaseRegularity<RegularityDetectResult>
     {
         public ArithmeticProgressionWithFixedGap(byte minLength = 3) : base(minLength)
         {
         }
         
-        public override RegularityType Type => RegularityType.ArithmeticProgressionWithFixedGap;
+        public override RegularityType MainType => RegularityType.ArithmeticProgression;
         
         protected override bool UseSubNumbers => false;
         
-        protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte firstPosition = 0)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
         {
             var start = number[0];
 
-            var res = new List<RegularityDetectResultWithGap>();
+            var res = new List<RegularityDetectResult>();
             
             for (byte gap = 1; gap < number.Length - 1; gap++) // TODO: take into account MinLength of regularity
             {
@@ -40,7 +41,7 @@ namespace NiceNumber.Core.Regularities.Deprecated
 
                     if (len >= MinLength && d > 0)
                     {
-                        res.Add(new RegularityDetectResultWithGap
+                        res.Add(new RegularityDetectResult
                         {
                             FirstNumber = start,
                             FirstPosition = firstPosition,
@@ -60,29 +61,29 @@ namespace NiceNumber.Core.Regularities.Deprecated
             return res;
         }
 
-        protected override List<RegularityDetectResultWithGap> Detect(byte[] number, byte[] lengths, byte firstPosition)
+        protected override List<RegularityDetectResult> Detect(byte[] number, byte[] lengths, byte firstPosition)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithGap> DetectAll(byte[] number)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number)
         {
             return null;
         }
 
-        protected override List<RegularityDetectResultWithGap> DetectAll(byte[] number, byte[] lengths)
+        protected override List<RegularityDetectResult> DetectAll(byte[] number, byte[] lengths)
         {
             return null;
         }
 
-        protected override bool Include(RegularityDetectResultWithGap first, RegularityDetectResultWithGap second)
+        protected override bool Include(RegularityDetectResult first, RegularityDetectResult second)
         {
-            return second.RegularityNumber % first.RegularityNumber == 0 &&
+            return (int)second.RegularityNumber.RoundTo(0) % (int)first.RegularityNumber.RoundTo(0) == 0 &&
                    first.FirstPosition <= second.FirstPosition &&
                    (second.Gap + 1) % (first.Gap + 1) == 0 &&
                    first.FirstPosition + (first.Gap + 1) * first.Length >= second.FirstPosition + (second.Gap + 1) * second.Length;
         }
 
-        protected override IEqualityComparer<RegularityDetectResultWithGap> Comparer => RegularityDetectResultWithGap.Comparer;
+        protected override IEqualityComparer<RegularityDetectResult> Comparer => RegularityDetectResult.Comparer;
     }
 }

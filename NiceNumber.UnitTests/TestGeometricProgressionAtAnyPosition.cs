@@ -1,4 +1,5 @@
-﻿using NiceNumber.Core.Regularities;
+﻿using NiceNumber.Core;
+using NiceNumber.Core.Regularities;
 using NiceNumber.Core.Results;
 using NUnit.Framework;
 
@@ -16,9 +17,10 @@ namespace NiceNumber.UnitTests
         public void Test_GeometricProgressionAtAnyPosition_CommonCase()
         {
             const long number = 2721943816;
-            var supposed1 = new RegularityDetectResultWithPositions
+            var supposed1 = new RegularityDetectResult
             {
-                Type = RegularityType.GeometricProgressionAtAnyPosition,
+                Type = RegularityType.GeometricProgression,
+                SequenceType = SequenceType.General,
                 Length = 4,
                 FirstNumber = 27,
                 RegularityNumber = (double) 1 / 3,
@@ -26,9 +28,10 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {0, 4, 6, 8},
                 SubNumberLengths = new byte[] {2, 1, 1, 1}
             };
-            var supposed2 = new RegularityDetectResultWithPositions
+            var supposed2 = new RegularityDetectResult
             {
-                Type = RegularityType.GeometricProgressionAtAnyPosition,
+                Type = RegularityType.GeometricProgression,
+                SequenceType = SequenceType.General,
                 Length = 4,
                 FirstNumber = 2,
                 RegularityNumber = 2,
@@ -36,9 +39,10 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {0, 5, 7, 8},
                 SubNumberLengths = new byte[] {1, 1, 1, 2}
             };
-            var supposed3 = new RegularityDetectResultWithPositions
+            var supposed3 = new RegularityDetectResult
             {
-                Type = RegularityType.GeometricProgressionAtAnyPosition,
+                Type = RegularityType.GeometricProgression,
+                SequenceType = SequenceType.General,
                 Length = 4,
                 FirstNumber = 2,
                 RegularityNumber = 2,
@@ -46,9 +50,10 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {2, 5, 7, 8},
                 SubNumberLengths = new byte[] {1, 1, 1, 2}
             };
-            var supposed4 = new RegularityDetectResultWithPositions
+            var supposed4 = new RegularityDetectResult
             {
-                Type = RegularityType.GeometricProgressionAtAnyPosition,
+                Type = RegularityType.GeometricProgression,
+                SequenceType = SequenceType.General,
                 Length = 3,
                 FirstNumber = 1,
                 RegularityNumber = 4,
@@ -56,11 +61,12 @@ namespace NiceNumber.UnitTests
                 Positions = new byte[] {3, 5, 8},
                 SubNumberLengths = new byte[] {1, 1, 2}
             };
-            var supposed5 = new RegularityDetectResultWithPositions
+            var supposed5 = new RegularityDetectResult
             {
-                Type = RegularityType.GeometricProgressionAtAnyPosition,
+                Type = RegularityType.GeometricProgression,
+                SequenceType = SequenceType.General,
                 Length = 3,
-                FirstNumber = 2,
+                FirstNumber = 1,
                 RegularityNumber = 9,
                 FirstPosition = 3,
                 Positions = new byte[] {3, 4, 7},

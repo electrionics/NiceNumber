@@ -3,8 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NiceNumber.Core.Results;
 using NiceNumber.Helpers;
-using NiceNumber.Results;
 
 namespace NiceNumber.Core.Regularities
 {
@@ -13,7 +13,7 @@ namespace NiceNumber.Core.Regularities
     {
         #region Base Members
         
-        public abstract RegularityType Type { get; }
+        public abstract RegularityType MainType { get; }
 
         protected BaseRegularity()
         {
@@ -74,6 +74,39 @@ namespace NiceNumber.Core.Regularities
             return result
                 .Distinct(Comparer)
                 .ToList();
+        }
+
+        protected virtual void SetTypes(TResult result)
+        {
+            result.Type = MainType;
+            result.SequenceType = SequenceType.General;
+
+            var prev = result.Positions[0] + result.SubNumberLengths[0] - 1;
+            var gap = (byte)(result.Positions[1] - prev - 1);
+            var gapCanCount = false;
+            
+            for (var i = 1; i < result.Positions.Length; i++)
+            {
+                if (result.Positions[i] - prev - 1 != gap)
+                {
+                    result.Gap = 0;
+                    return;
+                }
+
+                if (i > 1)
+                {
+                    gapCanCount = true;
+                }
+
+                prev = result.Positions[i] + result.SubNumberLengths[i] - 1;
+            }
+
+            result.Gap = gapCanCount ? gap : (byte)0;
+            result.SequenceType = gap == 0
+                ? SequenceType.Sequential
+                : gapCanCount
+                    ? SequenceType.FixedGap
+                    : SequenceType.General;
         }
 
         protected virtual bool Include(TResult first, TResult second)
@@ -151,7 +184,7 @@ namespace NiceNumber.Core.Regularities
             
             foreach (var detected in result)
             {
-                detected.Type = Type;
+                SetTypes(detected);
             }
 
             return FilterOut(result).Cast<RegularityDetectResult>().ToList();
@@ -289,7 +322,7 @@ namespace NiceNumber.Core.Regularities
 
     public interface IRegularity
     {
-        RegularityType Type { get; }
+        RegularityType MainType { get; }
         List<RegularityDetectResult> Process(long number);
     }
 }
