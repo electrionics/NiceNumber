@@ -18,7 +18,7 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameNumbersSequence()
         {
             const long number = 2222222;
-            var regularity = new ArithmeticProgression();
+            var regularity = new SameNumbers();
             var supposed = new RegularityDetectResult
             {
                 Type = RegularityType.SameDigits,
@@ -43,7 +43,7 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameNumbersWithGapSequence()
         {
             const long number = 3421282;
-            var regularity = new ArithmeticProgression();
+            var regularity = new SameNumbers();
             var supposed = new RegularityDetectResult
             {
                 Type = RegularityType.SameDigits,
@@ -52,6 +52,7 @@ namespace NiceNumber.UnitTests
                 FirstNumber = 2,
                 FirstPosition = 2,
                 RegularityNumber = 0,
+                Gap = 1,
                 Positions = new byte[]{ 2, 4, 6},
                 SubNumberLengths = new byte[]{ 1, 1, 1}
             };
@@ -68,7 +69,7 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameNumbersAtAnyPosition_OneResult()
         {
             const long number = 3412282;
-            var regularity = new GeometricProgression();
+            var regularity = new SameNumbers();
             var supposed = new RegularityDetectResult
             {
                 Type = RegularityType.SameDigits,
@@ -77,7 +78,8 @@ namespace NiceNumber.UnitTests
                 FirstNumber = 2,
                 FirstPosition = 3,
                 RegularityNumber = 0,
-                Positions = new byte[]{ 3, 4, 6}
+                Positions = new byte[]{ 3, 4, 6},
+                SubNumberLengths = new byte[] { 1, 1, 1}
             };
             
             var detected = regularity.Process(number);
@@ -92,7 +94,7 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameNumbersAtAnyPosition_OneResult_MinimalSet()
         {
             const long number = 3417587;
-            var regularity = new GeometricProgression();
+            var regularity = new SameNumbers();
             var supposed = new RegularityDetectResult
             {
                 Type = RegularityType.SameDigits,
@@ -117,7 +119,7 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameNumbersAtAnyPosition_NoResults()
         {
             const long number = 3416587;
-            var regularity = new ArithmeticProgression();
+            var regularity = new SameNumbers();
 
             var detected = regularity.Process(number);
             
@@ -130,16 +132,17 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameNumbersAtAnyPosition_SeveralResults_NotAllPositionsUsed()
         {
             const long number = 377537;
-            var regularity = new ArithmeticProgression();
+            var regularity = new SameNumbers();
             var supposed1 = new RegularityDetectResult
             {
-                Type = RegularityType.SameDigits,
-                SequenceType = SequenceType.FixedGap,
+                Type = RegularityType.SameNumbers,
+                SequenceType = SequenceType.General,
                 Length = 2,
-                FirstNumber = 3,
+                FirstNumber = 37,
                 FirstPosition = 0,
                 RegularityNumber = 0,
-                Positions = new byte[]{ 0, 4}
+                Positions = new byte[]{ 0, 4},
+                SubNumberLengths = new byte[] { 2, 2}
             };
             var supposed2 = new RegularityDetectResult
             {
@@ -149,7 +152,8 @@ namespace NiceNumber.UnitTests
                 FirstNumber = 7,
                 FirstPosition = 1,
                 RegularityNumber = 0,
-                Positions = new byte[]{ 1, 2, 5}
+                Positions = new byte[]{ 1, 2, 5},
+                SubNumberLengths = new byte[] { 1, 1, 1}
             };
             
             var detected = regularity.Process(number);
@@ -165,7 +169,7 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameNumbersAtAnyPosition_SeveralResults_AllPositionsUsed()
         {
             const long number = 357537;
-            var regularity = new ArithmeticProgression();
+            var regularity = new SameNumbers();
             var supposed1 = new RegularityDetectResult
             {
                 Type = RegularityType.SameDigits,

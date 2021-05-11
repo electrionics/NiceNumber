@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NiceNumber.Core.Helpers;
 using NiceNumber.Core.Results;
 using NiceNumber.Helpers;
 
@@ -111,7 +112,51 @@ namespace NiceNumber.Core.Regularities
 
         protected virtual bool Include(TResult first, TResult second)
         {
-            return false;
+            const byte accuracy = RegularityConstants.DoubleRegularityNumberAccuracy;
+            if (!first.RegularityNumber.EqualTo(second.RegularityNumber, accuracy))
+            {
+                return false;
+            }
+            
+            var firstPairs = first.Positions
+                .Select((t, i) => new Tuple<byte, byte>(t, first.SubNumberLengths[i]))
+                .ToList();
+            var secondPairs = second.Positions
+                .Select((t, i) => new Tuple<byte, byte>(second.Positions[i], second.SubNumberLengths[i]))
+                .ToList();
+            var firstPositions = firstPairs
+                .SelectMany(pair => Enumerable.Range(pair.Item1, pair.Item2))
+                .ToList();
+            var secondPositions = secondPairs
+                .SelectMany(pair => Enumerable.Range(pair.Item1, pair.Item2))
+                .ToList();
+
+            if (firstPositions.Count < secondPositions.Count)
+            {
+                return false;
+            }
+
+            var res = secondPositions.All(pair => firstPositions.Contains(pair));
+            return res;
+            
+            // if (second.Positions.Length > first.Positions.Length)
+            // {
+            //     return false;
+            // }
+            //
+            // var firstPairs = new List<Tuple<byte, byte>>();
+            // var secondPairs = new List<Tuple<byte, byte>>();
+            // for (var i = 0; i < first.Positions.Length; i++)
+            // {
+            //     firstPairs.Add(new Tuple<byte, byte>(first.Positions[i], first.SubNumberLengths[i]));
+            //     if (i < second.Positions.Length)
+            //     {
+            //         secondPairs.Add(new Tuple<byte, byte>(second.Positions[i], second.SubNumberLengths[i]));
+            //     }
+            // }
+            //
+            // var res = secondPairs.All(pair => firstPairs.Contains(pair));
+            // return res;
         }
 
         protected virtual IEqualityComparer<TResult> Comparer => RegularityDetectResult.Comparer;

@@ -93,7 +93,12 @@ namespace NiceNumber.Core.Regularities
 
             return result;
         }
-        
+
+        protected override bool Include(RegularityDetectResult first, RegularityDetectResult second)
+        {
+            return false;
+        }
+
         protected override IEqualityComparer<RegularityDetectResult> Comparer =>
             RegularityDetectResult.Comparer;
     }

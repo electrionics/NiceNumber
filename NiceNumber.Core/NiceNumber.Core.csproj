@@ -4,4 +4,8 @@
         <TargetFramework>net48</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Regularities\New" />
+    </ItemGroup>
+
 </Project>

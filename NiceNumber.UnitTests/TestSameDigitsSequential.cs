@@ -17,7 +17,7 @@ namespace NiceNumber.UnitTests
         public void Test_DetectSameDigitsSequential()
         {
             const long number = 3222337;
-            var regularity = new ArithmeticProgression();
+            var regularity = new SameNumbers();
             var supposed1 = new RegularityDetectResult
             {
                 Type = RegularityType.SameDigits,
