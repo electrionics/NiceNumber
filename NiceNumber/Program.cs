@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using NiceNumber.Core;
 using NiceNumber.Core.Regularities;
 using NiceNumber.Core.Regularities.Deprecated;
 using NiceNumber.Core.Results;
@@ -26,14 +27,15 @@ namespace NiceNumber
                 new GeometricProgression(),
                 new ArithmeticProgression(),
                 new MirrorDigits(),
-                new Multiples()
+                new Multiples(),
+                new SameNumbers()
             };
             
             Console.WriteLine("Hello");
 
             var random = new Random();
             var numbersDigits = Enumerable.Range(1, 10).Select(x =>
-                Enumerable.Range(1, 11)
+                Enumerable.Range(1, 10)
                     .Select(y => random.Next(0, 9))
                     .Prepend(random.Next(1, 9))
                     .ToArray()).ToArray();
@@ -53,6 +55,8 @@ namespace NiceNumber
             foreach (var number in numbers)
             {
                 Console.WriteLine(number);
+
+                var totalCount = 0;
                 
                 foreach (var regularity in regularities)
                 {
@@ -66,8 +70,11 @@ namespace NiceNumber
                     var seconds = time / (double)1000;
 
                     Console.WriteLine($"'{regularity.GetType().Name}' Detected: {result.Count}. Time: {seconds} s.");
+
+                    totalCount += result.Count;
                 }
                 
+                Console.WriteLine($"Total regularities count: {totalCount}.");
                 Console.WriteLine();
             }
 
