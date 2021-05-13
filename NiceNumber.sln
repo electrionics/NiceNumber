@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber.UnitTests", "Nic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber.Core", "NiceNumber.Core\NiceNumber.Core.csproj", "{26C8CC55-1192-47EC-8BB6-025640A2CBD1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber.Web", "NiceNumber.Web\NiceNumber.Web.csproj", "{6292B12F-243A-4BF4-B635-26C1EA492A30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{26C8CC55-1192-47EC-8BB6-025640A2CBD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26C8CC55-1192-47EC-8BB6-025640A2CBD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26C8CC55-1192-47EC-8BB6-025640A2CBD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6292B12F-243A-4BF4-B635-26C1EA492A30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6292B12F-243A-4BF4-B635-26C1EA492A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6292B12F-243A-4BF4-B635-26C1EA492A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6292B12F-243A-4BF4-B635-26C1EA492A30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
