@@ -2,9 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NiceNumber.Domain;
+using NiceNumber.Services.Implementation;
+using NiceNumber.Services.Interfaces;
 
 namespace NiceNumber.Web
 {
@@ -23,6 +27,13 @@ namespace NiceNumber.Web
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+            
+            services.AddDbContext<NumberDataContext>(options => 
+            {
+                options.UseSqlServer("server=.;database=numio;trusted_connection=true;");
+            });
+
+            services.AddScoped<INumberRegularityService, NumberRegularityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

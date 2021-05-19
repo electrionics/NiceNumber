@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber.Core", "NiceNumb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber.Web", "NiceNumber.Web\NiceNumber.Web.csproj", "{6292B12F-243A-4BF4-B635-26C1EA492A30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber.Domain", "NiceNumber.Domain\NiceNumber.Domain.csproj", "{23703234-1EE4-457B-82FA-63A844DA907C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NiceNumber.Services", "NiceNumber.Services\NiceNumber.Services.csproj", "{3DF21908-47A6-4298-A569-82B04F62D189}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{6292B12F-243A-4BF4-B635-26C1EA492A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6292B12F-243A-4BF4-B635-26C1EA492A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6292B12F-243A-4BF4-B635-26C1EA492A30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23703234-1EE4-457B-82FA-63A844DA907C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23703234-1EE4-457B-82FA-63A844DA907C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23703234-1EE4-457B-82FA-63A844DA907C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23703234-1EE4-457B-82FA-63A844DA907C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DF21908-47A6-4298-A569-82B04F62D189}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DF21908-47A6-4298-A569-82B04F62D189}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DF21908-47A6-4298-A569-82B04F62D189}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DF21908-47A6-4298-A569-82B04F62D189}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
