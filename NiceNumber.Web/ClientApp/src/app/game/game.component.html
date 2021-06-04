@@ -1,0 +1,20 @@
+<h1 id="tableLabel">Weather forecast</h1>
+
+<p>Чтобы начать игру, выберите уровень сложности.</p>
+
+<p *ngIf="!difficultyLevels"><em>Загрузка...</em></p>
+
+<button class="btn btn-primary" (click)="start()">Начать игру</button>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="number">
+  <thead>
+    <tr>
+      <th *ngFor="let pos of positions">{{ pos + 1 }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let digit of number">{{ digit }}</td>
+    </tr>
+  </tbody>
+</table>

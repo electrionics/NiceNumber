@@ -1,4 +1,5 @@
-﻿using NiceNumber.Core;
+﻿using System;
+using NiceNumber.Core;
 
 namespace NiceNumber.Web.ViewModels
 {
@@ -7,5 +8,7 @@ namespace NiceNumber.Web.ViewModels
         public byte[] Positions { get; set; }
         
         public RegularityType Type { get; set; }
+        
+        public Guid GameId { get; set; }
     }
 }

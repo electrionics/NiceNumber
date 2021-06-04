@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NiceNumber.Core;
+using NiceNumber.Domain.Entities;
 
 namespace NiceNumber.Web.ViewModels
 {
@@ -12,9 +13,11 @@ namespace NiceNumber.Web.ViewModels
         
         public int Length { get; set; }
         
-        public List<StartRegularityInfo> RegularityInfos { get; set; }
+        public DifficultyLevel DifficultyLevel { get; set; }
         
-        public Dictionary<RegularityType, int> RegularityTypeCounts { get; set; }
+        public List<StartRegularityInfo> ExistRegularityInfos { get; set; }
+        
+        public Dictionary<RegularityType, int> ExistRegularityTypeCounts { get; set; }
     }
 
     public class StartRegularityInfo

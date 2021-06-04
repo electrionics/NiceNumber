@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NiceNumber.Core;
 using NiceNumber.Domain.Entities;
 using NiceNumber.Services.Interfaces;
 using NiceNumber.Web.ViewModels;
@@ -10,11 +13,13 @@ namespace NiceNumber.Web.Controllers
     [ApiController]
     public class GameController:ControllerBase
     {
-        private readonly INumberRegularityService _numberRegularityService;
+        private readonly IGameService _gameService;
+        private readonly ICheckService _checkService;
 
-        public GameController(INumberRegularityService numberRegularityService)
+        public GameController(IGameService gameService, ICheckService checkService)
         {
-            _numberRegularityService = numberRegularityService;
+            _gameService = gameService;
+            _checkService = checkService;
         }
 
         #region Test
@@ -23,7 +28,7 @@ namespace NiceNumber.Web.Controllers
         [ApiRoute("Game/Test")]
         public async Task<int> Test()
         {
-            return await _numberRegularityService.GetCountOfNumbers(1) + 1;
+            return 1;
         }
 
         #endregion
@@ -32,28 +37,37 @@ namespace NiceNumber.Web.Controllers
         
         [HttpGet]
         [ApiRoute("Game/Start")]
-        public StartModel Start()
+        public async Task<StartModel> Start([FromQuery]DifficultyLevel difficultyLevel)
         {
             var sessionId = HttpContext.Session.Id;
             
-            var entity = _numberRegularityService.StartRandomNumberGame(sessionId);
+            var game = await _gameService.StartRandomNumberGame(difficultyLevel, sessionId);
 
             var model = new StartModel
             {
-                GameId = entity.Id,
-                Number = entity.Number.Value,
-                Length = entity.Number.Length,
-                RegularityInfos = entity.Number.Regularities.Select(x => new StartRegularityInfo
+                GameId = game.Id,
+                Number = game.Number.Value,
+                Length = game.Number.Length,
+                DifficultyLevel = difficultyLevel,
+                ExistRegularityInfos = game.Number.Regularities.Select(x => new StartRegularityInfo
                 {
                     RegularityNumber = x.RegularityNumber,
-                    Type = x.Type
+                    Type = x.Type,
                 }).ToList(),
-                RegularityTypeCounts = entity.Number.Regularities
-                    .GroupBy(x => x.Type)
-                    .ToDictionary(
-                        x => x.Key,
-                        x => x.Count())
+                ExistRegularityTypeCounts = new Dictionary<RegularityType, int>()
             };
+            
+            var regularityTypeCounts = game.Number.Regularities
+                .GroupBy(x => x.Type)
+                .ToDictionary(
+                    x => x.Key,
+                    x => x.Count());
+            foreach (var type in Enum.GetValues<RegularityType>())
+            {
+                model.ExistRegularityTypeCounts[type] = regularityTypeCounts.TryGetValue(type, out var count)
+                    ? count
+                    : 0;
+            }
 
             return model;
         }
@@ -65,11 +79,11 @@ namespace NiceNumber.Web.Controllers
 
         [HttpPost]
         [ApiRoute("Game/Check")]
-        public CheckResultModel Check(CheckModel data)
+        public async Task<CheckResultModel> Check(CheckModel data)
         {
             var sessionId = HttpContext.Session.Id;
 
-            var check = _numberRegularityService.CheckRegularity(sessionId, data.Positions, data.Type);
+            var check = await _checkService.CheckRegularity(data.GameId, sessionId, data.Positions, data.Type);
             
             var model = PrepareModel(check);
             return model;
@@ -81,13 +95,65 @@ namespace NiceNumber.Web.Controllers
             {
                 Match = entity.NeedAddDigits == 0,
                 PointsAdded = entity.ScoreAdded,
-                NewTotalPoints = entity.Game.Score
+                NewTotalPoints = entity.Game.Score,
+                AddHint = CheckHint.No,
+                RemoveHint = CheckHint.No
             };
             
             if (entity.NeedAddDigits == 1)
             {
-                model.Hint = CheckHint.AddOneDigit;
+                model.AddHint = CheckHint.AddOneDigit;
             }
+            else if (entity.NeedAddDigits > 1)
+            {
+                model.AddHint = CheckHint.AddMoreThanOneDigit;
+            }
+            
+            if (entity.NeedRemoveDigits == 1)
+            {
+                model.AddHint = CheckHint.RemoveOneDigit;
+            }
+            else if (entity.NeedRemoveDigits > 1)
+            {
+                model.AddHint = CheckHint.RemoveMoreThanOneDigit;
+            }
+
+            return model;
+        }
+
+        #endregion
+
+        
+        #region End
+
+        [HttpPost]
+        [ApiRoute("Game/End")]
+        public async Task<EndModel> End([FromBody] Guid gameId)
+        {
+            var sessionId = HttpContext.Session.Id;
+
+            var game = await _gameService.EndGame(gameId, sessionId);
+
+            if (game == null)
+            {
+                return null;
+            }
+
+            // ReSharper disable once PossibleInvalidOperationException
+            var spentTime = game.FinishTime.Value - game.StartTime;
+            var model = new EndModel
+            {
+                TotalScore = game.Score,
+                SpentMinutes = Convert.ToInt32(Math.Floor(spentTime.TotalMinutes)),
+                SpentSeconds = spentTime.Seconds,
+                FoundRegularityInfos = game.Checks
+                    .GroupBy(x => x.CheckType)
+                    .Select(x => new EndRegularityInfo
+                    {
+                        Type = x.Key,
+                        Count = x.Count(y => y.RegularityId != null)
+                    }).ToList()
+            };
 
             return model;
         }

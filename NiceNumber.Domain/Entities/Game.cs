@@ -11,11 +11,15 @@ namespace NiceNumber.Domain.Entities
         
         public int NumberId { get; set; }
         
-        public Complexity Complexity { get; set; }
+        public DifficultyLevel DifficultyLevel { get; set; }
         
         public int Score { get; set; }
         
         public DateTime StartTime { get; set; }
+        
+        public DateTime? FinishTime { get; set; }
+        
+        public bool EndInBackground { get; set; }
         
         
         public Number Number { get; set; }
@@ -23,7 +27,7 @@ namespace NiceNumber.Domain.Entities
         public List<Check> Checks { get; set; }
     }
 
-    public enum Complexity
+    public enum DifficultyLevel
     {
         Easy = 1,
         Normal = 2,

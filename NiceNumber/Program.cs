@@ -2,18 +2,36 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NiceNumber.Core;
 using NiceNumber.Core.Regularities;
 using NiceNumber.Core.Regularities.Deprecated;
 using NiceNumber.Core.Results;
+using NiceNumber.Domain;
+using NiceNumber.Services.Implementation;
+using NiceNumber.Services.Interfaces;
 
 namespace NiceNumber
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Test4();
+            var serviceProvider = new ServiceCollection()
+                .AddScoped<INumberService, NumberService>()
+                .AddScoped<IRegularityService, RegularityService>()
+                .AddDbContext<NumberDataContext>(builder => 
+                    builder.UseSqlServer("server=.;database=numio;trusted_connection=true;"))
+                .BuildServiceProvider();
+
+            var numberService = serviceProvider.GetService<INumberService>();
+            var regularityService = serviceProvider.GetService<IRegularityService>();
+
+            await AddNumbers.Run(numberService, regularityService);
+            
+            //Test4();
             //Test3();
             //Test2();
             //Test1();

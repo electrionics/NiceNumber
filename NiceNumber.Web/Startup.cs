@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using NiceNumber.Domain;
 using NiceNumber.Services.Implementation;
 using NiceNumber.Services.Interfaces;
+using CheckService = NiceNumber.Services.Implementation.CheckService;
 
 namespace NiceNumber.Web
 {
@@ -33,7 +35,14 @@ namespace NiceNumber.Web
                 options.UseSqlServer("server=.;database=numio;trusted_connection=true;");
             });
 
-            services.AddScoped<INumberRegularityService, NumberRegularityService>();
+            services.AddSession(options => {  
+                options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
+            });
+
+            services.AddScoped<ICheckService, CheckService>();
+            services.AddScoped<IGameService, GameService>();
+            // services.AddScoped<INumberService, NumberService>();
+            // services.AddScoped<IRegularityService, RegularityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +58,8 @@ namespace NiceNumber.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSession();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

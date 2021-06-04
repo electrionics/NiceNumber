@@ -9,7 +9,7 @@ namespace NiceNumber.Domain.Entities
         
         public Guid GameId { get; set; }
         
-        public int RegularityId { get; set; }
+        public int? RegularityId { get; set; }
         
         public RegularityType CheckType { get; set; }
         

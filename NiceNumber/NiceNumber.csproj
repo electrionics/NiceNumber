@@ -2,11 +2,12 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net48</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\NiceNumber.Core\NiceNumber.Core.csproj" />
+      <ProjectReference Include="..\NiceNumber.Services\NiceNumber.Services.csproj" />
     </ItemGroup>
 
 </Project>

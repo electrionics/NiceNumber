@@ -2,23 +2,23 @@
 {
     public class CheckResultModel
     {
-        public CheckResultModel()
-        {
-            Hint = CheckHint.No;
-        }
-        
         public bool Match { get; set; }
         
         public int PointsAdded { get; set; }
         
         public int NewTotalPoints { get; set; }
 
-        public CheckHint Hint { get; set; }
+        public CheckHint AddHint { get; set; }
+
+        public CheckHint RemoveHint { get; set; }
     }
 
     public enum CheckHint
     {
-        No = 1,
-        AddOneDigit = 2
+        No = 0,
+        AddOneDigit = 11,
+        AddMoreThanOneDigit = 12,
+        RemoveOneDigit = 21,
+        RemoveMoreThanOneDigit = 22
     }
 }

@@ -19,16 +19,24 @@ namespace NiceNumber.Domain.Entities
         public string StartPositionsStr { get; set; }
         
         public string SubNumberLengthsStr { get; set; }
-        
-        public List<byte> StartPositions => StartPositionsStr
+
+        private List<byte> _startPositions;
+        public List<byte> StartPositions => _startPositions ??= StartPositionsStr
                 .Split(',')
                 .Select(byte.Parse)
                 .ToList();
 
-        public List<byte> SubNumberLengths => SubNumberLengthsStr
+        private List<byte> _subNumberLengths;
+        public List<byte> SubNumberLengths => _subNumberLengths ??= SubNumberLengthsStr
                 .Split(',')
                 .Select(byte.Parse)
                 .ToList();
+
+        private List<byte> _allPositions;
+        public List<byte> AllPositions => _allPositions ??= StartPositions
+            .SelectMany((pos, i) => Enumerable.Range(pos, SubNumberLengths[i]))
+            .Select(pos => (byte)pos)
+            .ToList();
 
         public Number Number { get; set; }
         
