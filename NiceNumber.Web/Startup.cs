@@ -1,15 +1,18 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using NiceNumber.Domain;
 using NiceNumber.Services.Implementation;
 using NiceNumber.Services.Interfaces;
+using NiceNumber.Web.Filters;
 using CheckService = NiceNumber.Services.Implementation.CheckService;
 
 namespace NiceNumber.Web
@@ -26,7 +29,11 @@ namespace NiceNumber.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(new SessionHoldingFilter());
+            }).AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
+            
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
             
@@ -34,9 +41,17 @@ namespace NiceNumber.Web
             {
                 options.UseSqlServer("server=.;database=numio;trusted_connection=true;");
             });
-
+            
             services.AddSession(options => {  
-                options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
+                //options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
+                // options.Cookie.IsEssential = true;
+                options.Cookie.Name = "SID";
+            });
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = _ => false;
             });
 
             services.AddScoped<ICheckService, CheckService>();
@@ -60,7 +75,7 @@ namespace NiceNumber.Web
             }
 
             app.UseSession();
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())

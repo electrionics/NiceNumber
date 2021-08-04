@@ -54,7 +54,7 @@ namespace NiceNumber.Web.Controllers
                     RegularityNumber = x.RegularityNumber,
                     Type = x.Type,
                 }).ToList(),
-                ExistRegularityTypeCounts = new Dictionary<RegularityType, int>()
+                ExistRegularityTypeCounts = new Dictionary<int, int>()
             };
             
             var regularityTypeCounts = game.Number.Regularities
@@ -64,7 +64,7 @@ namespace NiceNumber.Web.Controllers
                     x => x.Count());
             foreach (var type in Enum.GetValues<RegularityType>())
             {
-                model.ExistRegularityTypeCounts[type] = regularityTypeCounts.TryGetValue(type, out var count)
+                model.ExistRegularityTypeCounts[(int)type] = regularityTypeCounts.TryGetValue(type, out var count)
                     ? count
                     : 0;
             }
@@ -83,39 +83,42 @@ namespace NiceNumber.Web.Controllers
         {
             var sessionId = HttpContext.Session.Id;
 
-            var check = await _checkService.CheckRegularity(data.GameId, sessionId, data.Positions, data.Type);
+            var check = await _checkService.CheckRegularity(data.GameId, sessionId, data.Positions.Select(x => (byte)x).ToArray(), data.Type);
             
             var model = PrepareModel(check);
             return model;
         }
 
-        private static CheckResultModel PrepareModel(Check entity)
+        private static CheckResultModel PrepareModel(CheckResult entity)
         {
+            var check = entity.Value;
+            
             var model = new CheckResultModel
             {
-                Match = entity.NeedAddDigits == 0,
-                PointsAdded = entity.ScoreAdded,
-                NewTotalPoints = entity.Game.Score,
+                Match = check.ScoreAdded > 0,
+                PointsAdded = check.ScoreAdded,
+                NewTotalPoints = check.Game.Score,
                 AddHint = CheckHint.No,
-                RemoveHint = CheckHint.No
+                RemoveHint = CheckHint.No,
+                RegularityNumber = entity.RegularityNumber
             };
             
-            if (entity.NeedAddDigits == 1)
+            if (check.NeedAddDigits == 1)
             {
                 model.AddHint = CheckHint.AddOneDigit;
             }
-            else if (entity.NeedAddDigits > 1)
+            else if (check.NeedAddDigits > 1)
             {
                 model.AddHint = CheckHint.AddMoreThanOneDigit;
             }
             
-            if (entity.NeedRemoveDigits == 1)
+            if (check.NeedRemoveDigits == 1)
             {
-                model.AddHint = CheckHint.RemoveOneDigit;
+                model.RemoveHint = CheckHint.RemoveOneDigit;
             }
-            else if (entity.NeedRemoveDigits > 1)
+            else if (check.NeedRemoveDigits > 1)
             {
-                model.AddHint = CheckHint.RemoveMoreThanOneDigit;
+                model.RemoveHint = CheckHint.RemoveMoreThanOneDigit;
             }
 
             return model;

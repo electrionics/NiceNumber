@@ -1,3 +1,5 @@
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
 /* You can add global styles to this file, and also import other style files */
 
 /* Provide sufficient contrast against white background */
@@ -9,8 +11,65 @@ code {
   color: #e01a76;
 }
 
-.btn-primary {
+.text-center{
+  text-align: center;
+}
+
+.btn-info {
+  color:#fff;
+  background-color:#17a2b8;
+  border-color:#17a2b8;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+#checks .btn{
+  margin-right: 5px;
+}
+
+#digits .btn, #progress .btn{
+  width: 100%;
+}
+
+#digits .btn-selected {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+}
+
+#digits .btn-deselected{
+  color: #fff;
+  background-color: gray;
+  border-color: gray;
+}
+
+#progress .btn-deselected{
+  color: #fff;
+  background-color: lightgray;
+  border-color: lightgray;
+}
+
+#progress{
+  table-layout: fixed;
+}
+
+#progress .btn-deselected{
+  cursor: default;
+}
+
+.btn.check{
+  width: 155px;
+  vertical-align: middle;
+  height: 62px;
+}
+
+.reg-type-summary .minus{
+  color: red;
+  font-weight: bold;
+}
+
+.reg-type-summary .plus{
+  color: green;
+  font-weight: bold;
 }

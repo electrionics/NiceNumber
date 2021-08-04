@@ -11,6 +11,8 @@
         public CheckHint AddHint { get; set; }
 
         public CheckHint RemoveHint { get; set; }
+        
+        public double RegularityNumber { get; set; }
     }
 
     public enum CheckHint

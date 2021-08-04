@@ -23,6 +23,8 @@ namespace NiceNumber.Domain.Entities
 
         public int ScoreAdded { get; set; }
         
+        public string CheckPositions { get; set; }
+        
         public DateTime TimePerformed { get; set; }
         
 

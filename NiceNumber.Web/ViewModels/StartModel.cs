@@ -17,7 +17,7 @@ namespace NiceNumber.Web.ViewModels
         
         public List<StartRegularityInfo> ExistRegularityInfos { get; set; }
         
-        public Dictionary<RegularityType, int> ExistRegularityTypeCounts { get; set; }
+        public Dictionary<int, int> ExistRegularityTypeCounts { get; set; }
     }
 
     public class StartRegularityInfo

@@ -1,20 +1,47 @@
-<h1 id="tableLabel">Weather forecast</h1>
-
-<p>Чтобы начать игру, выберите уровень сложности.</p>
-
 <p *ngIf="!difficultyLevels"><em>Загрузка...</em></p>
 
-<button class="btn btn-primary" (click)="start()">Начать игру</button>
+<button *ngIf="!game" class="btn btn-primary" (click)="start()">Начать игру</button>
 
 <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="number">
-  <thead>
-    <tr>
-      <th *ngFor="let pos of positions">{{ pos + 1 }}</th>
-    </tr>
-  </thead>
   <tbody>
     <tr>
-      <td *ngFor="let digit of number">{{ digit }}</td>
+      <td rowspan="2" style="width: 155px; vertical-align: middle;" class="text-center"><button *ngIf="game" class="btn btn-primary text-center" (click)="end()">Завершить игру</button></td>
+      <td *ngFor="let pos of positions" class="text-center"><b>{{ pos.value + 1 }}</b></td>
+    </tr>
+    <tr id="digits">
+      <td *ngFor="let digit of number"><button (click)="toggleSelected(digit)" [ngClass]="digit.selected ? 'btn btn-selected text-center' : 'btn btn-deselected text-center'">{{ digit.value }}</button></td>
     </tr>
   </tbody>
 </table>
+<div *ngIf="game">
+  <div id="checks" class="btn-group">
+    <div *ngFor="let regType of regularityTypes">
+      <button *ngIf="startGame.ExistRegularityTypeCounts[regType.type]" class="btn btn-info check" (click)="check(regType.type)">{{regType.label}}</button>
+    </div>
+  </div>
+  <table id="progress" class='table table-striped'>
+    <thead>
+      <tr>
+        <th style="width: 155px;" class="text-center">Число закономерности</th>
+        <th *ngFor="let pos of positions" class="text-center">{{ pos.value + 1 }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let regType of regularityTypes">
+        <ng-container *ngIf="startGame.ExistRegularityTypeCounts[regType.type]">
+          <tr class="reg-type-summary">
+            <td [colSpan]="positions.length + 1">
+              <span *ngIf="regType.regularityNumberHint"><i matTooltip="Число закономерности - {{regType.regularityNumberHint}}" class="bi bi-info-circle"></i></span>
+              {{regType.label}} ({{filterByFound(game.ProgressRegularityInfos, regType.type).length}}/{{startGame.ExistRegularityTypeCounts[regType.type]}})
+              <span *ngFor="let regularity of game.ProgressRegularityInfos[regType.type]">{{regularity.RegularityNumber}}<span class="{{regularity.Found ? 'plus' : 'minus'}}">{{regularity.Found ? '+' : '-'}}</span>&nbsp;&nbsp;</span>
+            </td>
+          </tr>
+          <tr *ngFor="let regularity of filterByFound(game.ProgressRegularityInfos, regType.type)">
+            <td class="text-center"><span *ngIf="regType.regularityNumberHint">{{regularity.RegularityNumber}}</span></td>
+            <td class="text-center" *ngFor="let position of positions"><span class="btn btn-deselected text-center" *ngIf="some(regularity.Positions, position.value)">{{number[position.value].value}}</span></td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>

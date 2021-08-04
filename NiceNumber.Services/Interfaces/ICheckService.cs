@@ -7,6 +7,6 @@ namespace NiceNumber.Services.Interfaces
 {
     public interface ICheckService
     {
-        Task<Check> CheckRegularity(Guid gameId, string sessionId, byte[] positions, RegularityType type);
+        Task<CheckResult> CheckRegularity(Guid gameId, string sessionId, byte[] positions, RegularityType type);
     }
 }

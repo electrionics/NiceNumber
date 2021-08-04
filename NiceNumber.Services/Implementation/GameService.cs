@@ -50,11 +50,11 @@ namespace NiceNumber.Services.Implementation
             var skipCount = generator.Next(limit);
 
             var number = await _dbContext.Set<Number>()
-                    .Include(x => x.Regularities)
+                    .Include(x => x.Regularities.Where(y => Math.Abs(y.RegularityNumber) <= 100))
                 .Where(x => 
                         x.Length == length && 
-                        x.Regularities.Count <= maxRegCount &&
-                        x.Regularities.Count >= minRegCount)
+                        x.Regularities.Count(y => Math.Abs(y.RegularityNumber) <= 100) <= maxRegCount &&
+                        x.Regularities.Count(y => Math.Abs(y.RegularityNumber) <= 100) >= minRegCount)
                 .Skip(skipCount)
                 .Take(1)
                 .FirstOrDefaultAsync();
