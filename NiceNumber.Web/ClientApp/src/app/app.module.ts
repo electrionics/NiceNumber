@@ -6,9 +6,10 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { AboutComponent } from './about/about.component';
+import { AuthorComponent } from './author/author.component';
 import { GameComponent } from "./game/game.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -17,9 +18,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   declarations: [
     AppComponent,
     NavMenuComponent,
+    FooterComponent,
     HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
+    AboutComponent,
+    AuthorComponent,
     GameComponent
   ],
   imports: [
@@ -28,8 +30,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     FormsModule,
     RouterModule.forRoot([
       {path: '', component: GameComponent, pathMatch: 'full'},
-      {path: 'counter', component: CounterComponent},
-      {path: 'fetch-data', component: FetchDataComponent},
+      {path: 'about', component: AboutComponent},
+      {path: 'author', component: AuthorComponent},
       {path: 'home', component: HomeComponent},
     ]),
     BrowserAnimationsModule,
