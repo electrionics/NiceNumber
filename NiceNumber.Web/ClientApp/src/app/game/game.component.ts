@@ -73,6 +73,7 @@ export class GameComponent {
 
   public toggleSelected(digit){
     if (this.endGame) return;
+
     digit.selected = !digit.selected;
     for(let pos = 0; pos < this.number.length; pos++){
       if (this.number[pos] === digit){
@@ -101,6 +102,7 @@ export class GameComponent {
 
           this.game.Score = result.NewTotalPoints;
 
+          this.clearSelections();
         }
         else {
           let hintMessage = GameComponent.composeHintMessage(result);
