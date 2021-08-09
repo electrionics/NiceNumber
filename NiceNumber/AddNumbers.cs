@@ -8,7 +8,7 @@ using NiceNumber.Services.Interfaces;
 
 namespace NiceNumber
 {
-    public class AddNumbers
+    public static class AddNumbers
     {
         public static async Task Run(INumberService numberService, IRegularityService regularityService)
         {

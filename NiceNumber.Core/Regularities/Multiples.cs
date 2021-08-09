@@ -39,7 +39,7 @@ namespace NiceNumber.Core.Regularities
             var subNumbers = GetSubNumbers(number, lengths);
             var subNumberPositions = GetSubNumberPositions(lengths);
 
-            if (lengths.Where((len, i) => len > 1 && subNumbers[i] < Math.Pow(10, len - 1)).Any()) // not count sub-numbers with leading zero, because sub-numbers without leading zero give same finaL result
+            if (lengths.Where((len, i) => len > 1 && subNumbers[i] < Math.Pow(10, len - 1)).Any()) // not count sub-numbers with leading zero, because sub-numbers without leading zero give same final result
             {
                 return new List<RegularityDetectResult>();
             }

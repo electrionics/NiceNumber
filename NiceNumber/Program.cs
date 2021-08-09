@@ -29,8 +29,9 @@ namespace NiceNumber
             var numberService = serviceProvider.GetService<INumberService>();
             var regularityService = serviceProvider.GetService<IRegularityService>();
 
-            await AddNumbers.Run(numberService, regularityService);
-            
+            //await AddNumbers.Run(numberService, regularityService);
+            await UpdateRegularities.Run(numberService, regularityService);
+
             //Test4();
             //Test3();
             //Test2();

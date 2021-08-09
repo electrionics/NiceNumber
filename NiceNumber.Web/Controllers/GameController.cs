@@ -22,17 +22,6 @@ namespace NiceNumber.Web.Controllers
             _checkService = checkService;
         }
 
-        #region Test
-
-        [HttpGet]
-        [ApiRoute("Game/Test")]
-        public async Task<int> Test()
-        {
-            return 1;
-        }
-
-        #endregion
-
         #region Start
         
         [HttpGet]
@@ -131,7 +120,7 @@ namespace NiceNumber.Web.Controllers
 
         [HttpPost]
         [ApiRoute("Game/End")]
-        public async Task<EndModel> End([FromBody] Guid gameId)
+        public async Task<EndModel> End([FromQuery] Guid gameId)
         {
             var sessionId = HttpContext.Session.Id;
 

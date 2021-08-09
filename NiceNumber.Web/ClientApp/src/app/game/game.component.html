@@ -14,7 +14,7 @@
   </tbody>
 </table>
 <div *ngIf="game">
-  <div id="checks" class="btn-group">
+  <div id="checks" class="btn-group" *ngIf="!endGame">
     <div *ngFor="let regType of regularityTypes">
       <button *ngIf="startGame.ExistRegularityTypeCounts[regType.type]" class="btn btn-info check" (click)="check(regType.type)">{{regType.label}}</button>
     </div>

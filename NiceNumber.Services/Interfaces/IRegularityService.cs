@@ -6,5 +6,7 @@ namespace NiceNumber.Services.Interfaces
     public interface IRegularityService
     {
         Task<Regularity> SaveRegularity(Regularity regularity);
+        Task SaveChanges();
+        Task RemoveRegularitiesMarkedAsDeleted();
     }
 }

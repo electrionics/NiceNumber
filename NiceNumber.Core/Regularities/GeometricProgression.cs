@@ -40,7 +40,7 @@ namespace NiceNumber.Core.Regularities
             var subNumbers = GetSubNumbers(number, lengths);
             var subNumberPositions = GetSubNumberPositions(lengths);
 
-            if (lengths.Where((len, i) => subNumbers[i] < Math.Pow(10, len - 1)).Any())
+            if (lengths.Where((len, i) => len > 1 && subNumbers[i] < Math.Pow(10, len - 1)).Any())
             {
                 return new List<RegularityDetectResult>();
             }

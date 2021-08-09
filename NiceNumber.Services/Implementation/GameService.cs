@@ -83,9 +83,9 @@ namespace NiceNumber.Services.Implementation
 
         public async Task<Game> EndGame(Guid gameId, string sessionId, bool inBackground = false)
         {
-            var game = _dbContext.Set<Game>()
+            var game = await _dbContext.Set<Game>()
                 .Include(x => x.Checks).ThenInclude(x => x.Regularity)
-                .FirstOrDefault(x => x.SessionId == sessionId && x.Id == gameId);
+                .FirstOrDefaultAsync(x => x.SessionId == sessionId && x.Id == gameId);
 
             if (game != null)
             {

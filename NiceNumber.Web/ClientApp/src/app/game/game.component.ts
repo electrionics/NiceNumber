@@ -35,6 +35,7 @@ export class GameComponent {
 
   public start(){
     this.http.get<StartModel>(this.baseUrl + 'Game/Start?difficultyLevel=' + this.difficultyLevel).subscribe(result => {
+      this.endGame = null;
       this.startGame = result;
       this.game = new ProgressModel();
       this.game.ProgressRegularityInfos = {};
@@ -71,6 +72,7 @@ export class GameComponent {
   }
 
   public toggleSelected(digit){
+    if (this.endGame) return;
     digit.selected = !digit.selected;
     for(let pos = 0; pos < this.number.length; pos++){
       if (this.number[pos] === digit){
@@ -95,15 +97,10 @@ export class GameComponent {
           info.Positions = selectedPositions;
           info.Found = true;
 
-          alert(result.PointsAdded + ' points added!');
+          alert(result.PointsAdded + ' очков заработано!');
 
           this.game.Score = result.NewTotalPoints;
-          this.positions.forEach(pos => {
-            pos.selected = false;
-          });
-          this.number.forEach(num => {
-            num.selected = false;
-          });
+
         }
         else {
           let hintMessage = GameComponent.composeHintMessage(result);
@@ -112,20 +109,22 @@ export class GameComponent {
             alert(hintMessage);
           }
         }
-      });
+      }, error => console.error(error));
     }
   }
 
   public end(){
-    this.http.post<EndModel>(this.baseUrl + 'Game/End', { gameId: this.startGame.GameId}).subscribe(result => {
-      this.endGame = result;
-      // popup with appearing animation
-      alert("Game ended!");
-    });
-  }
-
-  public filterByType(existRegularityInfos, type){
-    return existRegularityInfos.filter(x => x.Type == type);
+    if (!this.endGame){
+      this.http.post<EndModel>(this.baseUrl + 'Game/End?gameId=' + this.startGame.GameId, null).subscribe(result => {
+        this.endGame = result;
+        // TODO: popup with appearing animation
+        this.clearSelections();
+        this.confirmEndGame();
+      }, error => console.error(error));
+    }
+    else {
+      this.confirmEndGame();
+    }
   }
 
   public filterByFound(progressRegularityInfos, type){
@@ -145,16 +144,16 @@ export class GameComponent {
     let digitsToAddMessage = result.AddHint == CheckHint.No
       ? '' :
       result.AddHint == CheckHint.AddOneDigit
-        ? 'add one digit'
+        ? 'добавьте одну цифру'
         : result.AddHint == CheckHint.AddMoreThanOneDigit
-        ? 'add one more digit'
+        ? 'добавьте несколько цифр'
         : '';
     let digitsToRemoveMessage = result.RemoveHint == CheckHint.No
       ? '' :
       result.RemoveHint == CheckHint.RemoveOneDigit
-        ? 'remove one digit'
+        ? 'удалите одну цифру'
         : result.RemoveHint == CheckHint.RemoveMoreThanOneDigit
-        ? 'remove one more digit'
+        ? 'удалите несколько цифр'
         : '';
 
     return digitsToAddMessage == ''
@@ -177,6 +176,24 @@ export class GameComponent {
     this.difficultyLevels.push({type: 1, label: "Лёгкий"});
     this.difficultyLevels.push({type: 2, label: "Средний"});
     this.difficultyLevels.push({type: 3, label: "Тяжелый"});
+  }
+
+  private clearSelections(){
+    this.positions.forEach(pos => {
+      pos.selected = false;
+    });
+    this.number.forEach(num => {
+      num.selected = false;
+    });
+  }
+
+  private confirmEndGame(){
+    if (confirm("Игра окончена! Набрано " + this.endGame.TotalScore + ' очков за ' + this.endGame.SpentMinutes + ' минуты ' + this.endGame.SpentSeconds + ' секунды. Завершить сеанс?')){
+      this.startGame = null;
+      this.game = null;
+      this.number = null;
+      this.positions = null;
+    }
   }
 }
 

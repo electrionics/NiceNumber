@@ -17,6 +17,8 @@ namespace NiceNumber.Core.Regularities
         
         public override RegularityType MainType => RegularityType.SameNumbers;
 
+        public override RegularityType[] PossibleTypes => new[] {RegularityType.SameDigits, RegularityType.SameNumbers};
+
         protected override bool UseSubNumbers => true;
 
         protected override List<RegularityDetectResult> Detect(byte[] number, byte firstPosition = 0)
@@ -39,7 +41,7 @@ namespace NiceNumber.Core.Regularities
             var subNumbers = GetSubNumbers(number, lengths);
             var subNumberPositions = GetSubNumberPositions(lengths);
             
-            if (lengths.Where((len, i) => subNumbers[i] < Math.Pow(10, len - 1)).Any())
+            if (lengths.Where((len, i) => len > 1 && subNumbers[i] < Math.Pow(10, len - 1)).Any())
             {
                 return new List<RegularityDetectResult>();
             }

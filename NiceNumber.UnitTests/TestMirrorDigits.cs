@@ -134,5 +134,30 @@ namespace NiceNumber.UnitTests
             Assert.IsTrue(detected.Contains(supposed9));
             Assert.Pass();
         }
+
+        [Test]
+        public void Test_MirrorDigitsAtAnyPosition_ManySequentialDigits()
+        {
+            var number = 527001753254;
+            var supposed1 = new RegularityDetectResult
+            {
+                Type = RegularityType.MirrorDigits,
+                SequenceType = SequenceType.General,
+                Length = 8,
+                FirstNumber = 5,
+                RegularityNumber = 0,
+                FirstPosition = 0,
+                Positions = new byte[] {0, 1, 2, 3, 4, 6, 9, 10},
+                SubNumberLengths = new byte[] {1, 1, 1, 1, 1, 1, 1, 1}
+            }; //+
+            
+            var regularity = new MirrorDigits();
+            
+            var detected = regularity.Process(number);
+            
+            Assert.NotNull(detected);
+            Assert.IsTrue(detected.Contains(supposed1));
+            Assert.Pass();
+        }
     }
 }

@@ -16,6 +16,11 @@ namespace NiceNumber.Core.Regularities
         
         public abstract RegularityType MainType { get; }
 
+        public virtual RegularityType[] PossibleTypes => new[]
+        {
+            MainType
+        };
+
         protected BaseRegularity()
         {
             MinLength = 3;
@@ -368,6 +373,7 @@ namespace NiceNumber.Core.Regularities
     public interface IRegularity
     {
         RegularityType MainType { get; }
+        RegularityType[] PossibleTypes { get; }
         List<RegularityDetectResult> Process(long number);
     }
 }

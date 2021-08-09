@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NiceNumber.Core;
 
@@ -19,6 +20,8 @@ namespace NiceNumber.Domain.Entities
         public string StartPositionsStr { get; set; }
         
         public string SubNumberLengthsStr { get; set; }
+        
+        public bool Deleted { get; set; }
 
         private List<byte> _startPositions;
         public List<byte> StartPositions => _startPositions ??= StartPositionsStr
@@ -41,5 +44,29 @@ namespace NiceNumber.Domain.Entities
         public Number Number { get; set; }
         
         public List<Check> Checks { get; set; }
+        
+        
+        private sealed class RegularityEqualityComparer : IEqualityComparer<Regularity>
+        {
+            public bool Equals(Regularity x, Regularity y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return x.Type == y.Type && 
+                       x.SequenceType == y.SequenceType && 
+                       x.RegularityNumber.Equals(y.RegularityNumber) && 
+                       x.StartPositionsStr == y.StartPositionsStr && 
+                       x.SubNumberLengthsStr == y.SubNumberLengthsStr;
+            }
+
+            public int GetHashCode(Regularity obj)
+            {
+                return HashCode.Combine((int) obj.Type, (int) obj.SequenceType, obj.RegularityNumber, obj.StartPositionsStr, obj.SubNumberLengthsStr);
+            }
+        }
+
+        public static IEqualityComparer<Regularity> RegularityComparer { get; } = new RegularityEqualityComparer();
     }
 }

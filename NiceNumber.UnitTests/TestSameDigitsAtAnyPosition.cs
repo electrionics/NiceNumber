@@ -213,5 +213,28 @@ namespace NiceNumber.UnitTests
             Assert.IsTrue(detected.Contains(supposed3));
             Assert.Pass();
         }
+
+        [Test]
+        public void Test_ManySameDigits_OneResult()
+        {
+            const long number = 444543524022;
+            var regularity = new SameNumbers();
+            var supposed1 = new RegularityDetectResult
+            {
+                Type = RegularityType.SameDigits,
+                SequenceType = SequenceType.General,
+                Length = 5,
+                FirstNumber = 4,
+                FirstPosition = 0,
+                RegularityNumber = 0,
+                Positions = new byte[]{ 0, 1, 2, 4, 8 },
+                SubNumberLengths = new byte[]{ 1, 1, 1, 1, 1}
+            };
+            var detected = regularity.Process(number);
+            
+            Assert.NotNull(detected);
+            Assert.IsTrue(detected.Contains(supposed1));
+            Assert.Pass();
+        }
     }
 }
