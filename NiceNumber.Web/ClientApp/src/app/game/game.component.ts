@@ -19,7 +19,7 @@ export class GameComponent {
   public regularityTypes: { type: number; label: string; shortLabel: string; regularityNumberHint: string; }[];
   public difficultyLevels: { type: number; label: string; }[];
 
-  public timer: number;
+  public timerSet: boolean;
 
   private http: HttpClient;
   private baseUrl: string;
@@ -28,6 +28,7 @@ export class GameComponent {
     this.initLists();
 
     this.difficultyLevel = 3;
+    this.timerSet = false;
 
     this.http = http;
     this.baseUrl = baseUrl;
@@ -39,6 +40,7 @@ export class GameComponent {
       this.startGame = result;
       this.game = new ProgressModel();
       this.game.ProgressRegularityInfos = {};
+      this.game.Score = 0;
 
       this.number = [];
 
@@ -65,9 +67,18 @@ export class GameComponent {
           progressInfo.RegularityNumber = regularityInfo.RegularityNumber;
 
           this.game.ProgressRegularityInfos[type].push(progressInfo);
-        })
-      })
+        });
+      });
 
+      this.game.TimerSeconds = 300;
+      if (!this.timerSet){
+        setInterval(() => {
+          if (this.game.TimerSeconds-- == 0){
+            this.end();
+          }
+        }, 1000);
+        this.timerSet = true;
+      }
     }, error => console.error(error));
   }
 
@@ -167,8 +178,8 @@ export class GameComponent {
 
   private initLists(){
     this.regularityTypes = [];
-    this.regularityTypes.push({type: 1, label: "Одинаковые цифры", regularityNumberHint: null, shortLabel: "ОЦ"});
-    this.regularityTypes.push({type: 2, label: "Одинаковые числа", regularityNumberHint: null, shortLabel: "ОЧ"});
+    this.regularityTypes.push({type: 1, label: "Одинаковые цифры", regularityNumberHint: "Количество цифр", shortLabel: "ОЦ"});
+    this.regularityTypes.push({type: 2, label: "Одинаковые числа", regularityNumberHint: "Количество чисел", shortLabel: "ОЧ"});
     this.regularityTypes.push({type: 3, label: "Зеркальные цифры", regularityNumberHint: "Количество цифр между крайними цифрами", shortLabel: "ЗЦ"});
     this.regularityTypes.push({type: 4, label: "Кратные числа", regularityNumberHint: "Кратность", shortLabel: "КЧ"});
     this.regularityTypes.push({type: 5, label: "Арифметическая прогрессия", regularityNumberHint: "Шаг прогрессии", shortLabel: "АП"});
@@ -217,6 +228,7 @@ class ProgressModel
 {
   ProgressRegularityInfos: { [type: number]: ProgressRegularityInfo[] }
   Score: number;
+  TimerSeconds: number;
 }
 
 class ProgressRegularityInfo

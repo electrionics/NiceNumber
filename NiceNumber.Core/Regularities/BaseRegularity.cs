@@ -115,10 +115,12 @@ namespace NiceNumber.Core.Regularities
                     : SequenceType.General;
         }
 
+        protected virtual bool UseRegularityNumberForInclude => true;
+
         protected virtual bool Include(TResult first, TResult second)
         {
             const byte accuracy = RegularityConstants.DoubleRegularityNumberAccuracy;
-            if (!first.RegularityNumber.EqualTo(second.RegularityNumber, accuracy))
+            if (UseRegularityNumberForInclude && !first.RegularityNumber.EqualTo(second.RegularityNumber, accuracy))
             {
                 return false;
             }

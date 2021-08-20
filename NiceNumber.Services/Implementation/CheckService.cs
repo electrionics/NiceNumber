@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NiceNumber.Core;
+using NiceNumber.Core.Helpers;
+using NiceNumber.Core.Regularities;
 using NiceNumber.Domain;
 using NiceNumber.Domain.Entities;
 using NiceNumber.Services.Interfaces;
@@ -60,11 +62,11 @@ namespace NiceNumber.Services.Implementation
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 var existCheck = await _dbContext.Set<Check>()
-                    .FirstOrDefaultAsync(x => x.RegularityId == check.RegularityId);
+                    .FirstOrDefaultAsync(x => x.RegularityId == check.RegularityId && x.GameId == gameId);
             
                 check.ScoreAdded = check.Regularity == null || existCheck != null
                     ? 0
-                    : 10; //TODO: need algorithm
+                    : CalculateRegularityFoundScore(check.Regularity);
                 
                 _dbContext.Set<Check>().Add(check);
                 var game = _dbContext.Set<Game>().First(x => x.Id == gameId && x.SessionId == sessionId);
@@ -80,6 +82,25 @@ namespace NiceNumber.Services.Implementation
             }
             
             return new CheckResult { Value = check, RegularityNumber = check.Regularity?.RegularityNumber ?? 0};
+        }
+
+        private static int CalculateRegularityFoundScore(Regularity regularity)
+        {
+            var regNumber = (int) Math.Abs(Math
+                .Max(1 / regularity.RegularityNumber, regularity.RegularityNumber)
+                .RoundTo(RegularityConstants.DoubleRegularityNumberAccuracy));
+            var subNumbersCount = regularity.SubNumberLengths.Count;
+            return regularity.Type switch
+            {
+                RegularityType.SameDigits => 10 + 5 * (regNumber - 2),
+                RegularityType.SameNumbers => 20 + 10 * (regNumber - 2),
+                RegularityType.MirrorDigits => 30 + 5 * (subNumbersCount - 4),
+                RegularityType.MultiplesNumbers => 40 + 5 * regNumber,
+                RegularityType.ArithmeticProgression => 10 + 5 * regNumber,
+                RegularityType.GeometricProgression => 20 + 10 * regNumber,
+                
+                _ => throw new NotImplementedException()
+            };
         }
     }
 }

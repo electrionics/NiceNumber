@@ -45,6 +45,8 @@ namespace NiceNumber.Domain.Entities
         
         public List<Check> Checks { get; set; }
         
+        public List<Check> ClosestChecks { get; set; }
+        
         
         private sealed class RegularityEqualityComparer : IEqualityComparer<Regularity>
         {

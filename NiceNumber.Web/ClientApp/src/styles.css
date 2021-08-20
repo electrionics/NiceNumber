@@ -73,3 +73,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   color: green;
   font-weight: bold;
 }
+
+.game-progress div{
+  font-size: 16px;
+}
+
+.game-progress .score, .game-progress .timer{
+  font-weight: bold;
+}

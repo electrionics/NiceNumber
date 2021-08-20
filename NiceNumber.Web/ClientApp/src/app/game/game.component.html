@@ -5,7 +5,13 @@
 <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="number">
   <tbody>
     <tr>
-      <td rowspan="2" style="width: 155px; vertical-align: middle;" class="text-center"><button *ngIf="game" class="btn btn-primary text-center" (click)="end()">Завершить игру</button></td>
+      <td rowspan="2" style="width: 170px; vertical-align: middle;" class="text-center game-progress">
+        <ng-container *ngIf="game">
+          <div style="margin-bottom: 5px;"><span class="score">{{game.Score}}</span> очков</div>
+          <button class="btn btn-primary text-center" (click)="end()">Завершить игру</button>
+          <div style="margin-top: 5px;">Осталось <span class="timer">{{game.TimerSeconds * 1000 | date:'mm:ss'}}</span></div>
+        </ng-container>
+      </td>
       <td *ngFor="let pos of positions" class="text-center"><b>{{ pos.value + 1 }}</b></td>
     </tr>
     <tr id="digits">
@@ -22,7 +28,7 @@
   <table id="progress" class='table table-striped'>
     <thead>
       <tr>
-        <th style="width: 155px;" class="text-center">Число закономерности</th>
+        <th style="width: 170px;" class="text-center">Число закономерности</th>
         <th *ngFor="let pos of positions" class="text-center">{{ pos.value + 1 }}</th>
       </tr>
     </thead>

@@ -76,7 +76,7 @@ namespace NiceNumber.Core.Regularities
                     var count = mirrors.Count;
                     for (var k = 0; k < count; k++)
                     {
-                        if (mirrors[k].Count <= number.Length / 2 - 1 && j >= mirrors[k].Count + 2 && j < mirrors[k][mirrors[k].Count - 1])
+                        if (mirrors[k].Count <= number.Length / 2 - 1 && j >= mirrors[k].Count + 1 && j < mirrors[k][mirrors[k].Count - 1])
                         {
                             mirrors.Add(new List<byte>(mirrors[k]));
                             mirrors[k].Add(j);

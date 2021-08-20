@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NiceNumber.Core;
 using NiceNumber.Core.Regularities;
 using NiceNumber.Domain.Entities;
 using NiceNumber.Services.Interfaces;
@@ -14,8 +13,7 @@ namespace NiceNumber
         {
             var regularities = new List<IRegularity>
             {
-                new GeometricProgression(),
-                new SameNumbers()
+                new MirrorDigits()
             };
 
             var typesToUpdate = regularities.SelectMany(x => x.PossibleTypes).ToList();

@@ -93,7 +93,7 @@ namespace NiceNumber.Core.Regularities
                     FirstNumber = subNumbers[indexes[0]],
                     FirstPosition = subNumberPositions[indexes[0]],
                     Length = indexes.Count,
-                    RegularityNumber = 0,
+                    RegularityNumber = indexes.Count,
                     Positions = indexes.Select(index => subNumberPositions[index]).ToArray(),
                     SubNumberLengths = indexes.Select(index => lengths[index]).ToArray()
                 });
@@ -103,6 +103,8 @@ namespace NiceNumber.Core.Regularities
         }
 
         protected override IEqualityComparer<RegularityDetectResult> Comparer => RegularityDetectResult.Comparer;
+
+        protected override bool UseRegularityNumberForInclude => false;
 
         protected override void SetTypes(RegularityDetectResult result)
         {

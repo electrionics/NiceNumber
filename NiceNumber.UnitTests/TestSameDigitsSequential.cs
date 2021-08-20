@@ -25,7 +25,7 @@ namespace NiceNumber.UnitTests
                 Length = 3,
                 FirstNumber = 2,
                 FirstPosition = 1,
-                RegularityNumber = 0,
+                RegularityNumber = 3,
                 Positions = new byte[]{1, 2, 3},
                 SubNumberLengths = new byte[]{ 1, 1, 1}
             };
@@ -36,7 +36,7 @@ namespace NiceNumber.UnitTests
                 Length = 3,
                 FirstNumber = 3,
                 FirstPosition = 0,
-                RegularityNumber = 0,
+                RegularityNumber = 3,
                 Positions = new byte[] {0, 4, 5},
                 SubNumberLengths = new byte[]{ 1, 1, 1}
             };

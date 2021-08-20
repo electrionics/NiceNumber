@@ -26,7 +26,7 @@ namespace NiceNumber.UnitTests
                 Length = 7,
                 FirstNumber = 2,
                 FirstPosition = 0,
-                RegularityNumber = 0,
+                RegularityNumber = 7,
                 Positions = new byte[]{ 0, 1, 2, 3, 4, 5, 6},
                 SubNumberLengths = new byte[]{ 1, 1, 1, 1, 1, 1, 1}
             };
@@ -51,7 +51,7 @@ namespace NiceNumber.UnitTests
                 Length = 3,
                 FirstNumber = 2,
                 FirstPosition = 2,
-                RegularityNumber = 0,
+                RegularityNumber = 3,
                 Gap = 1,
                 Positions = new byte[]{ 2, 4, 6},
                 SubNumberLengths = new byte[]{ 1, 1, 1}
@@ -77,7 +77,7 @@ namespace NiceNumber.UnitTests
                 Length = 3,
                 FirstNumber = 2,
                 FirstPosition = 3,
-                RegularityNumber = 0,
+                RegularityNumber = 3,
                 Positions = new byte[]{ 3, 4, 6},
                 SubNumberLengths = new byte[] { 1, 1, 1}
             };
@@ -102,7 +102,7 @@ namespace NiceNumber.UnitTests
                 Length = 2,
                 FirstNumber = 7,
                 FirstPosition = 3,
-                RegularityNumber = 0,
+                RegularityNumber = 2,
                 Positions = new byte[]{ 3, 6},
                 SubNumberLengths = new byte[]{ 1, 1}
             };
@@ -140,7 +140,7 @@ namespace NiceNumber.UnitTests
                 Length = 2,
                 FirstNumber = 37,
                 FirstPosition = 0,
-                RegularityNumber = 0,
+                RegularityNumber = 2,
                 Positions = new byte[]{ 0, 4},
                 SubNumberLengths = new byte[] { 2, 2}
             };
@@ -151,7 +151,7 @@ namespace NiceNumber.UnitTests
                 Length = 3,
                 FirstNumber = 7,
                 FirstPosition = 1,
-                RegularityNumber = 0,
+                RegularityNumber = 3,
                 Positions = new byte[]{ 1, 2, 5},
                 SubNumberLengths = new byte[] { 1, 1, 1}
             };
@@ -177,7 +177,7 @@ namespace NiceNumber.UnitTests
                 Length = 2,
                 FirstNumber = 3,
                 FirstPosition = 0,
-                RegularityNumber = 0,
+                RegularityNumber = 2,
                 Positions = new byte[]{ 0, 4},
                 SubNumberLengths = new byte[]{ 1, 1}
             };
@@ -188,7 +188,7 @@ namespace NiceNumber.UnitTests
                 Length = 2,
                 FirstNumber = 5,
                 FirstPosition = 1,
-                RegularityNumber = 0,
+                RegularityNumber = 2,
                 Positions = new byte[]{ 1, 3},
                 SubNumberLengths = new byte[]{ 1, 1}
             };
@@ -199,7 +199,7 @@ namespace NiceNumber.UnitTests
                 Length = 2,
                 FirstNumber = 7,
                 FirstPosition = 2,
-                RegularityNumber = 0,
+                RegularityNumber = 2,
                 Positions = new byte[]{ 2, 5},
                 SubNumberLengths = new byte[]{ 1, 1}
             };
@@ -226,7 +226,7 @@ namespace NiceNumber.UnitTests
                 Length = 5,
                 FirstNumber = 4,
                 FirstPosition = 0,
-                RegularityNumber = 0,
+                RegularityNumber = 5,
                 Positions = new byte[]{ 0, 1, 2, 4, 8 },
                 SubNumberLengths = new byte[]{ 1, 1, 1, 1, 1}
             };

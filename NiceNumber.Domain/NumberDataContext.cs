@@ -42,6 +42,9 @@ namespace NiceNumber.Domain
                 entity.HasOne(x => x.Regularity)
                     .WithMany(x => x.Checks)
                     .HasForeignKey(x => x.RegularityId);
+                entity.HasOne(x => x.ClosestRegularity)
+                    .WithMany(x => x.ClosestChecks)
+                    .HasForeignKey(x => x.ClosestRegularityId);
             });
         }
     }

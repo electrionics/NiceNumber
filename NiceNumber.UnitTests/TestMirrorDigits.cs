@@ -159,5 +159,30 @@ namespace NiceNumber.UnitTests
             Assert.IsTrue(detected.Contains(supposed1));
             Assert.Pass();
         }
+
+        [Test]
+        public void Test_MirrorDigitsSequential_FullNumberMirror()
+        {
+            var number = 125521;
+            var supposed1 = new RegularityDetectResult
+            {
+                Type = RegularityType.MirrorDigits,
+                SequenceType = SequenceType.Sequential,
+                Length = 6,
+                FirstNumber = 1,
+                RegularityNumber = 0,
+                FirstPosition = 0,
+                Positions = new byte[] {0, 1, 2, 3, 4, 5},
+                SubNumberLengths = new byte[] {1, 1, 1, 1, 1, 1}
+            }; //+
+            
+            var regularity = new MirrorDigits();
+            
+            var detected = regularity.Process(number);
+            
+            Assert.NotNull(detected);
+            Assert.IsTrue(detected.Contains(supposed1));
+            Assert.Pass();
+        }
     }
 }

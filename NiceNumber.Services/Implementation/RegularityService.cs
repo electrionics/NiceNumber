@@ -33,7 +33,7 @@ namespace NiceNumber.Services.Implementation
 
         public async Task RemoveRegularitiesMarkedAsDeleted()
         {
-            var toDelete = _dataContext.Set<Regularity>().Where(x => x.Deleted && !x.Checks.Any());
+            var toDelete = _dataContext.Set<Regularity>().Where(x => x.Deleted && !x.Checks.Any() && !x.ClosestChecks.Any());
             _dataContext.Set<Regularity>().RemoveRange(toDelete);
             await _dataContext.SaveChangesAsync();
         }
