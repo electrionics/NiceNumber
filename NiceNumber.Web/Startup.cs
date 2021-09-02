@@ -12,6 +12,7 @@ using Newtonsoft.Json.Serialization;
 using NiceNumber.Domain;
 using NiceNumber.Services.Implementation;
 using NiceNumber.Services.Interfaces;
+using NiceNumber.Web.Configuration;
 using NiceNumber.Web.Filters;
 using CheckService = NiceNumber.Services.Implementation.CheckService;
 
@@ -37,9 +38,11 @@ namespace NiceNumber.Web
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
             
+            services.AddSingleton(Configuration.GetSection("Database").Get<DatabaseConfig>());
+
             services.AddDbContext<NumberDataContext>(options => 
             {
-                options.UseSqlServer("server=.;database=numio;trusted_connection=true;");
+                options.UseSqlServer(Configuration.GetSection("Database").Get<DatabaseConfig>().ConnectionString);
             });
             
             services.AddSession(options => {  

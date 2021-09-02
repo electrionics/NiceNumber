@@ -25,7 +25,8 @@ namespace NiceNumber.Services.Implementation
             var regularitiesToCheck = await _dbContext.Set<Regularity>()
                 .Where(x =>
                     x.Number.Games.Any(y => y.Id == gameId && y.SessionId == sessionId) &&
-                    x.Type == type)
+                    !x.Checks.Any(y => y.GameId == gameId && y.Game.SessionId == sessionId && y.ScoreAdded > 0) &&
+                    x.Type == type && Math.Abs(x.RegularityNumber) <= 100)
                 .ToListAsync();
 
             var regularityToCheck = regularitiesToCheck
@@ -62,7 +63,7 @@ namespace NiceNumber.Services.Implementation
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 var existCheck = await _dbContext.Set<Check>()
-                    .FirstOrDefaultAsync(x => x.RegularityId == check.RegularityId && x.GameId == gameId);
+                    .FirstOrDefaultAsync(x => x.RegularityId == check.RegularityId && x.GameId == gameId && x.Game.SessionId == sessionId);
             
                 check.ScoreAdded = check.Regularity == null || existCheck != null
                     ? 0

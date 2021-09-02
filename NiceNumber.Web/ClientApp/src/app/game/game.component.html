@@ -8,7 +8,7 @@
       <td rowspan="2" style="width: 170px; vertical-align: middle;" class="text-center game-progress">
         <ng-container *ngIf="game">
           <div style="margin-bottom: 5px;"><span class="score">{{game.Score}}</span> очков</div>
-          <button class="btn btn-primary text-center" (click)="end()">Завершить игру</button>
+          <button class="btn btn-primary text-center" (click)="end(true)">Завершить игру</button>
           <div style="margin-top: 5px;">Осталось <span class="timer">{{game.TimerSeconds * 1000 | date:'mm:ss'}}</span></div>
         </ng-container>
       </td>

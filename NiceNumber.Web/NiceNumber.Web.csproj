@@ -10,6 +10,7 @@
         <!-- Set this to true if you enable server-side prerendering -->
         <BuildServerSideRenderer>false</BuildServerSideRenderer>
         <TargetFramework>net5.0</TargetFramework>
+        <UserSecretsId>6d05613e-c2b9-411c-91b3-ff0507575f7c</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>

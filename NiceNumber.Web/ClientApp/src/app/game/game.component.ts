@@ -73,8 +73,10 @@ export class GameComponent {
       this.game.TimerSeconds = 300;
       if (!this.timerSet){
         setInterval(() => {
-          if (this.game.TimerSeconds-- == 0){
-            this.end();
+          if (this.game.TimerSeconds > 0 && !this.endGame){
+            if (--this.game.TimerSeconds == 0){
+              this.end(false);
+            }
           }
         }, 1000);
         this.timerSet = true;
@@ -112,6 +114,7 @@ export class GameComponent {
           alert(result.PointsAdded + ' очков заработано!');
 
           this.game.Score = result.NewTotalPoints;
+          this.game.TimerSeconds += 5;
 
           this.clearSelections();
         }
@@ -124,19 +127,24 @@ export class GameComponent {
         }
       }, error => console.error(error));
     }
+    else {
+      alert("Выберите минимум 2 цифры.");
+    }
   }
 
-  public end(){
+  public end(needConfirm){
     if (!this.endGame){
-      this.http.post<EndModel>(this.baseUrl + 'Game/End?gameId=' + this.startGame.GameId, null).subscribe(result => {
-        this.endGame = result;
-        // TODO: popup with appearing animation
-        this.clearSelections();
-        this.confirmEndGame();
-      }, error => console.error(error));
+      if (!needConfirm || confirm("Вы уверены, что хотите завершить игру?")){
+        this.http.post<EndModel>(this.baseUrl + 'Game/End?gameId=' + this.startGame.GameId, null).subscribe(result => {
+          this.endGame = result;
+          // TODO: popup with appearing animation
+          this.clearSelections();
+          this.confirmEndGameWithResults();
+        }, error => console.error(error));
+      }
     }
     else {
-      this.confirmEndGame();
+      this.confirmEndGameWithResults();
     }
   }
 
@@ -200,7 +208,7 @@ export class GameComponent {
     });
   }
 
-  private confirmEndGame(){
+  private confirmEndGameWithResults(){
     if (confirm("Игра окончена! Набрано " + this.endGame.TotalScore + ' очков за ' + this.endGame.SpentMinutes + ' минуты ' + this.endGame.SpentSeconds + ' секунды. Завершить сеанс?')){
       this.startGame = null;
       this.game = null;

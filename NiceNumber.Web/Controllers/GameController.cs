@@ -29,7 +29,7 @@ namespace NiceNumber.Web.Controllers
         public async Task<StartModel> Start([FromQuery]DifficultyLevel difficultyLevel)
         {
             var sessionId = HttpContext.Session.Id;
-            
+
             var game = await _gameService.StartRandomNumberGame(difficultyLevel, sessionId);
 
             var model = new StartModel
@@ -45,7 +45,7 @@ namespace NiceNumber.Web.Controllers
                 }).ToList(),
                 ExistRegularityTypeCounts = new Dictionary<int, int>()
             };
-            
+
             var regularityTypeCounts = game.Number.Regularities
                 .GroupBy(x => x.Type)
                 .ToDictionary(
@@ -53,7 +53,7 @@ namespace NiceNumber.Web.Controllers
                     x => x.Count());
             foreach (var type in Enum.GetValues<RegularityType>())
             {
-                model.ExistRegularityTypeCounts[(int)type] = regularityTypeCounts.TryGetValue(type, out var count)
+                model.ExistRegularityTypeCounts[(int) type] = regularityTypeCounts.TryGetValue(type, out var count)
                     ? count
                     : 0;
             }
