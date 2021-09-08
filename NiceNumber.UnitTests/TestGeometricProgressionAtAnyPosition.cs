@@ -99,5 +99,11 @@ namespace NiceNumber.UnitTests
             Assert.AreEqual(detected.Count, 0);
             Assert.Pass();
         }
+
+        [Test]
+        public void Test_GeometricProgressionAtAnyPosition_NotCountZeroRegularityNumber()
+        {
+            //TODO: test progression with '0' regularity number
+        }
     }
 }

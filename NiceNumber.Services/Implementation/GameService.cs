@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using NiceNumber.Core;
 using NiceNumber.Domain;
 using NiceNumber.Domain.Entities;
 using NiceNumber.Services.Interfaces;
@@ -50,11 +51,17 @@ namespace NiceNumber.Services.Implementation
             var skipCount = generator.Next(limit);
 
             var number = await _dbContext.Set<Number>()
-                    .Include(x => x.Regularities.Where(y => Math.Abs(y.RegularityNumber) <= 100))
+                    .Include(x => x.Regularities.Where(y => 
+                        Math.Abs(y.RegularityNumber) <= 100 && 
+                        (y.Type != RegularityType.GeometricProgression || y.RegularityNumber >= 0.01))) //TODO: move this check to 'playable' logic, and use only flag here
                 .Where(x => 
                         x.Length == length && 
-                        x.Regularities.Count(y => Math.Abs(y.RegularityNumber) <= 100) <= maxRegCount &&
-                        x.Regularities.Count(y => Math.Abs(y.RegularityNumber) <= 100) >= minRegCount)
+                        x.Regularities.Count(y => 
+                            Math.Abs(y.RegularityNumber) <= 100 && 
+                            (y.Type != RegularityType.GeometricProgression || y.RegularityNumber >= 0.01)) <= maxRegCount && //TODO: move this check to 'playable' logic, and use only flag here
+                        x.Regularities.Count(y => 
+                            Math.Abs(y.RegularityNumber) <= 100 && 
+                            (y.Type != RegularityType.GeometricProgression || y.RegularityNumber >= 0.01)) >= minRegCount) //TODO: move this check to 'playable' logic, and use only flag here
                 .Skip(skipCount)
                 .Take(1)
                 .FirstOrDefaultAsync();
