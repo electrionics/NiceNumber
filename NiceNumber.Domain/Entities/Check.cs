@@ -22,7 +22,14 @@ namespace NiceNumber.Domain.Entities
         public int NeedChangeDigits => NeedAddDigits + NeedRemoveDigits;
 
         public int ScoreAdded { get; set; }
-        
+
+        public CheckStatus Status =>
+            RegularityId == null
+                ? CheckStatus.Miss
+                : ScoreAdded == 0
+                    ? CheckStatus.Hint
+                    : CheckStatus.Match;
+
         public string CheckPositions { get; set; }
         
         public DateTime TimePerformed { get; set; }
@@ -33,5 +40,12 @@ namespace NiceNumber.Domain.Entities
         public Regularity Regularity { get; set; }
         
         public Regularity ClosestRegularity { get; set; }
+    }
+
+    public enum CheckStatus
+    {
+        Match = 1,
+        Hint = 2,
+        Miss = 3
     }
 }

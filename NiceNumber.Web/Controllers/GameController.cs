@@ -42,7 +42,9 @@ namespace NiceNumber.Web.Controllers
                 {
                     RegularityNumber = x.RegularityNumber,
                     Type = x.Type,
-                }).ToList(),
+                }).OrderBy(x => x.Type)
+                    .ThenBy(x => x.RegularityNumber)
+                    .ToList(),
                 ExistRegularityTypeCounts = new Dictionary<int, int>()
             };
 
@@ -71,25 +73,37 @@ namespace NiceNumber.Web.Controllers
         public async Task<CheckResultModel> Check(CheckModel data)
         {
             var sessionId = HttpContext.Session.Id;
-
-            var check = await _checkService.CheckRegularity(data.GameId, sessionId, data.Positions.Select(x => (byte)x).ToArray(), data.Type);
+            var hinted = HttpContext.Session.TryGetValue(NextCheckIsHintSessionKey, out _);
             
-            var model = PrepareModel(check);
+            var check = await _checkService.CheckRegularity(data.GameId, sessionId, data.Positions.Select(x => (byte)x).ToArray(), data.Type, hinted);
+
+            if (hinted)
+            {
+                HttpContext.Session.Remove(NextCheckIsHintSessionKey);
+            }
+            
+            if (check == null)
+            {
+                return null;
+            }
+
+            var model = PrepareModel(check, hinted);
             return model;
         }
 
-        private static CheckResultModel PrepareModel(CheckResult entity)
+        private static CheckResultModel PrepareModel(CheckResult entity, bool hinted)
         {
             var check = entity.Value;
             
             var model = new CheckResultModel
             {
-                Match = check.ScoreAdded > 0,
+                Match = check.RegularityId != null,
                 PointsAdded = check.ScoreAdded,
                 NewTotalPoints = check.Game.Score,
                 AddHint = CheckHint.No,
                 RemoveHint = CheckHint.No,
-                RegularityNumber = entity.RegularityNumber
+                RegularityNumber = entity.RegularityNumber,
+                Hinted = hinted
             };
             
             if (check.NeedAddDigits == 1)
@@ -116,6 +130,35 @@ namespace NiceNumber.Web.Controllers
         #endregion
 
         
+        #region Hint
+
+        private const string NextCheckIsHintSessionKey = "NextCheckIsHint";
+
+        [HttpPost]
+        [ApiRoute("Game/Hint")]
+        public async Task<HintResultModel> Hint([FromQuery] Guid gameId)
+        {
+            var sessionId = HttpContext.Session.Id;
+
+            var hint = await _checkService.GetNextCheck(gameId, sessionId);
+            if (hint != null)
+            {
+                HttpContext.Session.Set(NextCheckIsHintSessionKey, Array.Empty<byte>());
+
+                return new HintResultModel
+                {
+                    Positions = hint.AllPositions.Select(x => (int)x).ToArray(),
+                    Type = hint.Type,
+                    RegularityNumber = hint.RegularityNumber
+                };
+            }
+
+            return null;
+        }
+        
+        #endregion
+        
+        
         #region End
 
         [HttpPost]
@@ -131,6 +174,15 @@ namespace NiceNumber.Web.Controllers
                 return null;
             }
 
+            var foundAndHintedRegularityIds = game.Checks
+                .Where(y => y.RegularityId != null)
+                .Select(y => (int)y.RegularityId)
+                .ToHashSet();
+            var notFoundRegularities = game.Number.Regularities
+                .Where(x => !foundAndHintedRegularityIds.Contains(x.Id) && 
+                    Math.Abs(x.RegularityNumber) <= 100 &&
+                    (x.Type != RegularityType.GeometricProgression || x.RegularityNumber >= 0.01))//TODO: move this check to 'playable' logic, and use only flag here) //TODO: make status 'not found' and fill missing checks with it in the end of game
+                .ToList();
             // ReSharper disable once PossibleInvalidOperationException
             var spentTime = game.FinishTime.Value - game.StartTime;
             var model = new EndModel
@@ -143,8 +195,14 @@ namespace NiceNumber.Web.Controllers
                     .Select(x => new EndRegularityInfo
                     {
                         Type = x.Key,
-                        Count = x.Count(y => y.RegularityId != null)
-                    }).ToList()
+                        Count = x.Count(y => y.Status == CheckStatus.Match)
+                    }).ToList(),
+                NotFoundRegularityInfos = notFoundRegularities.Select(x => new HintResultModel
+                {
+                    Positions = x.AllPositions.Select(y => (int)y).ToArray(),
+                    RegularityNumber = x.RegularityNumber,
+                    Type = x.Type
+                }).ToList()
             };
 
             return model;

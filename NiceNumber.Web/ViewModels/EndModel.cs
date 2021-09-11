@@ -12,6 +12,8 @@ namespace NiceNumber.Web.ViewModels
         public int SpentSeconds { get; set; }
         
         public List<EndRegularityInfo> FoundRegularityInfos { get; set; }
+        
+        public List<HintResultModel> NotFoundRegularityInfos { get; set; }
     }
 
     public class EndRegularityInfo

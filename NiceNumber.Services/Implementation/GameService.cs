@@ -92,6 +92,7 @@ namespace NiceNumber.Services.Implementation
         {
             var game = await _dbContext.Set<Game>()
                 .Include(x => x.Checks).ThenInclude(x => x.Regularity)
+                .Include(x => x.Number).ThenInclude(x => x.Regularities)
                 .FirstOrDefaultAsync(x => x.SessionId == sessionId && x.Id == gameId);
 
             if (game != null)

@@ -13,10 +13,10 @@ export class GameComponent {
 
   public difficultyLevel: number;
 
-  public number: { value: number; selected: boolean; }[];
+  public number: { value: number; selected: boolean; disabled: boolean; }[];
   public positions: { value: number; selected: boolean; }[];
 
-  public regularityTypes: { type: number; label: string; shortLabel: string; regularityNumberHint: string; }[];
+  public regularityTypes: { type: number; enabled: boolean; label: string; shortLabel: string; regularityNumberHint: string; }[];
   public difficultyLevels: { type: number; label: string; }[];
 
   public timerSet: boolean;
@@ -49,7 +49,7 @@ export class GameComponent {
         let currentDigit = tempNumber % 10;
         tempNumber = (tempNumber - currentDigit) / 10;
 
-        this.number.push({value: currentDigit, selected: false});
+        this.number.push({value: currentDigit, selected: false, disabled: false });
       }
       this.number = this.number.reverse();
 
@@ -62,7 +62,7 @@ export class GameComponent {
         this.game.ProgressRegularityInfos[type] = [];
         this.startGame.ExistRegularityInfos.filter(x => x.Type == type).forEach(regularityInfo =>{
           let progressInfo = new ProgressRegularityInfo();
-          progressInfo.Found = false;
+          progressInfo.FoundStatus = FoundStatus.NotFound;
           progressInfo.Positions = [];
           progressInfo.RegularityNumber = regularityInfo.RegularityNumber;
 
@@ -96,7 +96,7 @@ export class GameComponent {
   }
 
   public check(regularityType){
-    var selectedPositions = this.positions.filter(x => x.selected).map(x => x.value);
+    let selectedPositions = this.positions.filter(x => x.selected).map(x => x.value);
     if (selectedPositions.length > 1){
       this.http.post<CheckResultModel>(this.baseUrl + 'Game/Check', {
         GameId: this.startGame.GameId,
@@ -106,15 +106,18 @@ export class GameComponent {
         // popup with appearing and hiding animation
         if (result.Match){
           let progressInfos = this.game.ProgressRegularityInfos[regularityType];
-          let info = progressInfos.find(x => x.RegularityNumber == result.RegularityNumber && !x.Found);
+          let info = progressInfos.find(x => x.RegularityNumber == result.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
 
           info.Positions = selectedPositions;
-          info.Found = true;
+          info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
           alert(result.PointsAdded + ' очков заработано!');
 
           this.game.Score = result.NewTotalPoints;
-          this.game.TimerSeconds += 5;
+
+          if (!result.Hinted){
+            this.game.TimerSeconds += 5;
+          }
 
           this.clearSelections();
         }
@@ -139,12 +142,56 @@ export class GameComponent {
           this.endGame = result;
           // TODO: popup with appearing animation
           this.clearSelections();
-          this.confirmEndGameWithResults();
+          alert("Игра окончена! Набрано " + this.endGame.TotalScore + ' очков за ' + this.endGame.SpentMinutes + ' минуты ' + this.endGame.SpentSeconds + ' секунды.');
+          this.showNotFound();
         }, error => console.error(error));
       }
     }
-    else {
-      this.confirmEndGameWithResults();
+  }
+
+  public endSession(){
+    if (confirm('Завершить сеанс? (текущий прогресс будет утерян)')){
+      this.startGame = null;
+      this.game = null;
+      this.number = null;
+      this.positions = null;
+    }
+  }
+
+  public showNotFound(){
+    if (confirm("Показать ненайденные закономерности?")){
+      this.endGame.NotFoundRegularityInfos.forEach(hint => {
+        let progressInfos = this.game.ProgressRegularityInfos[hint.Type];
+        let info = progressInfos.find(x => x.RegularityNumber == hint.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
+
+        if (info) {
+          info.Positions = hint.Positions;
+          info.FoundStatus = FoundStatus.Hinted;
+        }
+      });
+      this.endGame.HintsIterated = true;
+    }
+  }
+
+  public startHintMode(){
+    if (confirm("Вам нужна подсказка?")){
+      this.http.post<HintResultModel>(this.baseUrl + 'Game/Hint?gameId=' + this.startGame.GameId, null).subscribe(result => {
+        if (result) {
+          this.clearSelections();
+
+          for (let pos = 0; pos < this.startGame.Length; pos++) {
+            let selected = result.Positions.some(x => x == pos);
+
+            this.positions[pos].selected = selected;
+            this.number[pos].selected = selected;
+            this.number[pos].disabled = true;
+          }
+
+          this.regularityTypes.forEach(regType => {
+            regType.enabled = result.Type == regType.type;
+          });
+        }
+      }, error => console.error(error));
     }
   }
 
@@ -154,11 +201,23 @@ export class GameComponent {
       return [];
     }
 
-    return infos.filter(x => x.Found);
+    return infos.filter(x => x.FoundStatus == FoundStatus.Hinted || x.FoundStatus == FoundStatus.Found);
   }
 
   public some(collection, value){
     return collection.some(x => x == value);
+  }
+
+  public getHintClass(status){
+    return status == FoundStatus.Found
+      ? 'plus'
+      : status == FoundStatus.NotFound
+        ? 'minus'
+        : 'hint';
+  }
+
+  public getHintChar(status){
+    return status == FoundStatus.NotFound ? '-' : '+';
   }
 
   private static composeHintMessage(result){
@@ -186,12 +245,12 @@ export class GameComponent {
 
   private initLists(){
     this.regularityTypes = [];
-    this.regularityTypes.push({type: 1, label: "Одинаковые цифры", regularityNumberHint: "Количество цифр", shortLabel: "ОЦ"});
-    this.regularityTypes.push({type: 2, label: "Одинаковые числа", regularityNumberHint: "Количество чисел", shortLabel: "ОЧ"});
-    this.regularityTypes.push({type: 3, label: "Зеркальные цифры", regularityNumberHint: "Количество цифр между крайними цифрами", shortLabel: "ЗЦ"});
-    this.regularityTypes.push({type: 4, label: "Кратные числа", regularityNumberHint: "Кратность", shortLabel: "КЧ"});
-    this.regularityTypes.push({type: 5, label: "Арифметическая прогрессия", regularityNumberHint: "Шаг прогрессии", shortLabel: "АП"});
-    this.regularityTypes.push({type: 6, label: "Геометрическая прогрессия", regularityNumberHint: "Шаг прогрессии", shortLabel: "ГП"});
+    this.regularityTypes.push({type: 1, enabled: true, label: "Одинаковые цифры", regularityNumberHint: "Количество цифр", shortLabel: "ОЦ"});
+    this.regularityTypes.push({type: 2, enabled: true, label: "Одинаковые числа", regularityNumberHint: "Количество чисел", shortLabel: "ОЧ"});
+    this.regularityTypes.push({type: 3, enabled: true, label: "Зеркальные цифры", regularityNumberHint: "Количество цифр между крайними цифрами", shortLabel: "ЗЦ"});
+    this.regularityTypes.push({type: 4, enabled: true, label: "Кратные числа", regularityNumberHint: "Кратность", shortLabel: "КЧ"});
+    this.regularityTypes.push({type: 5, enabled: true, label: "Арифметическая прогрессия", regularityNumberHint: "Шаг прогрессии", shortLabel: "АП"});
+    this.regularityTypes.push({type: 6, enabled: true, label: "Геометрическая прогрессия", regularityNumberHint: "Шаг прогрессии", shortLabel: "ГП"});
 
     this.difficultyLevels = [];
     this.difficultyLevels.push({type: 1, label: "Лёгкий"});
@@ -205,16 +264,11 @@ export class GameComponent {
     });
     this.number.forEach(num => {
       num.selected = false;
+      num.disabled = false;
     });
-  }
-
-  private confirmEndGameWithResults(){
-    if (confirm("Игра окончена! Набрано " + this.endGame.TotalScore + ' очков за ' + this.endGame.SpentMinutes + ' минуты ' + this.endGame.SpentSeconds + ' секунды. Завершить сеанс?')){
-      this.startGame = null;
-      this.game = null;
-      this.number = null;
-      this.positions = null;
-    }
+    this.regularityTypes.forEach(regType => {
+      regType.enabled = true;
+    });
   }
 }
 
@@ -242,7 +296,7 @@ class ProgressModel
 class ProgressRegularityInfo
 {
   RegularityNumber: number;
-  Found: boolean;
+  FoundStatus: FoundStatus;
   Positions: number[];
 }
 
@@ -250,7 +304,9 @@ interface EndModel {
   TotalScore: number;
   SpentMinutes: number;
   SpentSeconds: number;
+  NotFoundRegularityInfos: HintResultModel[];
   FoundRegularityInfos: EndRegularityInfo[];
+  HintsIterated: boolean;
 }
 
 interface EndRegularityInfo {
@@ -258,9 +314,16 @@ interface EndRegularityInfo {
   Count: number;
 }
 
+interface HintResultModel{
+  Positions: number[];
+  Type: number;
+  RegularityNumber: number;
+}
+
 interface CheckResultModel {
   RegularityNumber: number;
   Match: boolean;
+  Hinted: boolean;
   PointsAdded: number;
   NewTotalPoints: number;
   AddHint: CheckHint;
@@ -273,4 +336,10 @@ enum CheckHint{
   AddMoreThanOneDigit = 12,
   RemoveOneDigit = 21,
   RemoveMoreThanOneDigit = 22
+}
+
+enum FoundStatus{
+  Found = 1,
+  Hinted = 2,
+  NotFound = 3
 }

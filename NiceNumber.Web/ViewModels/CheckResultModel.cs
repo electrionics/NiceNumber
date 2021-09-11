@@ -13,6 +13,8 @@
         public CheckHint RemoveHint { get; set; }
         
         public double RegularityNumber { get; set; }
+        
+        public bool Hinted { get; set; }
     }
 
     public enum CheckHint

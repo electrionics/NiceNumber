@@ -20,12 +20,12 @@ namespace NiceNumber.Services.Implementation
             _dbContext = dbContext;
         }
 
-        public async Task<CheckResult> CheckRegularity(Guid gameId, string sessionId, byte[] positions, RegularityType type)
+        public async Task<CheckResult> CheckRegularity(Guid gameId, string sessionId, byte[] positions, RegularityType type, bool hinted)
         {
             var regularitiesToCheck = await _dbContext.Set<Regularity>()
                 .Where(x =>
                     x.Number.Games.Any(y => y.Id == gameId && y.SessionId == sessionId) &&
-                    !x.Checks.Any(y => y.GameId == gameId && y.Game.SessionId == sessionId && y.ScoreAdded > 0) &&
+                    !x.Checks.Any(y => y.GameId == gameId && y.Game.SessionId == sessionId && y.RegularityId != null) &&
                     x.Type == type && Math.Abs(x.RegularityNumber) <= 100 && (type != RegularityType.GeometricProgression || x.RegularityNumber >= 0.01))//TODO: move this check to 'playable' logic, and use only flag here
                 .ToListAsync();
 
@@ -60,26 +60,36 @@ namespace NiceNumber.Services.Implementation
             check.RegularityId = check.Regularity?.Id;
             check.ClosestRegularityId = check.ClosestRegularity.Id;
 
-            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            if (hinted)
             {
-                var existCheck = await _dbContext.Set<Check>()
-                    .FirstOrDefaultAsync(x => x.RegularityId == check.RegularityId && x.GameId == gameId && x.Game.SessionId == sessionId);
-            
-                check.ScoreAdded = check.Regularity == null || existCheck != null
-                    ? 0
-                    : CalculateRegularityFoundScore(check.Regularity);
-                
                 _dbContext.Set<Check>().Add(check);
                 var game = _dbContext.Set<Game>().First(x => x.Id == gameId && x.SessionId == sessionId);
                 check.Game = game;
-                
-                if (check.ScoreAdded > 0)
-                {
-                    game.Score += check.ScoreAdded;
-                }
-
                 await _dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
+            }
+            else
+            {
+                using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+                {
+                    var existCheck = await _dbContext.Set<Check>()
+                        .FirstOrDefaultAsync(x => x.RegularityId == check.RegularityId && x.GameId == gameId && x.Game.SessionId == sessionId);
+            
+                    check.ScoreAdded = check.Regularity == null || existCheck != null
+                        ? 0
+                        : CalculateRegularityFoundScore(check.Regularity);
+                
+                    _dbContext.Set<Check>().Add(check);
+                    var game = _dbContext.Set<Game>().First(x => x.Id == gameId && x.SessionId == sessionId);
+                    check.Game = game;
+                
+                    if (check.ScoreAdded > 0)
+                    {
+                        game.Score += check.ScoreAdded;
+                    }
+
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
             }
             
             return new CheckResult { Value = check, RegularityNumber = check.Regularity?.RegularityNumber ?? 0};
@@ -102,6 +112,35 @@ namespace NiceNumber.Services.Implementation
                 
                 _ => throw new NotImplementedException()
             };
+        }
+
+        public async Task<HintResult> GetNextCheck(Guid gameId, string sessionId)
+        {
+            var regularityToHint = await _dbContext.Set<Regularity>()
+                .Where(x =>
+                    x.Number.Games.Any(y => y.Id == gameId && y.SessionId == sessionId) &&
+                    !x.Checks.Any(y => y.GameId == gameId && y.Game.SessionId == sessionId && y.RegularityId != null) &&
+                    Math.Abs(x.RegularityNumber) <= 100 &&
+                    (x.Type != RegularityType.GeometricProgression || x.RegularityNumber >= 0.01))//TODO: move this check to 'playable' logic, and use only flag here
+                .OrderBy(x => x.Type)
+                .ThenBy(x => x.RegularityNumber)
+                .FirstOrDefaultAsync();
+
+            if (regularityToHint == null)
+            {
+                return null;
+            }
+
+            var result = new HintResult
+            {
+                Type = regularityToHint.Type,
+                StartPositions = regularityToHint.StartPositions,
+                SubNumberLengths = regularityToHint.SubNumberLengths,
+                AllPositions = regularityToHint.AllPositions,
+                RegularityNumber = regularityToHint.RegularityNumber
+            };
+
+            return result;
         }
     }
 }

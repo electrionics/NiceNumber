@@ -64,6 +64,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   height: 62px;
 }
 
+.btn.check.disabled{
+  background-color: gray;
+}
+
 .reg-type-summary .minus{
   color: red;
   font-weight: bold;
@@ -71,6 +75,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .reg-type-summary .plus{
   color: green;
+  font-weight: bold;
+}
+
+.reg-type-summary .hint{
+  color: orange;
   font-weight: bold;
 }
 
