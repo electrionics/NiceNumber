@@ -11,7 +11,7 @@
             <button class="btn btn-primary text-center" (click)="end(true)" *ngIf="!endGame">Завершить игру</button>
             <button style="margin-top: 5px;" class="btn btn-info text-center" (click)="startHintMode()" *ngIf="!endGame">Подсказать</button>
             <button class="btn btn-primary text-center" (click)="endSession()" *ngIf="endGame">Завершить сеанс</button>
-            <button style="margin-top: 5px;" class="btn btn-info text-center" (click)="showNotFound()" *ngIf="endGame && !endGame.HintsIterated">Показать ненайденные</button>
+            <button style="margin-top: 5px;" class="btn btn-info text-center" (click)="showNotFound()" *ngIf="endGame && !endGame.HintsIterated">Показать не найденные</button>
           <div style="margin-top: 5px;">Осталось <span class="timer">{{game.TimerSeconds * 1000 | date:'mm:ss'}}</span></div>
         </ng-container>
       </td>
@@ -31,21 +31,24 @@
   <table id="progress" class='table table-striped'>
     <thead>
       <tr>
-        <th style="width: 170px;" class="text-center">Число закономерности</th>
+        <th style="width: 170px;" class="text-center">Число-подсказка</th>
         <th *ngFor="let pos of positions" class="text-center">{{ pos.value + 1 }}</th>
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td [colSpan]="positions.length + 1" class="text-center font-weight-bold"><span>Наведите/нажмите на знаки вопроса <i class="bi bi-question-circle"></i> в таблице, чтобы узнать, что означают числа-посказки.</span></td>
+      </tr>
       <ng-container *ngFor="let regType of regularityTypes">
         <ng-container *ngIf="startGame.ExistRegularityTypeCounts[regType.type]">
           <tr class="reg-type-summary">
             <td [colSpan]="positions.length + 1">
-              <span *ngIf="regType.regularityNumberHint"><i matTooltip="Число закономерности - {{regType.regularityNumberHint}}" class="bi bi-info-circle"></i></span>
+              <span *ngIf="regType.regularityNumberHint"><i matTooltip="Число-подсказка - {{regType.regularityNumberHint}}" class="bi bi-question-circle"></i></span>
               {{regType.label}} ({{filterByFound(game.ProgressRegularityInfos, regType.type).length}}/{{startGame.ExistRegularityTypeCounts[regType.type]}})
               <span *ngFor="let regularity of game.ProgressRegularityInfos[regType.type]">{{regularity.RegularityNumber}}<span class="{{getHintClass(regularity.FoundStatus)}}">{{getHintChar(regularity.FoundStatus)}}</span>&nbsp;&nbsp;</span>
             </td>
           </tr>
-          <tr *ngFor="let regularity of filterByFound(game.ProgressRegularityInfos, regType.type)">
+          <tr *ngFor="let regularity of filterByFound(game.ProgressRegularityInfos, regType.type)" class="{{regularity.FoundStatus == 2 ? 'hinted' : ''}}">
             <td class="text-center"><span *ngIf="regType.regularityNumberHint">{{regularity.RegularityNumber}}</span></td>
             <td class="text-center" *ngFor="let position of positions"><span class="btn btn-deselected text-center" *ngIf="some(regularity.Positions, position.value)">{{number[position.value].value}}</span></td>
           </tr>

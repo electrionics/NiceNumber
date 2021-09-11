@@ -245,12 +245,12 @@ export class GameComponent {
 
   private initLists(){
     this.regularityTypes = [];
-    this.regularityTypes.push({type: 1, enabled: true, label: "Одинаковые цифры", regularityNumberHint: "Количество цифр", shortLabel: "ОЦ"});
-    this.regularityTypes.push({type: 2, enabled: true, label: "Одинаковые числа", regularityNumberHint: "Количество чисел", shortLabel: "ОЧ"});
-    this.regularityTypes.push({type: 3, enabled: true, label: "Зеркальные цифры", regularityNumberHint: "Количество цифр между крайними цифрами", shortLabel: "ЗЦ"});
-    this.regularityTypes.push({type: 4, enabled: true, label: "Кратные числа", regularityNumberHint: "Кратность", shortLabel: "КЧ"});
-    this.regularityTypes.push({type: 5, enabled: true, label: "Арифметическая прогрессия", regularityNumberHint: "Шаг прогрессии", shortLabel: "АП"});
-    this.regularityTypes.push({type: 6, enabled: true, label: "Геометрическая прогрессия", regularityNumberHint: "Шаг прогрессии", shortLabel: "ГП"});
+    this.regularityTypes.push({type: 1, enabled: true, label: "Одинаковые цифры", regularityNumberHint: "Количество цифр в закономерности. Например, для числа '373177' будет два числа-подсказки, равные 2 для троек и 3 для семерок.", shortLabel: "ОЦ"});
+    this.regularityTypes.push({type: 2, enabled: true, label: "Одинаковые числа", regularityNumberHint: "Количество чисел в закономерности. Например, для числа '404040' будет одно число-подсказка, равное 3: три числа, равных 40.", shortLabel: "ОЧ"});
+    this.regularityTypes.push({type: 3, enabled: true, label: "Зеркальные цифры", regularityNumberHint: "Количество цифр между внутренними крайними цифрами. Например, для числа '133221' будет два числа-подсказки, равных 0, так как зеркальные будут '1331' и '1221', а между двойками и тройками в исходном числе нет цифр.", shortLabel: "ЗЦ"});
+    this.regularityTypes.push({type: 4, enabled: true, label: "Кратные числа", regularityNumberHint: "Кратность чисел (большее число разделить на меньшее), всегда целое число. Например, для числа '8421' будет одно число-подсказка, равное 84/21 = 4.", shortLabel: "КЧ"});
+    this.regularityTypes.push({type: 5, enabled: true, label: "Арифметическая прогрессия", regularityNumberHint: "Шаг (разность) прогрессии. Например, для числа '23420' будет два числа-подсказки, 4-3 = 3-2 = 1 и 0-2 = 2-4 = -2.", shortLabel: "АП"});
+    this.regularityTypes.push({type: 6, enabled: true, label: "Геометрическая прогрессия", regularityNumberHint: "Знаменатель прогрессии. Например, для числа '141684' будет два числа-подсказки, 16/4 = 4/1 = 4 и 4/8 = 8/16 = 0.5.", shortLabel: "ГП"});
 
     this.difficultyLevels = [];
     this.difficultyLevels.push({type: 1, label: "Лёгкий"});

@@ -51,10 +51,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 #progress{
-  table-layout: fixed;
 }
 
-#progress .btn-deselected{
+#progress tr.hinted{
+    background-color: mistyrose;
+}
+
+#progress .btn-deselected {
   cursor: default;
 }
 
