@@ -58,7 +58,7 @@ namespace NiceNumber.Core.Regularities
                     if (subNumbers[i] == 0) continue; // eliminates divide by zero exception
                     
                     var q = (double)subNumbers[j] / subNumbers[i];
-                    if (q.EqualTo(1, Accuracy)) continue; // no same numbers count as geometric progression
+                    if (q.EqualTo(1, Accuracy) || q.EqualTo(0, Accuracy)) continue; // no same numbers count as geometric progression, no extra low multiplier progressions
 
                     if (!qIndexes.ContainsKey(q))
                     {

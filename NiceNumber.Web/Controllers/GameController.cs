@@ -136,11 +136,11 @@ namespace NiceNumber.Web.Controllers
 
         [HttpPost]
         [ApiRoute("Game/Hint")]
-        public async Task<HintResultModel> Hint([FromQuery] Guid gameId)
+        public async Task<HintResultModel> Hint(HintModel data)
         {
             var sessionId = HttpContext.Session.Id;
 
-            var hint = await _checkService.GetNextCheck(gameId, sessionId);
+            var hint = await _checkService.GetRandomCheck(data.GameId, sessionId, data.Type, data.RegularityNumber);
             if (hint != null)
             {
                 HttpContext.Session.Set(NextCheckIsHintSessionKey, Array.Empty<byte>());

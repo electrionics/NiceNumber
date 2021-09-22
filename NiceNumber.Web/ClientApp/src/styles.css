@@ -21,14 +21,40 @@ code {
   border-color:#17a2b8;
 }
 
-html, body { height: 100%; }
+.btn-hint {
+  color: #fff;
+  background-color: orange;
+  border-color: orange;
+}
+
+.btn-hint:hover {
+  color: #fff;
+  background-color: darkorange;
+  border-color: darkorange;
+}
+
+.btn-hint.btn-small{
+  width: 16px;
+  height: 25px;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-#checks .btn{
+#checks{
+    margin-bottom: 1rem;
+}
+#checks.btn-group {
+  text-align: center;
+}
+#checks .btn {
   margin-right: 5px;
 }
 
-#digits .btn, #progress .btn{
+#digits .btn, #progress .regularity .btn {
   width: 100%;
 }
 

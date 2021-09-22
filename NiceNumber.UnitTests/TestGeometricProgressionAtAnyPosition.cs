@@ -103,7 +103,14 @@ namespace NiceNumber.UnitTests
         [Test]
         public void Test_GeometricProgressionAtAnyPosition_NotCountZeroRegularityNumber()
         {
-            //TODO: test progression with '0' regularity number
+            const long number = 476670057680;
+            var regularity = new GeometricProgression(3);
+            
+            var detected = regularity.Process(number);
+            
+            Assert.NotNull(detected);
+            Assert.AreEqual(detected.Count, 0);
+            Assert.Pass();
         }
     }
 }

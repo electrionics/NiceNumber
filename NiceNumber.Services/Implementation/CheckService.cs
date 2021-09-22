@@ -114,17 +114,33 @@ namespace NiceNumber.Services.Implementation
             };
         }
 
-        public async Task<HintResult> GetNextCheck(Guid gameId, string sessionId)
+        public async Task<HintResult> GetRandomCheck(Guid gameId, string sessionId, RegularityType? type, double? regularityNumber)
         {
-            var regularityToHint = await _dbContext.Set<Regularity>()
+            var regularityToHintQuery = _dbContext.Set<Regularity>()
                 .Where(x =>
                     x.Number.Games.Any(y => y.Id == gameId && y.SessionId == sessionId) &&
                     !x.Checks.Any(y => y.GameId == gameId && y.Game.SessionId == sessionId && y.RegularityId != null) &&
                     Math.Abs(x.RegularityNumber) <= 100 &&
-                    (x.Type != RegularityType.GeometricProgression || x.RegularityNumber >= 0.01))//TODO: move this check to 'playable' logic, and use only flag here
+                    (x.Type != RegularityType.GeometricProgression || x.RegularityNumber >= 0.01));//TODO: move this check to 'playable' logic, and use only flag here
+            
+            if (type != null)
+            {
+                regularityToHintQuery = regularityToHintQuery.Where(x => x.Type == type);
+            }
+            if (regularityNumber != null)
+            {
+                regularityToHintQuery = regularityToHintQuery.Where(x => x.RegularityNumber == regularityNumber);
+            }
+            
+            var candidatesToHint = await regularityToHintQuery
                 .OrderBy(x => x.Type)
                 .ThenBy(x => x.RegularityNumber)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
+
+            var random = new Random();
+            var regularityToHint = candidatesToHint
+                .Skip(random.Next(0, Math.Max(candidatesToHint.Count - 1, 0)))
+                .FirstOrDefault();
 
             if (regularityToHint == null)
             {

@@ -13,7 +13,7 @@ namespace NiceNumber
         {
             var regularities = new List<IRegularity>
             {
-                new MirrorDigits()
+                new GeometricProgression()
             };
 
             var typesToUpdate = regularities.SelectMany(x => x.PossibleTypes).ToList();

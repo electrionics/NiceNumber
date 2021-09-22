@@ -173,9 +173,13 @@ export class GameComponent {
     }
   }
 
-  public startHintMode(){
+  public startHintMode(regularityType, regularityNumber){
     if (confirm("Вам нужна подсказка?")){
-      this.http.post<HintResultModel>(this.baseUrl + 'Game/Hint?gameId=' + this.startGame.GameId, null).subscribe(result => {
+      this.http.post<HintResultModel>(this.baseUrl + 'Game/Hint', {
+        GameId: this.startGame.GameId,
+        Type: regularityType,
+        RegularityNumber: regularityNumber
+      }).subscribe(result => {
         if (result) {
           this.clearSelections();
 
@@ -218,6 +222,14 @@ export class GameComponent {
 
   public getHintChar(status){
     return status == FoundStatus.NotFound ? '-' : '+';
+  }
+
+  public getHintDisabled(status) {
+    return status != FoundStatus.NotFound;
+  }
+
+  public getAnyDisabled(regularityTypes){
+    return regularityTypes.some(x => !x.enabled);
   }
 
   private static composeHintMessage(result){
