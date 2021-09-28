@@ -83,6 +83,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border-color: gray;
 }
 
+#progress .number .btn{
+  background: none!important;
+  border: none!important;
+  color: white;
+}
+
 #progress .btn-deselected{
   color: #fff;
   background-color: lightgray;
