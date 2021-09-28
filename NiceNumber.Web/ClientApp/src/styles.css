@@ -11,14 +11,18 @@ code {
   color: #e01a76;
 }
 
-.text-center{
-  text-align: center;
+.text-center {
+  text-align: center!important;
+}
+
+.vertical-center{
+  vertical-align: middle!important;
 }
 
 .btn-info {
-  color:#fff;
-  background-color:#17a2b8;
-  border-color:#17a2b8;
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
 }
 
 .btn-hint {
@@ -43,9 +47,13 @@ html, body {
   height: 100%;
 }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
+.table td, .table th{
+  padding: 0!important;
+}
 #checks{
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
+  margin-right: auto;
+  margin-left: auto;
 }
 #checks.btn-group {
   text-align: center;
@@ -53,8 +61,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 #checks .btn {
   margin-right: 5px;
 }
+#checks .reg-type-name{
+    width: 150px;
+    height: 45px;
+    font-weight: bold;
+}
 
-#digits .btn, #progress .regularity .btn {
+#digits .btn, #progress .regularity .btn, #progress .number .btn {
   width: 100%;
 }
 
@@ -86,12 +99,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 #progress .btn-deselected {
   cursor: default;
 }
-
+/*
 .btn.check{
   width: 155px;
   vertical-align: middle;
   height: 62px;
-}
+}*/
 
 .btn.check.disabled{
   background-color: gray;

@@ -12,6 +12,7 @@ export class GameComponent {
   public endGame: EndModel;
 
   public difficultyLevel: number;
+  public hintsEnabled: boolean;
 
   public number: { value: number; selected: boolean; disabled: boolean; }[];
   public positions: { value: number; selected: boolean; }[];
@@ -36,6 +37,7 @@ export class GameComponent {
 
   public start(){
     this.http.get<StartModel>(this.baseUrl + 'Game/Start?difficultyLevel=' + this.difficultyLevel).subscribe(result => {
+      this.hintsEnabled = true;
       this.endGame = null;
       this.startGame = result;
       this.game = new ProgressModel();
@@ -173,8 +175,12 @@ export class GameComponent {
     }
   }
 
-  public startHintMode(regularityType, regularityNumber){
-    if (confirm("Вам нужна подсказка?")){
+  public toggleHints(){
+    this.hintsEnabled = !this.hintsEnabled;
+  }
+
+  public startHintMode(regularityType, regularityNumber, needConfirm){
+    if (!needConfirm || confirm("Вам нужна подсказка?")){
       this.http.post<HintResultModel>(this.baseUrl + 'Game/Hint', {
         GameId: this.startGame.GameId,
         Type: regularityType,
@@ -206,6 +212,15 @@ export class GameComponent {
     }
 
     return infos.filter(x => x.FoundStatus == FoundStatus.Hinted || x.FoundStatus == FoundStatus.Found);
+  }
+
+  public someFoundProgressInfo(){
+    if (!this.game){
+      return false;
+    }
+
+    var dictionary = this.game.ProgressRegularityInfos;
+    return this.regularityTypes.some(t => this.filterByFound(dictionary, t.type).length);
   }
 
   public some(collection, value){

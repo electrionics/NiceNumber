@@ -23,7 +23,7 @@ namespace NiceNumber
                 .AddScoped<INumberService, NumberService>()
                 .AddScoped<IRegularityService, RegularityService>()
                 .AddDbContext<NumberDataContext>(builder => 
-                    builder.UseSqlServer("server=.;database=numio;trusted_connection=true;"))
+                    builder.UseSqlServer("server=93.125.99.108;database=nummiesr_numio;User Id=nummiesr_prod;Password=aquila899FU3P!!!;"))
                 .BuildServiceProvider();
 
             var numberService = serviceProvider.GetService<INumberService>();

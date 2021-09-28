@@ -49,6 +49,7 @@ namespace NiceNumber.Web
                 //options.IdleTimeout = TimeSpan.FromMinutes(30);//You can set Time   
                 // options.Cookie.IsEssential = true;
                 options.Cookie.Name = "SID";
+                options.IdleTimeout = TimeSpan.FromDays(30);
             });
 
             services.Configure<CookiePolicyOptions>(options =>
