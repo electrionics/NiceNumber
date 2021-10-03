@@ -67,20 +67,20 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-weight: bold;
 }
 
-#digits .btn, #progress .regularity .btn, #progress .number .btn {
+.digits .btn, #progress .regularity .btn, #progress .number .btn {
   width: 100%;
 }
 
-#digits .btn-selected {
+.digits .btn-selected {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
 
-#digits .btn-deselected{
+.digits .btn-deselected{
   color: #fff;
-  background-color: gray;
-  border-color: gray;
+  background-color: gray!important;
+  border-color: gray!important;
 }
 
 #progress .number .btn{

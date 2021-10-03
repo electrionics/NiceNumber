@@ -13,6 +13,7 @@ export class GameComponent {
 
   public difficultyLevel: number;
   public hintsEnabled: boolean;
+  public understandDescription: boolean;
 
   public number: { value: number; selected: boolean; disabled: boolean; }[];
   public positions: { value: number; selected: boolean; }[];
@@ -38,6 +39,7 @@ export class GameComponent {
   public start(){
     this.http.get<StartModel>(this.baseUrl + 'Game/Start?difficultyLevel=' + this.difficultyLevel).subscribe(result => {
       this.hintsEnabled = true;
+      this.understandDescription = false;
       this.endGame = null;
       this.startGame = result;
       this.game = new ProgressModel();
