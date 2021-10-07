@@ -11,6 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { AuthorComponent } from './author/author.component';
 import { GameComponent } from "./game/game.component";
+import { RecordsComponent } from "./records/records.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTooltipModule } from "@angular/material/tooltip";
 
@@ -22,7 +23,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     HomeComponent,
     AboutComponent,
     AuthorComponent,
-    GameComponent
+    GameComponent,
+    RecordsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -30,6 +32,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     FormsModule,
     RouterModule.forRoot([
       {path: '', component: GameComponent, pathMatch: 'full'},
+      {path: 'records', component: RecordsComponent},
       {path: 'about', component: AboutComponent},
       {path: 'author', component: AuthorComponent},
       {path: 'home', component: HomeComponent},

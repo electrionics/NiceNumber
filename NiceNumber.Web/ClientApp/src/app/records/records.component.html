@@ -1,0 +1,37 @@
+<h1>Таблица рекордов</h1>
+
+<div style="margin: 10px auto;">
+  <button (click)="getRecords(1)" class="btn  text-center {{selectedDays == 1 ? 'btn-primary' : 'btn-info'}}">Сегодня</button>
+  <button (click)="getRecords(7)" class="btn  text-center {{selectedDays == 7 ? 'btn-primary' : 'btn-info'}}">Неделя</button>
+  <button (click)="getRecords(30)" class="btn  text-center {{selectedDays == 30 ? 'btn-primary' : 'btn-info'}}">Месяц</button>
+  <button (click)="getRecords(null)" class="btn  text-center {{selectedDays == null ? 'btn-primary' : 'btn-info'}}">Всё время</button>
+</div>
+
+<table class='table table-striped' aria-labelledby="tableLabel" style="margin-bottom: 0;">
+  <thead>
+    <tr>
+      <th>Место</th>
+      <th>Игрок</th>
+      <th>Набрано очков</th>
+    </tr>
+  </thead>
+  <tbody *ngIf="records.length">
+    <tr *ngFor="let record of records" class="{{record.CurrentPlayer ? 'current' : ''}}">
+      <td>
+        {{record.Position}}
+      </td>
+      <td>
+        <span *ngIf="!record.Link">{{record.Player}}</span>
+        <a *ngIf="record.Link" href="{{record.Link}}">{{record.Player}}</a>
+      </td>
+      <td>
+        {{record.Score}}
+      </td>
+    </tr>
+  </tbody>
+  <tbody *ngIf="!records.length">
+    <tr>
+      <td colspan="3"><div style="margin: 0 auto; width: 110px;">Нет результатов</div></td>-
+    </tr>
+  </tbody>
+</table>
