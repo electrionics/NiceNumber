@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NiceNumber.Core;
 using NiceNumber.Domain.Entities;
 using NiceNumber.Services.Interfaces;
+using NiceNumber.Web.Results;
 using NiceNumber.Web.ViewModels;
 
 namespace NiceNumber.Web.Controllers
@@ -64,8 +65,8 @@ namespace NiceNumber.Web.Controllers
         }
 
         #endregion
-
-
+        
+        
         #region Check
 
         [HttpPost]
@@ -128,7 +129,7 @@ namespace NiceNumber.Web.Controllers
         }
 
         #endregion
-
+        
         
         #region Hint
 
@@ -156,6 +157,37 @@ namespace NiceNumber.Web.Controllers
             return null;
         }
         
+        #endregion
+
+
+        #region Records
+
+        [HttpGet]
+        [ApiRoute("Game/Records")]
+        public async Task<List<RecordModel>> Records(int? days)
+        {
+            const int topRecords = 10;
+            var possibleDays = new int?[] {null, 1, 7, 30};
+            var sessionId = HttpContext.Session.Id;
+            
+            if (!possibleDays.Contains(days))
+            {
+                days = null;
+            }
+
+            var games = await _gameService.GetTopResults(days, topRecords);
+            var model = games.Select((game, i) => new RecordModel
+            {
+                Position = i + 1,
+                CurrentPlayer = game.SessionId == sessionId,
+                Score = game.Score,
+                Player = game.PlayerName,
+                Link = game.PlayerLink
+            }).ToList();
+
+            return model;
+        }
+
         #endregion
         
         
@@ -206,6 +238,35 @@ namespace NiceNumber.Web.Controllers
             };
 
             return model;
+        }
+
+        #endregion
+
+
+        #region UpdateEnded
+
+        [HttpPost]
+        [ApiRoute("Game/UpdateEnded")]
+        public async Task<Result> UpdateEnded([FromBody] UpdateEndedModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var sessionId = HttpContext.Session.Id;
+
+                return new Result
+                {
+                    Success = await _gameService.UpdateEndedGame(model.GameId, sessionId, model.Name, model.Link),
+                    Errors = new List<KeyValuePair<string, string>>()
+                };
+            }
+
+            return new Result
+            {
+                Success = false,
+                Errors = ModelState.SelectMany(x =>
+                        x.Value.Errors.Select(e => new KeyValuePair<string, string>(x.Key, e.ErrorMessage)))
+                    .ToList()
+            };
         }
 
         #endregion

@@ -1,4 +1,6 @@
 using System;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +16,8 @@ using NiceNumber.Services.Implementation;
 using NiceNumber.Services.Interfaces;
 using NiceNumber.Web.Configuration;
 using NiceNumber.Web.Filters;
+using NiceNumber.Web.Validators;
+using NiceNumber.Web.ViewModels;
 using CheckService = NiceNumber.Services.Implementation.CheckService;
 
 namespace NiceNumber.Web
@@ -57,6 +61,12 @@ namespace NiceNumber.Web
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = _ => false;
             });
+            
+            services.AddMvc(setup => {
+                //...mvc setup...
+            }).AddFluentValidation();
+            
+            services.AddTransient<IValidator<UpdateEndedModel>, UpdateEndedModelValidator>();
 
             services.AddScoped<ICheckService, CheckService>();
             services.AddScoped<IGameService, GameService>();

@@ -21,6 +21,10 @@ namespace NiceNumber.Domain.Entities
         
         public bool EndInBackground { get; set; }
         
+        public string PlayerName { get; set; }
+        
+        public string PlayerLink { get; set; }
+        
         
         public Number Number { get; set; }
         

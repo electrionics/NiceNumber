@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -108,6 +109,63 @@ namespace NiceNumber.Services.Implementation
             }
 
             return game;
+        }
+
+        public async Task<bool> UpdateEndedGame(Guid gameId, string sessionId, string name, string link)
+        {
+            var game = await _dbContext.Set<Game>()
+                .FirstOrDefaultAsync(x => x.SessionId == sessionId && x.Id == gameId);
+
+            if (game != null && 
+                game.FinishTime != null && 
+                game.Score > 0 && 
+                game.PlayerName == null && 
+                game.PlayerLink == null)
+            {
+                game.PlayerName = name;
+                game.PlayerLink = link;
+
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        public async Task<List<Game>> GetTopResults(int? days, int count)
+        {
+            var query = _dbContext.Set<Game>()
+                .Where(x => x.FinishTime != null && x.Score > 0);
+            if (days != null)
+            {
+                var minFinishTime = DateTime.Today.AddDays(1 - days.Value);
+                
+                query = query.Where(x => x.FinishTime > minFinishTime);
+            }
+
+            var games = await query
+                .OrderByDescending(x => x.Score)
+                .ThenByDescending(x => x.FinishTime)
+                .Take(count)
+                .ToListAsync();
+
+            foreach (var game in games)
+            {
+                if (string.IsNullOrWhiteSpace(game.PlayerName))
+                {
+                    game.PlayerName = "Игрок";
+                }
+            }
+
+            return games;
         }
     }
 }
