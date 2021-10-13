@@ -14,6 +14,9 @@ import { GameComponent } from "./game/game.component";
 import { RecordsComponent } from "./records/records.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { UpdateRecordDialogComponent } from "./game/updateRecordDialog.component";
+import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from "@angular/material/dialog";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -24,6 +27,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     AboutComponent,
     AuthorComponent,
     GameComponent,
+    UpdateRecordDialogComponent,
     RecordsComponent
   ],
   imports: [
@@ -38,9 +42,16 @@ import { MatTooltipModule } from "@angular/material/tooltip";
       {path: 'home', component: HomeComponent},
     ]),
     BrowserAnimationsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDialogModule,
+    MatButtonModule
   ],
-  providers: [],
+  entryComponents: [
+    UpdateRecordDialogComponent
+  ],
+  providers: [
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

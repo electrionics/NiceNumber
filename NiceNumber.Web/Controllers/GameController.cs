@@ -247,7 +247,7 @@ namespace NiceNumber.Web.Controllers
 
         [HttpPost]
         [ApiRoute("Game/UpdateEnded")]
-        public async Task<Result> UpdateEnded([FromBody] UpdateEndedModel model)
+        public async Task<Result> UpdateEnded(UpdateEndedModel model)
         {
             if (ModelState.IsValid)
             {

@@ -1,6 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-
+import {UpdateRecordDialogComponent} from "./updateRecordDialog.component";
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-game',
@@ -26,7 +27,7 @@ export class GameComponent {
   private http: HttpClient;
   private baseUrl: string;
 
-  constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string) {
+  constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog) {
     this.initLists();
 
     this.difficultyLevel = 3;
@@ -146,8 +147,17 @@ export class GameComponent {
           this.endGame = result;
           // TODO: popup with appearing animation
           this.clearSelections();
-          alert("Игра окончена! Набрано " + this.endGame.TotalScore + ' очков за ' + this.endGame.SpentMinutes + ' минуты ' + this.endGame.SpentSeconds + ' секунды.');
-          this.showNotFound();
+          this.dialog.open(UpdateRecordDialogComponent, {
+            data: {
+              gameId: this.startGame.GameId,
+              totalScore: this.endGame.TotalScore,
+              spentMinutes: this.endGame.SpentMinutes,
+              spentSeconds: this.endGame.SpentSeconds
+            },
+            hasBackdrop: true
+          }).afterClosed().subscribe(result => {
+            this.showNotFound();
+          });
         }, error => console.error(error));
       }
     }

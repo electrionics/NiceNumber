@@ -22,7 +22,7 @@
       </td>
       <td>
         <span *ngIf="!record.Link">{{record.Player}}</span>
-        <a *ngIf="record.Link" href="{{record.Link}}">{{record.Player}}</a>
+        <a *ngIf="record.Link" href="{{record.Link}}" target="_blank">{{record.Player}}</a>
       </td>
       <td>
         {{record.Score}}
