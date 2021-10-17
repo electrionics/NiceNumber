@@ -154,7 +154,8 @@ export class GameComponent {
               spentMinutes: this.endGame.SpentMinutes,
               spentSeconds: this.endGame.SpentSeconds
             },
-            hasBackdrop: true
+            hasBackdrop: false,
+            disableClose: true
           }).afterClosed().subscribe(result => {
             this.showNotFound();
           });
