@@ -2,6 +2,8 @@ import {Component, Inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {UpdateRecordDialogComponent} from "./updateRecordDialog.component";
 import {MatDialog} from '@angular/material/dialog';
+import {ConfirmDialogComponent} from "../common/confirm.component";
+import {AlertDialogComponent} from "../common/alert.component";
 
 @Component({
   selector: 'app-game',
@@ -116,65 +118,73 @@ export class GameComponent {
           info.Positions = selectedPositions;
           info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
-          alert(result.PointsAdded + ' очков заработано!');
+          this.alertDialog(result.PointsAdded + ' очков заработано!', () =>{
+            this.game.Score = result.NewTotalPoints;
 
-          this.game.Score = result.NewTotalPoints;
+            if (!result.Hinted){
+              this.game.TimerSeconds += 5;
+            }
 
-          if (!result.Hinted){
-            this.game.TimerSeconds += 5;
-          }
-
-          this.clearSelections();
+            this.clearSelections();
+          });
         }
         else {
           let hintMessage = GameComponent.composeHintMessage(result);
 
           if (hintMessage){
-            alert(hintMessage);
+            this.alertDialog(hintMessage);
           }
         }
       }, error => console.error(error));
     }
     else {
-      alert("Выберите минимум 2 цифры.");
+      this.alertDialog("Выберите минимум 2 цифры.");
     }
   }
 
   public end(needConfirm){
+    let self = this;
+    let endBody = function(){
+      self.http.post<EndModel>(self.baseUrl + 'Game/End?gameId=' + self.startGame.GameId, null).subscribe(result => {
+        self.endGame = result;
+        // TODO: popup with appearing animation
+        self.clearSelections();
+        self.dialog.open(UpdateRecordDialogComponent, {
+          data: {
+            gameId: self.startGame.GameId,
+            totalScore: self.endGame.TotalScore,
+            spentMinutes: self.endGame.SpentMinutes,
+            spentSeconds: self.endGame.SpentSeconds
+          }
+        }).afterClosed().subscribe(result => {
+          self.showNotFound();
+        });
+      }, error => console.error(error));
+    }
+
     if (!this.endGame){
-      if (!needConfirm || confirm("Вы уверены, что хотите завершить игру?")){
-        this.http.post<EndModel>(this.baseUrl + 'Game/End?gameId=' + this.startGame.GameId, null).subscribe(result => {
-          this.endGame = result;
-          // TODO: popup with appearing animation
-          this.clearSelections();
-          this.dialog.open(UpdateRecordDialogComponent, {
-            data: {
-              gameId: this.startGame.GameId,
-              totalScore: this.endGame.TotalScore,
-              spentMinutes: this.endGame.SpentMinutes,
-              spentSeconds: this.endGame.SpentSeconds
-            },
-            hasBackdrop: false,
-            disableClose: true
-          }).afterClosed().subscribe(result => {
-            this.showNotFound();
-          });
-        }, error => console.error(error));
+      if (!needConfirm){
+        endBody();
+      }
+      else{
+        this.confirmDialog('Вы уверены, что хотите завершить игру?', () => {
+          endBody();
+        });
       }
     }
   }
 
   public endSession(){
-    if (confirm('Завершить сеанс? (текущий прогресс будет утерян)')){
+    this.confirmDialog('Завершить сеанс? (текущий прогресс будет утерян)', () => {
       this.startGame = null;
       this.game = null;
       this.number = null;
       this.positions = null;
-    }
+    });
   }
 
   public showNotFound(){
-    if (confirm("Показать ненайденные закономерности?")){
+    this.confirmDialog('Показать ненайденные закономерности?', () =>{
       this.endGame.NotFoundRegularityInfos.forEach(hint => {
         let progressInfos = this.game.ProgressRegularityInfos[hint.Type];
         let info = progressInfos.find(x => x.RegularityNumber == hint.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
@@ -185,7 +195,7 @@ export class GameComponent {
         }
       });
       this.endGame.HintsIterated = true;
-    }
+    })
   }
 
   public toggleHints(){
@@ -193,28 +203,38 @@ export class GameComponent {
   }
 
   public startHintMode(regularityType, regularityNumber, needConfirm){
-    if (!needConfirm || confirm("Вам нужна подсказка?")){
-      this.http.post<HintResultModel>(this.baseUrl + 'Game/Hint', {
-        GameId: this.startGame.GameId,
+    let self = this;
+    let startHintModeBody = function (regularityType, regularityNumber){
+      self.http.post<HintResultModel>(self.baseUrl + 'Game/Hint', {
+        GameId: self.startGame.GameId,
         Type: regularityType,
         RegularityNumber: regularityNumber
       }).subscribe(result => {
         if (result) {
-          this.clearSelections();
+          self.clearSelections();
 
-          for (let pos = 0; pos < this.startGame.Length; pos++) {
+          for (let pos = 0; pos < self.startGame.Length; pos++) {
             let selected = result.Positions.some(x => x == pos);
 
-            this.positions[pos].selected = selected;
-            this.number[pos].selected = selected;
-            this.number[pos].disabled = true;
+            self.positions[pos].selected = selected;
+            self.number[pos].selected = selected;
+            self.number[pos].disabled = true;
           }
 
-          this.regularityTypes.forEach(regType => {
+          self.regularityTypes.forEach(regType => {
             regType.enabled = result.Type == regType.type;
           });
         }
       }, error => console.error(error));
+    }
+
+    if (!needConfirm){
+      startHintModeBody(regularityType, regularityNumber);
+    }
+    else{
+      this.confirmDialog('Вам нужна подсказка?', () =>{
+        startHintModeBody(regularityType, regularityNumber);
+      })
     }
   }
 
@@ -308,6 +328,32 @@ export class GameComponent {
     });
     this.regularityTypes.forEach(regType => {
       regType.enabled = true;
+    });
+  }
+
+  private confirmDialog(message, successCallback){
+    this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        content: message
+      },
+      autoFocus: true
+    }).afterClosed().subscribe(result => {
+      if (result){
+        successCallback();
+      }
+    });
+  }
+
+  private alertDialog(message, successCallback = null){
+    this.dialog.open(AlertDialogComponent, {
+      data: {
+        content: message
+      },
+      autoFocus: true
+    }).afterClosed().subscribe(result => {
+      if (successCallback) {
+        successCallback();
+      }
     });
   }
 }

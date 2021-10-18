@@ -17,6 +17,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { UpdateRecordDialogComponent } from "./game/updateRecordDialog.component";
 import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
+import { ConfirmDialogComponent } from "./common/confirm.component";
+import { AlertDialogComponent } from "./common/alert.component";
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { MatButtonModule } from "@angular/material/button";
     AuthorComponent,
     GameComponent,
     UpdateRecordDialogComponent,
-    RecordsComponent
+    RecordsComponent,
+    ConfirmDialogComponent,
+    AlertDialogComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -47,10 +51,12 @@ import { MatButtonModule } from "@angular/material/button";
     MatButtonModule
   ],
   entryComponents: [
-    UpdateRecordDialogComponent
+    UpdateRecordDialogComponent,
+    ConfirmDialogComponent,
+    AlertDialogComponent
   ],
   providers: [
-    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true, disableClose: true}}
   ],
   bootstrap: [AppComponent]
 })
