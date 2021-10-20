@@ -97,8 +97,8 @@ namespace NiceNumber.Services.Implementation
 
         private static int CalculateRegularityFoundScore(Regularity regularity)
         {
-            var regNumber = (int) Math.Abs(Math
-                .Max(1 / regularity.RegularityNumber, regularity.RegularityNumber)
+            var regNumber = (int) (Math
+                .Max(Math.Abs(1 / regularity.RegularityNumber), Math.Abs(regularity.RegularityNumber))
                 .RoundTo(RegularityConstants.DoubleRegularityNumberAccuracy));
             var subNumbersCount = regularity.SubNumberLengths.Count;
             return regularity.Type switch
