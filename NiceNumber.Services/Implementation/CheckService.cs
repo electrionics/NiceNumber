@@ -26,7 +26,7 @@ namespace NiceNumber.Services.Implementation
                 .Where(x =>
                     x.Number.Games.Any(y => y.Id == gameId && y.SessionId == sessionId) &&
                     !x.Checks.Any(y => y.GameId == gameId && y.Game.SessionId == sessionId && y.RegularityId != null) &&
-                    x.Type == type && Math.Abs(x.RegularityNumber) <= 100 && (type != RegularityType.GeometricProgression || x.RegularityNumber >= 0.01))//TODO: move this check to 'playable' logic, and use only flag here
+                    x.Type == type && x.Playable)
                 .ToListAsync();
 
             var regularityToCheck = regularitiesToCheck
@@ -120,8 +120,7 @@ namespace NiceNumber.Services.Implementation
                 .Where(x =>
                     x.Number.Games.Any(y => y.Id == gameId && y.SessionId == sessionId) &&
                     !x.Checks.Any(y => y.GameId == gameId && y.Game.SessionId == sessionId && y.RegularityId != null) &&
-                    Math.Abs(x.RegularityNumber) <= 100 &&
-                    (x.Type != RegularityType.GeometricProgression || x.RegularityNumber >= 0.01));//TODO: move this check to 'playable' logic, and use only flag here
+                    x.Playable);
             
             if (type != null)
             {

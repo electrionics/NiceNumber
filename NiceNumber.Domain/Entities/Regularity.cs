@@ -21,6 +21,8 @@ namespace NiceNumber.Domain.Entities
         
         public string SubNumberLengthsStr { get; set; }
         
+        public bool Playable { get; set; }
+        
         public bool Deleted { get; set; }
 
         private List<byte> _startPositions;

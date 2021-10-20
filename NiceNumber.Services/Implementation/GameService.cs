@@ -52,17 +52,11 @@ namespace NiceNumber.Services.Implementation
             var skipCount = generator.Next(limit);
 
             var number = await _dbContext.Set<Number>()
-                    .Include(x => x.Regularities.Where(y => 
-                        Math.Abs(y.RegularityNumber) <= 100 && 
-                        (y.Type != RegularityType.GeometricProgression || y.RegularityNumber >= 0.01))) //TODO: move this check to 'playable' logic, and use only flag here
+                    .Include(x => x.Regularities.Where(y => y.Playable))
                 .Where(x => 
                         x.Length == length && 
-                        x.Regularities.Count(y => 
-                            Math.Abs(y.RegularityNumber) <= 100 && 
-                            (y.Type != RegularityType.GeometricProgression || y.RegularityNumber >= 0.01)) <= maxRegCount && //TODO: move this check to 'playable' logic, and use only flag here
-                        x.Regularities.Count(y => 
-                            Math.Abs(y.RegularityNumber) <= 100 && 
-                            (y.Type != RegularityType.GeometricProgression || y.RegularityNumber >= 0.01)) >= minRegCount) //TODO: move this check to 'playable' logic, and use only flag here
+                        x.Regularities.Count(y => y.Playable) <= maxRegCount &&
+                        x.Regularities.Count(y => y.Playable) >= minRegCount)
                 .Skip(skipCount)
                 .Take(1)
                 .FirstOrDefaultAsync();

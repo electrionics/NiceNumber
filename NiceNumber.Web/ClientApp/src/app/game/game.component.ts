@@ -122,7 +122,7 @@ export class GameComponent {
             this.game.Score = result.NewTotalPoints;
 
             if (!result.Hinted){
-              this.game.TimerSeconds += 5;
+              this.game.TimerSeconds += 10;
             }
 
             this.clearSelections();

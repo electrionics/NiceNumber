@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using NiceNumber.Domain;
 using NiceNumber.Domain.Entities;
 using NiceNumber.Services.Interfaces;
@@ -14,7 +16,12 @@ namespace NiceNumber.Services.Implementation
         {
             _dataContext = dataContext;
         }
-        
+
+        public async Task<List<Regularity>> GetAllRegularities()
+        {
+            return await _dataContext.Set<Regularity>().ToListAsync();
+        }
+
         public async Task<Regularity> SaveRegularity(Regularity regularity)
         {
             if (regularity.Id == 0)
