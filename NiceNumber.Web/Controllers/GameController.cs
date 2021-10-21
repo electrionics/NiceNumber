@@ -49,6 +49,14 @@ namespace NiceNumber.Web.Controllers
                 ExistRegularityTypeCounts = new Dictionary<int, int>()
             };
 
+            foreach (var regularityInfo in model.ExistRegularityInfos)
+            {
+                if (regularityInfo.RegularityNumber is > 0 and < 1)
+                {
+                    regularityInfo.ReverseRegularityNumber = Math.Round(1 / regularityInfo.RegularityNumber, 0);
+                }
+            }
+
             var regularityTypeCounts = game.Number.Regularities
                 .GroupBy(x => x.Type)
                 .ToDictionary(

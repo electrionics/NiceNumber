@@ -25,5 +25,7 @@ namespace NiceNumber.Web.ViewModels
         public RegularityType Type { get; set; }
         
         public double RegularityNumber { get; set; }
+        
+        public double? ReverseRegularityNumber { get; set; }
     }
 }

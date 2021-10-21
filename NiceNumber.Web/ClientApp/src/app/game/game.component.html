@@ -108,7 +108,7 @@
                         class="btn btn-hint btn-small"
                         [disabled]="getAnyDisabled(regularityTypes)"
                         (click)="startHintMode(regType.type, regularity.RegularityNumber, true)">?</button>
-                {{regularity.RegularityNumber}}
+                {{regularity.ReverseRegularityNumber ? '1/' + regularity.ReverseRegularityNumber : regularity.RegularityNumber}}
                 <span class="{{getHintClass(regularity.FoundStatus)}}">
                   {{getHintChar(regularity.FoundStatus)}}
                 </span>&nbsp;&nbsp;

@@ -72,6 +72,7 @@ export class GameComponent {
           progressInfo.FoundStatus = FoundStatus.NotFound;
           progressInfo.Positions = [];
           progressInfo.RegularityNumber = regularityInfo.RegularityNumber;
+          progressInfo.ReverseRegularityNumber = regularityInfo.ReverseRegularityNumber;
 
           this.game.ProgressRegularityInfos[type].push(progressInfo);
         });
@@ -370,6 +371,7 @@ interface StartModel {
 interface StartRegularityInfo {
   Type: number;
   RegularityNumber: number;
+  ReverseRegularityNumber: number;
 }
 
 class ProgressModel
@@ -382,6 +384,7 @@ class ProgressModel
 class ProgressRegularityInfo
 {
   RegularityNumber: number;
+  ReverseRegularityNumber: number;
   FoundStatus: FoundStatus;
   Positions: number[];
 }
