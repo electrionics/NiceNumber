@@ -14,6 +14,8 @@
         
         public double RegularityNumber { get; set; }
         
+        public FoundNumberModel[] FoundNumbers { get; set; }
+        
         public bool Hinted { get; set; }
     }
 

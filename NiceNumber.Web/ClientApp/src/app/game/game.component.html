@@ -28,7 +28,7 @@
     </tr>
     <tr class="digits">
       <td *ngFor="let digit of number" class="vertical-center">
-        <button (click)="toggleSelected(digit)" [disabled]="digit.disabled" [ngClass]="digit.selected ? 'btn btn-selected text-center' : 'btn btn-deselected text-center'">{{ digit.value }}</button>
+        <button (click)="toggleSelected(digit)" [disabled]="digit.disabled" [ngClass]="digit.selected ? 'btn btn-selected text-center' : 'btn btn-deselected text-center'"><span class="digit">{{ digit.value }}</span></button>
       </td>
     </tr>
   </tbody>
@@ -116,11 +116,19 @@
             </td>
           </tr>
           <tr *ngFor="let regularity of filterByFound(game.ProgressRegularityInfos, regType.type)" class="regularity{{regularity.FoundStatus == 2 ? ' hinted' : ''}}">
-            <td class="text-center"><span *ngIf="regType.regularityNumberHint">{{regularity.RegularityNumber}}</span></td>
-            <td class="text-center" *ngFor="let position of positions">
-              <span class="btn btn-deselected text-center" *ngIf="some(regularity.Positions, position.value)">{{number[position.value].value}}</span>
-              <span *ngIf="!some(regularity.Positions, position.value)">&nbsp;</span>
+            <td class="text-center">
+              <span *ngIf="regType.regularityNumberHint">{{regularity.RegularityNumber}}</span>
             </td>
+            <ng-container *ngFor="let position of positions">
+              <ng-container *ngFor="let length of [getCurrentLength(regularity.Numbers, position.value)]">
+                <td class="text-center" *ngIf="length.value" [colSpan]="length.value">
+                  <span *ngIf="length.exist" class="btn btn-deselected text-center">
+                    <span *ngFor="let increment of range(length.value)" class="found-digit">{{number[position.value + increment].value}}</span>
+                  </span>
+                  <span *ngIf="!length.exist">&nbsp;</span>
+                </td>
+              </ng-container>
+            </ng-container>
           </tr>
         </ng-container>
       </ng-container>

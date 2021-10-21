@@ -70,7 +70,7 @@ export class GameComponent {
         this.startGame.ExistRegularityInfos.filter(x => x.Type == type).forEach(regularityInfo =>{
           let progressInfo = new ProgressRegularityInfo();
           progressInfo.FoundStatus = FoundStatus.NotFound;
-          progressInfo.Positions = [];
+          progressInfo.Numbers = null;
           progressInfo.RegularityNumber = regularityInfo.RegularityNumber;
           progressInfo.ReverseRegularityNumber = regularityInfo.ReverseRegularityNumber;
 
@@ -116,7 +116,7 @@ export class GameComponent {
           let progressInfos = this.game.ProgressRegularityInfos[regularityType];
           let info = progressInfos.find(x => x.RegularityNumber == result.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
 
-          info.Positions = selectedPositions;
+          info.Numbers = result.FoundNumbers;
           info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
           this.alertDialog(result.PointsAdded + ' очков заработано!', () =>{
@@ -191,7 +191,7 @@ export class GameComponent {
         let info = progressInfos.find(x => x.RegularityNumber == hint.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
 
         if (info) {
-          info.Positions = hint.Positions;
+          info.Numbers = hint.Numbers;
           info.FoundStatus = FoundStatus.Hinted;
         }
       });
@@ -215,7 +215,15 @@ export class GameComponent {
           self.clearSelections();
 
           for (let pos = 0; pos < self.startGame.Length; pos++) {
-            let selected = result.Positions.some(x => x == pos);
+            let selected = result.Numbers.some(n => {
+              for (var i = 0; i < n.Length; i++){
+                if (n.Position + i == pos){
+                  return true;
+                }
+              }
+
+              return false;
+            });
 
             self.positions[pos].selected = selected;
             self.number[pos].selected = selected;
@@ -248,17 +256,34 @@ export class GameComponent {
     return infos.filter(x => x.FoundStatus == FoundStatus.Hinted || x.FoundStatus == FoundStatus.Found);
   }
 
-  public someFoundProgressInfo(){
-    if (!this.game){
-      return false;
+  public getCurrentLength(numbers: FoundNumber[], position){
+    for (let i = 0; i < numbers.length; i++){
+      if (numbers[i].Position == position){
+        return {
+          value: numbers[i].Length,
+          exist: true
+        }; // colspan cell
+      }
+      else if (numbers[i].Position < position && numbers[i].Position + numbers[i].Length > position){
+        return {
+          value: 0,
+          exist: true
+        }; // skip cell
+      }
     }
 
-    var dictionary = this.game.ProgressRegularityInfos;
-    return this.regularityTypes.some(t => this.filterByFound(dictionary, t.type).length);
+    return {
+      value: 1,
+      exist: false
+    }; // empty cell
   }
 
-  public some(collection, value){
-    return collection.some(x => x == value);
+  public range(length){
+    let result = [];
+    for (let i = 0; i < length; i++){
+      result.push(i);
+    }
+    return result;
   }
 
   public getHintClass(status){
@@ -386,7 +411,12 @@ class ProgressRegularityInfo
   RegularityNumber: number;
   ReverseRegularityNumber: number;
   FoundStatus: FoundStatus;
-  Positions: number[];
+  Numbers: FoundNumber[];
+}
+
+class FoundNumber{
+  Position: number;
+  Length: number;
 }
 
 interface EndModel {
@@ -404,7 +434,7 @@ interface EndRegularityInfo {
 }
 
 interface HintResultModel{
-  Positions: number[];
+  Numbers: FoundNumber[];
   Type: number;
   RegularityNumber: number;
 }
@@ -417,6 +447,7 @@ interface CheckResultModel {
   NewTotalPoints: number;
   AddHint: CheckHint;
   RemoveHint: CheckHint;
+  FoundNumbers: FoundNumber[];
 }
 
 enum CheckHint{

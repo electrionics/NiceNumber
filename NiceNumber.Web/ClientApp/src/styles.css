@@ -95,6 +95,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border-color: lightgray;
 }
 
+#progress .btn-deselected .found-digit, .digits .btn-deselected .digit{
+  padding: 0 3px;
+}
+
 #progress{
 }
 

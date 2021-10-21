@@ -112,7 +112,12 @@ namespace NiceNumber.Web.Controllers
                 AddHint = CheckHint.No,
                 RemoveHint = CheckHint.No,
                 RegularityNumber = entity.RegularityNumber,
-                Hinted = hinted
+                Hinted = hinted,
+                FoundNumbers = check.Regularity?.StartPositions.Select((pos, i) => new FoundNumberModel
+                {
+                    Position = pos,
+                    Length = check.Regularity.SubNumberLengths[i]
+                }).ToArray()
             };
             
             if (check.NeedAddDigits == 1)
@@ -156,7 +161,11 @@ namespace NiceNumber.Web.Controllers
 
                 return new HintResultModel
                 {
-                    Positions = hint.AllPositions.Select(x => (int)x).ToArray(),
+                    Numbers = hint.StartPositions.Select((pos, i) => new FoundNumberModel
+                    {
+                        Position = pos,
+                        Length = hint.SubNumberLengths[i]
+                    }).ToArray(),
                     Type = hint.Type,
                     RegularityNumber = hint.RegularityNumber
                 };
@@ -239,7 +248,11 @@ namespace NiceNumber.Web.Controllers
                     }).ToList(),
                 NotFoundRegularityInfos = notFoundRegularities.Select(x => new HintResultModel
                 {
-                    Positions = x.AllPositions.Select(y => (int)y).ToArray(),
+                    Numbers = x.StartPositions.Select((pos, i) => new FoundNumberModel
+                    {
+                        Position = pos,
+                        Length = x.SubNumberLengths[i]
+                    }).ToArray(),
                     RegularityNumber = x.RegularityNumber,
                     Type = x.Type
                 }).ToList()

@@ -4,7 +4,7 @@ namespace NiceNumber.Web.ViewModels
 {
     public class HintResultModel
     {
-        public int[] Positions { get; set; }
+        public FoundNumberModel[] Numbers { get; set; }
         
         public RegularityType Type { get; set; }
         
