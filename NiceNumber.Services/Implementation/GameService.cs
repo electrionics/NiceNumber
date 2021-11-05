@@ -83,7 +83,7 @@ namespace NiceNumber.Services.Implementation
             return game;
         }
 
-        public async Task<Game> EndGame(Guid gameId, string sessionId, bool inBackground = false)
+        public async Task<Game> EndGame(Guid gameId, string sessionId, int remainingSeconds, bool inBackground = false)
         {
             var game = await _dbContext.Set<Game>()
                 .Include(x => x.Checks).ThenInclude(x => x.Regularity)
@@ -96,7 +96,9 @@ namespace NiceNumber.Services.Implementation
                 {
                     game.FinishTime = DateTime.Now;
                 }
-                game.Score = game.Checks.Sum(x => x.ScoreAdded);
+
+                var checkScore = game.Checks.Sum(x => x.ScoreAdded);
+                game.Score = checkScore + Math.Min(checkScore / 2, remainingSeconds);
                 game.EndInBackground = inBackground;
                 
                 await _dbContext.SaveChangesAsync();

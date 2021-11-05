@@ -36,7 +36,7 @@ namespace NiceNumber.Web
         {
             services.AddControllersWithViews(options =>
             {
-                options.Filters.Add(new SessionHoldingFilter());
+                options.Filters.Add(new SessionIdFilter());
             }).AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
             
             // In production, the Angular files will be served from this directory

@@ -127,6 +127,10 @@ export class GameComponent {
             }
 
             this.clearSelections();
+
+            if (!this.regularityTypes.some(x => this.game.ProgressRegularityInfos[x.type].some(info => info.FoundStatus == FoundStatus.NotFound))){
+              this.end(false);
+            }
           });
         }
         else {
@@ -146,10 +150,13 @@ export class GameComponent {
   public end(needConfirm){
     let self = this;
     let endBody = function(){
-      self.http.post<EndModel>(self.baseUrl + 'Game/End?gameId=' + self.startGame.GameId, null).subscribe(result => {
+      self.http.post<EndModel>(self.baseUrl + 'Game/End?gameId=' + self.startGame.GameId + '&remainingSeconds=' + self.game.TimerSeconds, null).subscribe(result => {
         self.endGame = result;
-        // TODO: popup with appearing animation
+
+        self.game.Score = self.endGame.TotalScore;
+
         self.clearSelections();
+
         self.dialog.open(UpdateRecordDialogComponent, {
           data: {
             gameId: self.startGame.GameId,

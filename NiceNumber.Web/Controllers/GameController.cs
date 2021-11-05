@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NiceNumber.Core;
 using NiceNumber.Domain.Entities;
 using NiceNumber.Services.Interfaces;
+using NiceNumber.Web.Filters;
 using NiceNumber.Web.Results;
 using NiceNumber.Web.ViewModels;
 
@@ -16,6 +18,8 @@ namespace NiceNumber.Web.Controllers
     {
         private readonly IGameService _gameService;
         private readonly ICheckService _checkService;
+
+        private string SessionId => HttpContext.Session.GetString(SessionIdFilter.CookieSessionForGameKey);
 
         public GameController(IGameService gameService, ICheckService checkService)
         {
@@ -29,7 +33,7 @@ namespace NiceNumber.Web.Controllers
         [ApiRoute("Game/Start")]
         public async Task<StartModel> Start([FromQuery]DifficultyLevel difficultyLevel)
         {
-            var sessionId = HttpContext.Session.Id;
+            var sessionId = SessionId;
 
             var game = await _gameService.StartRandomNumberGame(difficultyLevel, sessionId);
 
@@ -81,7 +85,7 @@ namespace NiceNumber.Web.Controllers
         [ApiRoute("Game/Check")]
         public async Task<CheckResultModel> Check(CheckModel data)
         {
-            var sessionId = HttpContext.Session.Id;
+            var sessionId = SessionId;
             var hinted = HttpContext.Session.TryGetValue(NextCheckIsHintSessionKey, out _);
             
             var check = await _checkService.CheckRegularity(data.GameId, sessionId, data.Positions.Select(x => (byte)x).ToArray(), data.Type, hinted);
@@ -152,7 +156,7 @@ namespace NiceNumber.Web.Controllers
         [ApiRoute("Game/Hint")]
         public async Task<HintResultModel> Hint(HintModel data)
         {
-            var sessionId = HttpContext.Session.Id;
+            var sessionId = SessionId;
 
             var hint = await _checkService.GetRandomCheck(data.GameId, sessionId, data.Type, data.RegularityNumber);
             if (hint != null)
@@ -185,7 +189,7 @@ namespace NiceNumber.Web.Controllers
         {
             const int topRecords = 10;
             var possibleDays = new int?[] {null, 1, 7, 30};
-            var sessionId = HttpContext.Session.Id;
+            var sessionId = SessionId;
             
             if (!possibleDays.Contains(days))
             {
@@ -212,11 +216,11 @@ namespace NiceNumber.Web.Controllers
 
         [HttpPost]
         [ApiRoute("Game/End")]
-        public async Task<EndModel> End([FromQuery] Guid gameId)
+        public async Task<EndModel> End([FromQuery] Guid gameId, [FromQuery] int remainingSeconds)
         {
-            var sessionId = HttpContext.Session.Id;
+            var sessionId = SessionId;
 
-            var game = await _gameService.EndGame(gameId, sessionId);
+            var game = await _gameService.EndGame(gameId, sessionId, remainingSeconds);
 
             if (game == null)
             {
@@ -272,7 +276,7 @@ namespace NiceNumber.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var sessionId = HttpContext.Session.Id;
+                var sessionId = SessionId;
 
                 return new Result
                 {

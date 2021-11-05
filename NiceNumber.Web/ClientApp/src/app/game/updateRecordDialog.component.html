@@ -1,35 +1,41 @@
 ﻿<h2 mat-dialog-title class="text-center">Игра окончена!</h2>
 <mat-dialog-content>
   <h3>Набрано {{ data.totalScore }} очков за {{ data.spentMinutes }} минуты {{ data.spentSeconds }} секунды.</h3>
-    <div class="form-group">
-      <label for="Name" class="col-sm-4 control-label">Имя</label>
-      <div class="col-sm-12">
-        <input type="text" [(ngModel)]="model.Name" class="form-control" id="Name" name="Name" placeholder="Ваше имя" (ngModelChange)="updateControls()">
-        <div *ngIf="Name.invalid"
-             class="alert alert-danger">
-          <div *ngIf="Name.errors?.required">
-            Имя обязательно для заполнения.
-          </div>
-          <div *ngIf="Name.errors?.maxlength">
-            Имя должно содержать максимум 50 символов.
-          </div>
+  <div *ngIf="data.totalScore" class="form-group">
+    <label for="Name" class="col-sm-4 control-label">Имя</label>
+    <div class="col-sm-12">
+      <input type="text" [(ngModel)]="model.Name" class="form-control" id="Name" name="Name" placeholder="Ваше имя" (ngModelChange)="updateControls()">
+      <div *ngIf="Name.invalid"
+           class="alert alert-danger">
+        <div *ngIf="Name.errors?.required">
+          Имя обязательно для заполнения.
+        </div>
+        <div *ngIf="Name.errors?.maxlength">
+          Имя должно содержать максимум 50 символов.
+        </div>
+        <div *ngIf="Name.errors?.pattern">
+          Имя содержит недопустимые символы.
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label for="Link" class="col-sm-4 control-label">Ссылка</label>
-      <div class="col-sm-12">
-        <input type="text" [(ngModel)]="model.Link" class="form-control" id="Link" name="Link" placeholder="Ваша ссылка" (ngModelChange)="updateControls()">
-        <div *ngIf="Link.invalid"
-             class="alert alert-danger">
-          <div *ngIf="Link.errors?.maxlength">
-            Ссылка должна содержать максимум 100 символов.
-          </div>
+  </div>
+  <div *ngIf="data.totalScore" class="form-group">
+    <label for="Link" class="col-sm-4 control-label">Ссылка</label>
+    <div class="col-sm-12">
+      <input type="text" [(ngModel)]="model.Link" class="form-control" id="Link" name="Link" placeholder="Ваша ссылка" (ngModelChange)="updateControls()">
+      <div *ngIf="Link.invalid"
+           class="alert alert-danger">
+        <div *ngIf="Link.errors?.maxlength">
+          Ссылка должна содержать максимум 100 символов.
+        </div>
+        <div *ngIf="Link.errors?.pattern">
+          Неверный формат ссылки.
         </div>
       </div>
     </div>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button mat-dialog-close>Закрыть</button>
-  <button mat-button (click)="updateRecord()">Сохранить</button>
+  <button *ngIf="data.totalScore" mat-button (click)="updateRecord()">Сохранить</button>
 </mat-dialog-actions>
