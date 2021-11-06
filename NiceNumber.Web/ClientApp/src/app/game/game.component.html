@@ -1,6 +1,10 @@
 <p *ngIf="!difficultyLevels"><em>Загрузка...</em></p>
 
 <div *ngIf="!game" class="text-center">
+  <span>Уровень сложности:</span>
+  <select [(ngModel)]="difficultyLevel" style="margin: 0 10px;">
+    <option *ngFor="let dl of difficultyLevels" [value]="dl.type">{{dl.label}}</option>
+  </select>
   <button class="btn btn-primary" (click)="start()">Начать игру</button>
 </div>
 

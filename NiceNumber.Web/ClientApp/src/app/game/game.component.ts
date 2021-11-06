@@ -32,7 +32,7 @@ export class GameComponent {
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog) {
     this.initLists();
 
-    this.difficultyLevel = 3;
+    this.difficultyLevel = 1;
     this.timerSet = false;
 
     this.http = http;
@@ -183,7 +183,7 @@ export class GameComponent {
   }
 
   public endSession(){
-    this.confirmDialog('Завершить сеанс? (текущий прогресс будет утерян)', () => {
+    this.confirmDialog('Завершить сеанс и вернуться на главную страницу?', () => {
       this.startGame = null;
       this.game = null;
       this.number = null;

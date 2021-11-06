@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NiceNumber.Core;
@@ -21,42 +22,45 @@ namespace NiceNumber.Services.Implementation
         
         public async Task<Game> StartRandomNumberGame(DifficultyLevel level, string sessionId)
         {
-            int length, minRegCount, maxRegCount;
+            int minLength, maxLength, minRegCount, maxRegCount;
             switch (level)
             {
                 case DifficultyLevel.Easy:
-                    length = 8;
-                    minRegCount = 5;
+                    minLength = 7;
+                    maxLength = 8;
+                    minRegCount = 6;
                     maxRegCount = 10;
                     break;
                 case DifficultyLevel.Normal:
-                    length = 10;
-                    minRegCount = 10;
+                    minLength = 9;
+                    maxLength = 10;
+                    minRegCount = 11;
                     maxRegCount = 20;
                     break;
                 case DifficultyLevel.Hard:
-                    length = 12;
-                    minRegCount = 20;
+                    minLength = 11;
+                    maxLength = 12;
+                    minRegCount = 21;
                     maxRegCount = 30;
                     break;
                 default:
                     throw new ArgumentException($@"Invalid difficulty level. Value: {level}.");
             }
 
-            var limit = await _dbContext.Set<Number>().CountAsync(x => 
-                x.Length == length && 
-                x.Regularities.Count <= maxRegCount &&
-                x.Regularities.Count >= minRegCount) - 1;
+            Expression<Func<Number, bool>> numberCondition = x =>
+                x.Length >= minLength &&
+                x.Length <= maxLength &&
+                x.Regularities.Count(y => y.Playable) <= maxRegCount &&
+                x.Regularities.Count(y => y.Playable) >= minRegCount;
+            
+            var limit = await _dbContext.Set<Number>().CountAsync(numberCondition) - 1;
             
             var generator = new Random();
             var skipCount = generator.Next(limit);
 
             var number = await _dbContext.Set<Number>()
                     .Include(x => x.Regularities.Where(y => y.Playable))
-                .Where(x => 
-                        x.Length == length && 
-                        x.Regularities.Count(y => y.Playable) <= maxRegCount &&
-                        x.Regularities.Count(y => y.Playable) >= minRegCount)
+                .Where(numberCondition)
                 .Skip(skipCount)
                 .Take(1)
                 .FirstOrDefaultAsync();
