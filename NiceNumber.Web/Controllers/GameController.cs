@@ -185,7 +185,7 @@ namespace NiceNumber.Web.Controllers
 
         [HttpGet]
         [ApiRoute("Game/Records")]
-        public async Task<List<RecordModel>> Records(int? days)
+        public async Task<List<RecordModel>> Records(int? days, DifficultyLevel? difficultyLevel)
         {
             const int topRecords = 10;
             var possibleDays = new int?[] {null, 1, 7, 30};
@@ -196,7 +196,12 @@ namespace NiceNumber.Web.Controllers
                 days = null;
             }
 
-            var games = await _gameService.GetTopResults(days, topRecords);
+            if (difficultyLevel != null && !Enum.GetValues<DifficultyLevel>().Contains(difficultyLevel.Value))
+            {
+                difficultyLevel = null;
+            }
+
+            var games = await _gameService.GetTopResults(days, difficultyLevel, topRecords);
             var model = games.Select((game, i) => new RecordModel
             {
                 Position = i + 1,

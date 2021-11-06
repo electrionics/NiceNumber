@@ -140,7 +140,7 @@ namespace NiceNumber.Services.Implementation
             return false;
         }
 
-        public async Task<List<Game>> GetTopResults(int? days, int count)
+        public async Task<List<Game>> GetTopResults(int? days, DifficultyLevel? difficultyLevel, int count)
         {
             var query = _dbContext.Set<Game>()
                 .Where(x => x.FinishTime != null && x.Score > 0);
@@ -149,6 +149,11 @@ namespace NiceNumber.Services.Implementation
                 var minFinishTime = DateTime.Today.AddDays(1 - days.Value);
                 
                 query = query.Where(x => x.FinishTime > minFinishTime);
+            }
+
+            if (difficultyLevel != null)
+            {
+                query = query.Where(x => x.DifficultyLevel == difficultyLevel);
             }
 
             var games = await query

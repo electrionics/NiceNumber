@@ -142,3 +142,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .game-progress .score, .game-progress .timer{
   font-weight: bold;
 }
+
+.records .current{
+  background-color: #c4fec4!important;
+}
