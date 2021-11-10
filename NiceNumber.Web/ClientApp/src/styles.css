@@ -19,6 +19,10 @@ code {
   vertical-align: middle!important;
 }
 
+.btn{
+  box-shadow: 1px 1px 12px 5px #313155!important;
+}
+
 .btn-info {
   color: #fff;
   background-color: #17a2b8;
@@ -46,10 +50,20 @@ code {
 html, body {
   height: 100%;
 }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: linear-gradient(90deg,#8a8a8a7d,#91acbf);
+}
 .table td, .table th{
   padding: 0!important;
+  border-top: none;
 }
+
+header {
+  background: linear-gradient(#ffce75,#683c3c);
+}
+
 #checks{
   margin-bottom: 1rem;
   margin-right: auto;
@@ -66,8 +80,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     height: 45px;
     font-weight: bold;
 }
+#checks tr {
+  background: none;
+}
 
-.digits .btn, #progress .regularity .btn, #progress .number .btn {
+.digits .btn, .result-progress.regularity .btn, .result-progress.number .btn {
   width: 100%;
 }
 
@@ -83,41 +100,46 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border-color: gray!important;
 }
 
-#progress .number .btn{
+.result-progress.number .btn{
   background: none!important;
   border: none!important;
-  color: white;
+  color: rgba(255, 255, 255, 0);
 }
 
-#progress .btn-deselected{
+.result-progress .btn-deselected{
   color: #fff;
   background-color: lightgray;
   border-color: lightgray;
 }
 
-#progress .btn-deselected .found-digit, .digits .btn-deselected .digit, .digits .btn-selected .digit{
+.result-progress .btn-deselected .found-digit, .digits .btn-deselected .digit, .digits .btn-selected .digit{
   padding: 0 3px;
 }
 
-#progress{
+tr.result-progress.hinted{
+  background: linear-gradient(90deg, #fedb9c,#f87a7a8c)!important;
+  box-shadow: 1px 3px 15px 1px cadetblue;
 }
 
-#progress tr.hinted{
-    background-color: mistyrose;
+tr.result-progress.found{
+  background: linear-gradient(90deg, #fef99c, rgba(156, 248, 122, 0.55))!important;
 }
 
-#progress .btn-deselected {
+.result-progress .btn-deselected {
   cursor: default;
 }
-/*
-.btn.check{
-  width: 155px;
-  vertical-align: middle;
-  height: 62px;
-}*/
 
 .btn.check.disabled{
   background-color: gray;
+}
+
+.not-found-regs{
+  line-height: 15px;
+}
+
+.reg-type-summary{
+  line-height: 40px;
+  box-shadow: 1px 1px 6px 2px black;
 }
 
 .reg-type-summary .minus{
@@ -144,5 +166,5 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .records .current{
-  background-color: #c4fec4!important;
+  background-color: #c4fec440!important;
 }
