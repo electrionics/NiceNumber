@@ -51,6 +51,12 @@ export class RecordsComponent {
     }
 
     this.http.get<RecordModel[]>(url).subscribe(result => {
+      result.forEach((item) => {
+        if (item.Link && !item.Link.startsWith('http')){
+          item.Link = '//' + item.Link;
+        }
+      });
+
       this.records = result;
     }, error => console.error(error));
   }
