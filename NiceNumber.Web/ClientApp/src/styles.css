@@ -117,7 +117,7 @@ header {
 }
 
 tr.result-progress.hinted{
-  background: linear-gradient(90deg, #fedb9c,#f87a7a8c)!important;
+  background: linear-gradient(90deg, #d6c8af,#f87a7a8c)!important;
   box-shadow: 1px 3px 15px 1px cadetblue;
 }
 

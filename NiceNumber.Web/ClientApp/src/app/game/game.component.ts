@@ -81,7 +81,7 @@ export class GameComponent {
       this.game.TimerSeconds = 300;
       if (!this.timerSet){
         setInterval(() => {
-          if (this.game.TimerSeconds > 0 && !this.endGame){
+          if (this.game && this.game.TimerSeconds && this.game.TimerSeconds > 0 && !this.endGame){
             if (--this.game.TimerSeconds == 0){
               this.end(false);
             }

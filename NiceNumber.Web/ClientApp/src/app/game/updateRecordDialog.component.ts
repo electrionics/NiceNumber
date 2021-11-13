@@ -27,7 +27,7 @@ export class UpdateRecordDialogComponent {
     this.model.Link = cookies.getCookie("lastRecord_link");
 
     const nameRegexp = '[a-zA-Zа-яА-Я0-9_-]{0,50}';
-    const urlRegexp = '(https?:\\/\\/)?(www\\.)?[_\\-a-zA-Zа-яА-Я0-9\\.]{1,100}\\.[a-zA-Zа-яА-Я0-9]{1,6}([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)';
+    const urlRegexp = '((https?:\\/\\/)?(www\\.)?[_\\-a-zA-Zа-яА-Я0-9\\.]{1,100}\\.[a-zA-Zа-яА-Я0-9]{1,6}([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*))?';
 
     this.Name = new FormControl(this.model.Name, [Validators.required, Validators.maxLength(50), Validators.pattern(nameRegexp)]);
     this.Link = new FormControl(this.model.Link, [Validators.maxLength(100), Validators.pattern(urlRegexp)]);
