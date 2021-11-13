@@ -53,8 +53,9 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  background: linear-gradient(90deg,#8a8a8a7d,#91acbf);
+  background: linear-gradient(90deg, #8a8a8a7d, #91acbf) no-repeat fixed;
 }
+
 .table td, .table th{
   padding: 0!important;
   border-top: none;
@@ -117,12 +118,12 @@ header {
 }
 
 tr.result-progress.hinted{
-  background: linear-gradient(90deg, #d6c8af,#f87a7a8c)!important;
+  background: linear-gradient(90deg, #d6c8af,#f87a7a8c) no-repeat fixed!important;
   box-shadow: 1px 3px 15px 1px cadetblue;
 }
 
 tr.result-progress.found{
-  background: linear-gradient(90deg, #fef99c, rgba(156, 248, 122, 0.55))!important;
+  background: linear-gradient(90deg, #fef99c, rgba(156, 248, 122, 0.55)) no-repeat fixed!important;
 }
 
 .result-progress .btn-deselected {

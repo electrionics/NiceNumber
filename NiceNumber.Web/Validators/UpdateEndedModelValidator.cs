@@ -18,7 +18,8 @@ namespace NiceNumber.Web.Validators
                 .MaximumLength(100)
                     .WithMessage("Ссылка должна содержать максимум {MaxLength} символов.")
                 .Matches("((https?:\\/\\/)?(www\\.)?[_\\-a-zA-Zа-яА-Я0-9\\.]{1,100}\\.[a-zA-Zа-яА-Я0-9]{1,6}([-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*))?")
-                    .WithMessage("Неверный формат ссылки.");
+                    .WithMessage("Неверный формат ссылки.")
+                .When(m => !string.IsNullOrEmpty(m.Link));
         }
     }
 }
