@@ -192,18 +192,23 @@ export class GameComponent {
   }
 
   public showNotFound(){
-    this.confirmDialog('Показать ненайденные закономерности?', () =>{
-      this.endGame.NotFoundRegularityInfos.forEach(hint => {
-        let progressInfos = this.game.ProgressRegularityInfos[hint.Type];
-        let info = progressInfos.find(x => x.RegularityNumber == hint.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
+    if (this.endGame.NotFoundRegularityInfos.length){
+      this.confirmDialog('Показать ненайденные закономерности?', () =>{
+        this.endGame.NotFoundRegularityInfos.forEach(hint => {
+          let progressInfos = this.game.ProgressRegularityInfos[hint.Type];
+          let info = progressInfos.find(x => x.RegularityNumber == hint.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
 
-        if (info) {
-          info.Numbers = hint.Numbers;
-          info.FoundStatus = FoundStatus.Hinted;
-        }
+          if (info) {
+            info.Numbers = hint.Numbers;
+            info.FoundStatus = FoundStatus.Hinted;
+          }
+        });
+        this.endGame.HintsIterated = true;
       });
+    }
+    else{
       this.endGame.HintsIterated = true;
-    })
+    }
   }
 
   public toggleHints(){
