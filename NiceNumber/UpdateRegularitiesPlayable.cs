@@ -20,7 +20,7 @@ namespace NiceNumber
             await regularityService.SaveChanges();
         }
 
-        private static bool EvaluatePlayable(Regularity regularity)
+        public static bool EvaluatePlayable(Regularity regularity)
         {
             return Math.Abs(regularity.RegularityNumber) <= 100 &&
                    (regularity.Type != RegularityType.GeometricProgression || regularity.RegularityNumber >= 0.01);

@@ -30,8 +30,8 @@ namespace NiceNumber
             var regularityService = serviceProvider.GetService<IRegularityService>();
 
             //await AddNumbers.Run(numberService, regularityService);
-            //await UpdateRegularities.Run(numberService, regularityService);
-            await UpdateRegularitiesPlayable.Run(regularityService);
+            await UpdateRegularities.Run(numberService, regularityService);
+            //await UpdateRegularitiesPlayable.Run(regularityService);
 
             //Test4();
             //Test3();

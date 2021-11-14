@@ -13,51 +13,59 @@ namespace NiceNumber
         {
             var regularities = new List<IRegularity>
             {
-                new GeometricProgression()
+                new SameNumbers()
             };
 
             var typesToUpdate = regularities.SelectMany(x => x.PossibleTypes).ToList();
-            
-            var numberLength = 12;
 
-            var numbers = await numberService.GetNumbers(numberLength, typesToUpdate);
+            var numbersLength = new[] {7, 8, 9, 10, 11, 12};
 
-            foreach (var number in numbers)
+            foreach (var numberLength in numbersLength)
             {
-                foreach (var regularity in regularities)
+                var numbers = await numberService.GetNumbers(numberLength, typesToUpdate);
+
+                foreach (var number in numbers)
                 {
-                    var result = regularity.Process(number.Value);
-
-                    var existingRegularities = number.Regularities.Where(x =>
-                            regularity.PossibleTypes.Contains(x.Type))
-                        .ToHashSet(Regularity.RegularityComparer);
-                    var newRegularities = result.Select(reg => new Regularity
+                    foreach (var regularity in regularities)
                     {
-                        NumberId = number.Id,
-                        RegularityNumber = reg.RegularityNumber,
-                        SequenceType = reg.SequenceType,
-                        Type = reg.Type,
-                        StartPositionsStr = string.Join(',', reg.Positions),
-                        SubNumberLengthsStr = string.Join(',', reg.SubNumberLengths)
-                    }).ToHashSet(Regularity.RegularityComparer);
+                        var result = regularity.Process(number.Value);
 
-                    var regularitiesToDelete = existingRegularities
-                        .Where(x => !newRegularities.Contains(x))
-                        .ToList();
-                    var regularitiesToAdd = newRegularities
-                        .Where(x => !existingRegularities.Contains(x))
-                        .ToList();
+                        var existingRegularities = number.Regularities.Where(x =>
+                                regularity.PossibleTypes.Contains(x.Type))
+                            .ToHashSet(Regularity.RegularityComparer);
+                        var newRegularities = result.Select(reg => new Regularity
+                        {
+                            NumberId = number.Id,
+                            RegularityNumber = reg.RegularityNumber,
+                            SequenceType = reg.SequenceType,
+                            Type = reg.Type,
+                            StartPositionsStr = string.Join(',', reg.Positions),
+                            SubNumberLengthsStr = string.Join(',', reg.SubNumberLengths)
+                        }).ToHashSet(Regularity.RegularityComparer);
 
-                    foreach (var entity in regularitiesToDelete)
-                    {
-                        entity.Deleted = true;
-                    }
-                    
-                    await regularityService.SaveChanges();
-                    
-                    foreach (var entity in regularitiesToAdd)
-                    {
-                        await regularityService.SaveRegularity(entity);
+                        foreach (var newRegularity in newRegularities)
+                        {
+                            newRegularity.Playable = UpdateRegularitiesPlayable.EvaluatePlayable(newRegularity);
+                        }
+
+                        var regularitiesToDelete = existingRegularities
+                            .Where(x => !newRegularities.Contains(x))
+                            .ToList();
+                        var regularitiesToAdd = newRegularities
+                            .Where(x => !existingRegularities.Contains(x))
+                            .ToList();
+
+                        foreach (var entity in regularitiesToDelete)
+                        {
+                            entity.Deleted = true;
+                        }
+
+                        await regularityService.SaveChanges();
+
+                        foreach (var entity in regularitiesToAdd)
+                        {
+                            await regularityService.SaveRegularity(entity);
+                        }
                     }
                 }
             }

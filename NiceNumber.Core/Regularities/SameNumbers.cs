@@ -106,6 +106,22 @@ namespace NiceNumber.Core.Regularities
 
         protected override bool UseRegularityNumberForInclude => false;
 
+        protected override bool Include(RegularityDetectResult first, RegularityDetectResult second)
+        {
+            var preResult = base.Include(first, second);
+            if (!preResult)
+            {
+                return false;
+            }
+            
+            var firstDigitsLength = first.SubNumberLengths.Sum(x => x);
+            var secondDigitsLength = second.SubNumberLengths.Sum(x => x);
+
+            return firstDigitsLength > secondDigitsLength ||
+                   firstDigitsLength == secondDigitsLength &&
+                   first.RegularityNumber < second.RegularityNumber;
+        }
+
         protected override void SetTypes(RegularityDetectResult result)
         {
             base.SetTypes(result);
