@@ -23,6 +23,8 @@ export class UpdateRecordDialogComponent {
     this.baseUrl = baseUrl;
     this.dialogReference = dialogRef;
 
+    dialogRef.addPanelClass('update-record-dialog');
+
     this.model.Name = cookies.getCookie("lastRecord_name");
     this.model.Link = cookies.getCookie("lastRecord_link");
 

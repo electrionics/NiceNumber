@@ -41,6 +41,11 @@ code {
   border-color: darkorange;
 }
 
+.btn-hint[disabled]:hover{
+  background-color: orange;
+  border-color: orange;
+}
+
 .btn-hint.btn-small{
   width: 16px;
   height: 25px;
@@ -69,6 +74,7 @@ header {
   margin-bottom: 1rem;
   margin-right: auto;
   margin-left: auto;
+  margin-top: 0.5rem;
 }
 #checks.btn-group {
   text-align: center;
@@ -132,6 +138,7 @@ tr.result-progress.found{
 
 .btn.check.disabled{
   background-color: gray;
+  border-color: gray;
 }
 
 .not-found-regs{
@@ -166,6 +173,34 @@ tr.result-progress.found{
   font-weight: bold;
 }
 
+.reg-tooltip-container{
+  margin-left: 10px;
+}
+
+.tooltip-regularity-type{
+  font-size: 12px;
+}
+
 .records .current{
   background-color: #c4fec440!important;
+}
+
+.update-record-dialog mat-dialog-container{
+  background: linear-gradient(#ffce75,#683c3c);
+}
+
+.update-record-dialog .btn{
+  margin: 0 auto;
+}
+
+.confirm-dialog mat-dialog-container, .alert-dialog mat-dialog-container {
+  background: linear-gradient(#ffce75,#683c3c);
+}
+
+.confirm-dialog .btn, .alert-dialog .btn{
+  margin: 0 auto;
+}
+
+.alert-dialog.points-added-dialog mat-dialog-container{
+  background: linear-gradient(90deg, #fef99c, #9CF87A);
 }

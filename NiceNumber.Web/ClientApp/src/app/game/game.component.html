@@ -5,7 +5,7 @@
   <select [(ngModel)]="difficultyLevel" style="margin: 0 10px; background: none;">
     <option *ngFor="let dl of difficultyLevels" [value]="dl.type">{{dl.label}}</option>
   </select>
-  <button class="btn btn-primary" (click)="start()">Начать игру</button>
+  <button class="btn btn-success" (click)="start()">Начать игру</button>
 </div>
 
 <table class='table table-striped game-table' aria-labelledby="tableLabel" *ngIf="number" style="margin-bottom: 0;">
@@ -99,7 +99,7 @@
       <ng-container *ngIf="startGame.ExistRegularityTypeCounts[regType.type]">
         <tr class="result-progress reg-type-summary">
           <td [colSpan]="positions.length + 1">
-            <span *ngIf="regType.regularityNumberHint"><i #tooltip="matTooltip" matTooltip="Число-подсказка - {{regType.regularityNumberHint}}" (click)="tooltip.toggle()" class="bi bi-question-circle"></i></span>
+            <span class="reg-tooltip-container" *ngIf="regType.regularityNumberHint"><i #tooltip="matTooltip" matTooltip="Число-подсказка - {{regType.regularityNumberHint}}" matTooltipClass="tooltip-regularity-type" (click)="tooltip.toggle()" class="bi bi-question-circle"></i></span>
             <b> {{regType.label}}</b> (найдено: {{filterByFound(game.ProgressRegularityInfos, regType.type).length}}/{{startGame.ExistRegularityTypeCounts[regType.type]}}), числа-подсказки:
             <span *ngFor="let regularity of game.ProgressRegularityInfos[regType.type]">
                 <button *ngIf="!endGame && !getHintDisabled(regularity.FoundStatus) && hintsEnabled"

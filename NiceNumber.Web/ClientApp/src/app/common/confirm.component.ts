@@ -8,10 +8,16 @@ import {HttpClient} from "@angular/common/http";
 })
 export class ConfirmDialogComponent {
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialogRef: MatDialogRef<ConfirmDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: {
-    content: string
+    content: string,
+    cssClass: string
   }) {
     this.content = data.content;
     this.dialogReference = dialogRef;
+
+    dialogRef.addPanelClass('confirm-dialog');
+    if (data.cssClass) {
+      dialogRef.addPanelClass(data.cssClass);
+    }
   }
 
   public content: string;

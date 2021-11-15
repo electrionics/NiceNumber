@@ -22,7 +22,7 @@ export class GameComponent {
   public positions: { value: number; selected: boolean; }[];
 
   public regularityTypes: { type: number; enabled: boolean; label: string; shortLabel: string; regularityNumberHint: string; }[];
-  public difficultyLevels: { type: number; label: string; }[];
+  public difficultyLevels: { type: number; label: string; timer: number; bonusTime: number; }[];
 
   public timerSet: boolean;
 
@@ -78,7 +78,7 @@ export class GameComponent {
         });
       });
 
-      this.game.TimerSeconds = 300;
+      this.game.TimerSeconds = this.getCurrentDifficultyLevel().timer;
       if (!this.timerSet){
         setInterval(() => {
           if (this.game && this.game.TimerSeconds && this.game.TimerSeconds > 0 && !this.endGame){
@@ -119,11 +119,11 @@ export class GameComponent {
           info.Numbers = result.FoundNumbers;
           info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
-          this.alertDialog(result.PointsAdded + ' очков заработано!', () =>{
+          this.alertDialog(result.PointsAdded + ' очков заработано!', 'Поздравляем!', 'points-added-dialog', () =>{
             this.game.Score = result.NewTotalPoints;
 
             if (!result.Hinted){
-              this.game.TimerSeconds += 10;
+              this.game.TimerSeconds += this.getCurrentDifficultyLevel().bonusTime;
             }
 
             this.clearSelections();
@@ -137,13 +137,13 @@ export class GameComponent {
           let hintMessage = GameComponent.composeHintMessage(result);
 
           if (hintMessage){
-            this.alertDialog(hintMessage);
+            this.alertDialog(hintMessage, 'Подсказка!');
           }
         }
       }, error => console.error(error));
     }
     else {
-      this.alertDialog("Выберите минимум 2 цифры.");
+      this.alertDialog("Выберите минимум 2 цифры.", 'Внимание!');
     }
   }
 
@@ -268,6 +268,17 @@ export class GameComponent {
     return infos.filter(x => x.FoundStatus == FoundStatus.Hinted || x.FoundStatus == FoundStatus.Found);
   }
 
+  public getCurrentDifficultyLevel(){
+    let result;
+    this.difficultyLevels.forEach((item) =>{
+      if (item.type == this.difficultyLevel){
+        result = item;
+      }
+    });
+
+    return result;
+  }
+
   public getCurrentLength(numbers: FoundNumber[], position){
     for (let i = 0; i < numbers.length; i++){
       if (numbers[i].Position == position){
@@ -348,12 +359,12 @@ export class GameComponent {
     this.regularityTypes.push({type: 3, enabled: true, label: "Зеркальные цифры", regularityNumberHint: "Количество цифр между внутренними крайними цифрами. Например, для числа '133221' будет два числа-подсказки, равных 0, так как зеркальные будут '1331' и '1221', а между двойками и тройками в исходном числе нет цифр.", shortLabel: "ЗЦ"});
     this.regularityTypes.push({type: 4, enabled: true, label: "Кратные числа (минимум 2-значные)", regularityNumberHint: "Кратность чисел (большее число разделить на меньшее), всегда целое число. Например, для числа '8421' будет одно число-подсказка, равное 84/21 = 4.", shortLabel: "КЧ"});
     this.regularityTypes.push({type: 5, enabled: true, label: "Арифметическая прогрессия", regularityNumberHint: "Шаг (разность) прогрессии. Например, для числа '23420' будет два числа-подсказки, 4-3 = 3-2 = 1 и 0-2 = 2-4 = -2.", shortLabel: "АП"});
-    this.regularityTypes.push({type: 6, enabled: true, label: "Геометрическая прогрессия", regularityNumberHint: "Знаменатель прогрессии. Например, для числа '141684' будет два числа-подсказки, 16/4 = 4/1 = 4 и 4/8 = 8/16 = 0.5.", shortLabel: "ГП"});
+    this.regularityTypes.push({type: 6, enabled: true, label: "Геометрическая прогрессия", regularityNumberHint: "Знаменатель прогрессии. Например, для числа '141684' будет два числа-подсказки, 16/4 = 4/1 = 4 и 4/8 = 8/16 = 1/2.", shortLabel: "ГП"});
 
     this.difficultyLevels = [];
-    this.difficultyLevels.push({type: 1, label: "Лёгкий"});
-    this.difficultyLevels.push({type: 2, label: "Средний"});
-    this.difficultyLevels.push({type: 3, label: "Тяжелый"});
+    this.difficultyLevels.push({type: 1, label: "Лёгкий", timer: 180, bonusTime: 10 });
+    this.difficultyLevels.push({type: 2, label: "Средний", timer: 240, bonusTime: 9 });
+    this.difficultyLevels.push({type: 3, label: "Тяжелый", timer: 300, bonusTime: 8 });
   }
 
   private clearSelections(){
@@ -382,10 +393,12 @@ export class GameComponent {
     });
   }
 
-  private alertDialog(message, successCallback = null){
+  private alertDialog(message, title = null, cssClass = null, successCallback = null){
     this.dialog.open(AlertDialogComponent, {
       data: {
-        content: message
+        title: title,
+        content: message,
+        cssClass: cssClass
       },
       autoFocus: true
     }).afterClosed().subscribe(result => {
