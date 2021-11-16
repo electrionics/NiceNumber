@@ -204,3 +204,10 @@ tr.result-progress.found{
 .alert-dialog.points-added-dialog mat-dialog-container{
   background: linear-gradient(90deg, #fef99c, #9CF87A);
 }
+
+/* https://www.iconfinder.com/icons/ */
+.social-networks img{
+  width: 24px;
+  height: 24px;
+  margin: 4px;
+}
