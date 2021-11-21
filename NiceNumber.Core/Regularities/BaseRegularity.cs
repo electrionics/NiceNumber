@@ -51,6 +51,8 @@ namespace NiceNumber.Core.Regularities
 
         protected abstract List<TResult> Detect(byte[] number, byte[] lengths, byte firstPosition);
 
+        //TODO: remove Single Detect methods, if it would be unused it any scenarios or not more effective, than DetectAll method usage
+        
         /// <summary>
         /// алгоритм 2: найти все закономерности данного типа в числе
         /// (оптимальнее по потребляемой памяти с скорости)

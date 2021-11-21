@@ -22,6 +22,9 @@ code {
 .btn{
   box-shadow: 1px 1px 12px 5px #313155!important;
 }
+.btn.disabled, .btn:disabled{
+  opacity: 0.55!important;
+}
 
 .btn-info {
   color: #fff;
@@ -150,19 +153,21 @@ tr.result-progress.found{
   box-shadow: 1px 1px 6px 2px black;
 }
 
-.reg-type-summary .minus{
-  color: red;
+.reg-type-summary .minus, .reg-type-summary .plus, .reg-type-summary .hint{
   font-weight: bold;
+  font-size: 16px;
+}
+
+.reg-type-summary .minus{
+  color: #d04040;
 }
 
 .reg-type-summary .plus{
   color: green;
-  font-weight: bold;
 }
 
 .reg-type-summary .hint{
-  color: orange;
-  font-weight: bold;
+  color: #897145;
 }
 
 .game-progress div{
