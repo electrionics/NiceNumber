@@ -216,3 +216,29 @@ tr.result-progress.found{
   height: 24px;
   margin: 4px;
 }
+
+
+.current-task-control{
+  animation-name: currentTaskControl;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  -moz-animation-name: currentTaskControl;
+  -moz-animation-duration: 1.5s;
+  -moz-animation-iteration-count: infinite;
+  -webkit-animation-name: currentTaskControl;
+  -webkit-animation-duration: 1.5s;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@keyframes currentTaskControl {
+  50%{
+    border: 1px solid #dc5252;
+    background-color: #dc5252;
+  }
+}
+@-webkit-keyframes currentTaskControl {
+  50%{
+    border: 1px solid #dc5252;
+    background-color: #dc5252;
+  }
+}
