@@ -24,7 +24,7 @@
       </td>
       <td [colSpan]="number.length">
         <div style="margin: 10px auto;">
-          <button *ngIf="!endGame" (click)="end(true)" class="btn btn-primary text-center current-task-control">Завершить игру</button>
+          <button *ngIf="!endGame" (click)="end(true)" class="btn btn-primary text-center current-task-control2">Завершить игру</button>
           <button *ngIf="!endGame" (click)="toggleHints()" class="btn btn-info text-center">{{hintsEnabled ? 'Убрать кнопки-подсказки' : 'Вернуть кнопки-подсказки'}}</button>
           <button *ngIf="!endGame && hintsEnabled" [disabled]="getAnyDisabled(regularityTypes)" (click)="startHintMode(null, null, false)" class="btn btn-hint text-center">Подсказать</button>
           <button *ngIf="endGame" (click)="endSession()" class="btn btn-primary text-center">Завершить сеанс</button>
