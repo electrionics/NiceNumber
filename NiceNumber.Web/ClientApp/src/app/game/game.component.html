@@ -10,6 +10,15 @@
 
 <table class='table table-striped game-table' aria-labelledby="tableLabel" *ngIf="number" style="margin-bottom: 0;">
   <tbody>
+    <tr *ngIf="difficultyLevel == 0">
+      <td [colSpan]="number.length + 1">
+        <table>
+          <tr>
+            <td *ngFor="let level in range(currentLevel.Order)" class="level-progress done"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
     <tr>
       <td rowspan="2" style="width: 170px; vertical-align: middle;" class="text-center game-progress">
         <div>

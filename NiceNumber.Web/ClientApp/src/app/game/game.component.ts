@@ -29,6 +29,11 @@ export class GameComponent {
   private http: HttpClient;
   private baseUrl: string;
 
+
+  public currentLevel: TutorialLevel;
+  public currentTaskIndex: number;
+
+
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog) {
     this.initLists();
 
@@ -487,4 +492,16 @@ enum FoundStatus{
   Found = 1,
   Hinted = 2,
   NotFound = 3
+}
+
+interface TutorialLevel{
+  Order: number;
+  Title: string;
+  Text: string;
+  Tasks: TutorialTask[];
+}
+
+interface TutorialTask {
+  Order: number;
+  Text: string;
 }
