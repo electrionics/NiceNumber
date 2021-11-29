@@ -4,6 +4,7 @@ import {UpdateRecordDialogComponent} from "./updateRecordDialog.component";
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from "../common/confirm.component";
 import {AlertDialogComponent} from "../common/alert.component";
+import {min} from "rxjs/operators";
 
 @Component({
   selector: 'app-game',
@@ -46,6 +47,9 @@ export class GameComponent {
 
   public start(){
     this.http.get<StartModel>(this.baseUrl + 'Game/Start?difficultyLevel=' + this.difficultyLevel).subscribe(result => {
+      this.currentTaskIndex = 2;
+
+
       this.hintsEnabled = true;
       this.understandDescription = false;
       this.endGame = null;
@@ -411,6 +415,21 @@ export class GameComponent {
         successCallback();
       }
     });
+  }
+
+  /* tutorial */
+  public increaseTask(minIndex, maxIndex = null, additionalCondition = true){
+    if (additionalCondition && ((!maxIndex && this.currentTaskIndex == minIndex) || (this.currentTaskIndex <= maxIndex && this.currentTaskIndex >= minIndex))){
+      this.currentTaskIndex++;
+    }
+  }
+
+  public getTutorialClass(minIndex, maxIndex = null, additionalCondition = true){
+    if (additionalCondition && ((!maxIndex && this.currentTaskIndex == minIndex) || (this.currentTaskIndex <= maxIndex && this.currentTaskIndex >= minIndex))){
+      return 'highlighted-control';
+    }
+
+    return null;
   }
 }
 
