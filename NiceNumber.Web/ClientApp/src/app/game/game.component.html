@@ -10,15 +10,6 @@
 
 <table class='table table-striped game-table' aria-labelledby="tableLabel" *ngIf="number" style="margin-bottom: 0;">
   <tbody>
-    <tr *ngIf="difficultyLevel == 0">
-      <td [colSpan]="number.length + 1">
-        <table>
-          <tr>
-            <td *ngFor="let level in range(currentLevel.Order)" class="level-progress done"></td>
-          </tr>
-        </table>
-      </td>
-    </tr>
     <tr>
       <td rowspan="2" style="width: 170px; vertical-align: middle;" class="text-center game-progress">
         <div>
@@ -33,7 +24,7 @@
       </td>
       <td [colSpan]="number.length">
         <div style="margin: 10px auto;">
-          <button *ngIf="!endGame" (click)="end(true)" class="btn btn-primary text-center current-task-control2">Завершить игру</button>
+          <button *ngIf="!endGame" (click)="end(true)" class="btn btn-primary text-center">Завершить игру</button>
           <button *ngIf="!endGame" (click)="toggleHints()" class="btn btn-info text-center">{{hintsEnabled ? 'Убрать кнопки-подсказки' : 'Вернуть кнопки-подсказки'}}</button>
           <button *ngIf="!endGame && hintsEnabled" [disabled]="getAnyDisabled(regularityTypes)" (click)="startHintMode(null, null, false)" class="btn btn-hint text-center">Подсказать</button>
           <button *ngIf="endGame" (click)="endSession()" class="btn btn-primary text-center">Завершить сеанс</button>
