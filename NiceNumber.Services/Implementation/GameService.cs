@@ -87,6 +87,35 @@ namespace NiceNumber.Services.Implementation
             return game;
         }
 
+        public async Task<Game> StartTutorial(int tutorialLevel, string sessionId)
+        {
+            var number = await _dbContext.Set<Number>()
+                .Include(x => x.Regularities.Where(y => y.Playable))
+                .Include(x => x.TutorialLevel)
+                .FirstOrDefaultAsync(x => x.TutorialLevel != null && x.TutorialLevel.Order == tutorialLevel);
+
+            if (number == null)
+            {
+                throw new InvalidOperationException("Supposed number was accidentially removed, please try again.");
+            }
+            
+            var game = new Game
+            {
+                Id = Guid.NewGuid(),
+                DifficultyLevel = DifficultyLevel.Tutorial,
+                NumberId = number.Id,
+                Score = 0,
+                SessionId = sessionId,
+                StartTime = DateTime.Now,
+                Number = number
+            };
+
+            _dbContext.Set<Game>().Add(game);
+            await _dbContext.SaveChangesAsync();
+
+            return game;
+        }
+
         public async Task<Game> EndGame(Guid gameId, string sessionId, int remainingSeconds, bool inBackground = false)
         {
             var game = await _dbContext.Set<Game>()

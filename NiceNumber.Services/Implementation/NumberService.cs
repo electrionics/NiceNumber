@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NiceNumber.Core;
@@ -29,13 +31,13 @@ namespace NiceNumber.Services.Implementation
             return number;
         }
 
-        public async Task<List<Number>> GetNumbers(int length, List<RegularityType> typesToRetrieve)
+        public async Task<List<Number>> GetNumbers(Expression<Func<Number, bool>> filterExpression, List<RegularityType> typesToRetrieve)
         {
             var result = await _dataContext.Set<Number>()
                 .Include(x => x.Regularities.Where(y => !y.Deleted && typesToRetrieve.Contains(y.Type)))
-                .Where(x => 
-                    x.Length == length && 
-                    x.Regularities.Any(y => !y.Deleted && typesToRetrieve.Contains(y.Type)))
+                .Where(filterExpression)
+                // .Where(x => 
+                //     x.Regularities.Any(y => !y.Deleted && typesToRetrieve.Contains(y.Type)))
                 .ToListAsync();
 
             return result;

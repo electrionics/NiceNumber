@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using NiceNumber.Core.Regularities;
 using NiceNumber.Domain.Entities;
@@ -13,16 +15,28 @@ namespace NiceNumber
         {
             var regularities = new List<IRegularity>
             {
+                new GeometricProgression(),
+                new ArithmeticProgression(),
+                new MirrorDigits(),
+                new Multiples(),
                 new SameNumbers()
             };
 
             var typesToUpdate = regularities.SelectMany(x => x.PossibleTypes).ToList();
 
-            var numbersLength = new[] {7, 8, 9, 10, 11, 12};
+            // var numbersLength = new[] {7, 8, 9, 10, 11, 12};
+            // var filters = numbersLength
+            //     .Select(numberLength => (Expression<Func<Number, bool>>) (x => x.Length == numberLength))
+            //     .ToList();
 
-            foreach (var numberLength in numbersLength)
+            var filters = new List<Expression<Func<Number, bool>>>()
             {
-                var numbers = await numberService.GetNumbers(numberLength, typesToUpdate);
+                x => x.TutorialLevel != null
+            };
+
+            foreach (var filter in filters)
+            {
+                var numbers = await numberService.GetNumbers(filter, typesToUpdate);
 
                 foreach (var number in numbers)
                 {

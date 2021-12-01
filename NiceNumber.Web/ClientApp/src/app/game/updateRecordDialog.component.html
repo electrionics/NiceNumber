@@ -36,6 +36,6 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close class="btn btn-danger">Закрыть</button>
+  <button mat-button mat-dialog-close="false" class="btn btn-danger">Закрыть</button>
   <button *ngIf="data.totalScore" mat-button class="btn btn-success" (click)="updateRecord()">Сохранить</button>
 </mat-dialog-actions>

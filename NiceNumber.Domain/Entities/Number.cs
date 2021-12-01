@@ -13,5 +13,7 @@ namespace NiceNumber.Domain.Entities
         public List<Regularity> Regularities { get; set; }
         
         public List<Game> Games { get; set; }
+        
+        public TutorialLevel TutorialLevel { get; set; }
     }
 }

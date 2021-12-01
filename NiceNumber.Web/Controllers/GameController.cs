@@ -31,11 +31,13 @@ namespace NiceNumber.Web.Controllers
         
         [HttpGet]
         [ApiRoute("Game/Start")]
-        public async Task<StartModel> Start([FromQuery]DifficultyLevel difficultyLevel)
+        public async Task<StartModel> Start([FromQuery]DifficultyLevel difficultyLevel, [FromQuery]int? tutorialLevel)
         {
             var sessionId = SessionId;
 
-            var game = await _gameService.StartRandomNumberGame(difficultyLevel, sessionId);
+            var game = difficultyLevel == DifficultyLevel.Tutorial && tutorialLevel.HasValue
+                ? await _gameService.StartTutorial(tutorialLevel.Value, sessionId)
+                : await _gameService.StartRandomNumberGame(difficultyLevel, sessionId);
 
             var model = new StartModel
             {
@@ -50,7 +52,16 @@ namespace NiceNumber.Web.Controllers
                 }).OrderBy(x => x.Type)
                     .ThenBy(x => x.RegularityNumber)
                     .ToList(),
-                ExistRegularityTypeCounts = new Dictionary<int, int>()
+                ExistRegularityTypeCounts = new Dictionary<int, int>(),
+                
+                TutorialLevel = game.Number.TutorialLevel == null 
+                    ? null 
+                    : new TutorialLevelModel
+                        {
+                            Title = game.Number.TutorialLevel.Title,
+                            Text = game.Number.TutorialLevel.Text,
+                            Level = game.Number.TutorialLevel.Order
+                        }
             };
 
             foreach (var regularityInfo in model.ExistRegularityInfos)

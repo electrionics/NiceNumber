@@ -31,6 +31,9 @@ namespace NiceNumber.Domain
             {
                 entity.HasKey(x => x.Id);
                 entity.HasIndex(x => x.Value);
+                entity.HasOne(x => x.TutorialLevel)
+                    .WithOne(x => x.Number)
+                    .HasForeignKey<TutorialLevel>(x => x.NumberId);
             });
 
             modelBuilder.Entity<Check>(entity =>
@@ -45,6 +48,14 @@ namespace NiceNumber.Domain
                 entity.HasOne(x => x.ClosestRegularity)
                     .WithMany(x => x.ClosestChecks)
                     .HasForeignKey(x => x.ClosestRegularityId);
+            });
+            
+            modelBuilder.Entity<TutorialLevel>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.HasOne(x => x.Number)
+                    .WithOne(x => x.TutorialLevel)
+                    .HasForeignKey<TutorialLevel>(x => x.NumberId);
             });
         }
     }

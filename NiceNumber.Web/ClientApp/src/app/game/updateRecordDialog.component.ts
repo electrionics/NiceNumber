@@ -66,7 +66,7 @@ export class UpdateRecordDialogComponent {
           this.cookies.setCookie("lastRecord_name", this.model.Name, 7);
           this.cookies.setCookie("lastRecord_link", this.model.Link, 7);
 
-          this.dialogReference.close();
+          this.dialogReference.close(true);
         }
         else {
           parseErrors(result);
