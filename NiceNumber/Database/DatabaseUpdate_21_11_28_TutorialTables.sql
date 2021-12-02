@@ -7,7 +7,7 @@
     CONSTRAINT [PK_TutorialLevel] PRIMARY KEY CLUSTERED
 (
 [Id] ASC
-)
+))
 GO
 
 ALTER TABLE [dbo].[TutorialLevel]  WITH CHECK ADD  CONSTRAINT [FK_TutorialLevel_Number] FOREIGN KEY([NumberId])
