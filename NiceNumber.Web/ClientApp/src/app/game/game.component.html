@@ -37,22 +37,21 @@
           <button *ngIf="!endGame"
                   (click)="end(true)"
                   class="btn btn-primary text-center"
-                  [ngClass]="getTutorialClass(14)">Завершить игру</button>
+                  [ngClass]="getTutorialClass('endGame')">Завершить игру</button>
           <button *ngIf="!endGame"
                   (click)="toggleHints()"
                   [ngClass]="
-                    getTutorialClass(6) ||
-                    getTutorialClass(7)"
+                    getTutorialClass('toggleHints')"
                   class="btn btn-info text-center">{{hintsEnabled ? 'Убрать кнопки-подсказки' : 'Вернуть кнопки-подсказки'}}</button>
           <button *ngIf="!endGame && hintsEnabled"
                   [disabled]="getAnyDisabled(regularityTypes)"
                   (click)="startHintMode(null, null, false)"
-                  [ngClass]="getTutorialClass(12)"
+                  [ngClass]="getTutorialClass('hintRandom')"
                   class="btn btn-hint text-center">Подсказать</button>
           <button *ngIf="endGame" (click)="endSession()" class="btn btn-primary text-center">Завершить сеанс</button>
           <button *ngIf="endGame && !endGame.HintsIterated"
                   (click)="showNotFound()"
-                  [ngClass]="getTutorialClass(15)"
+                  [ngClass]="getTutorialClass('showNotFound')"
                   class="btn btn-info text-center">Показать не найденные</button>
         </div>
       </td>
@@ -61,8 +60,8 @@
       <td *ngFor="let digit of number; let i = index;" class="vertical-center">
         <button (click)="toggleSelected(digit, i)"
                 [disabled]="digit.disabled"
-                [ngClass]="getTutorialClass(3, 0, i == 0) ||
-                           getTutorialClass(3, 4, i == 4)"
+                [ngClass]="getTutorialClass('digit', 0, i) ||
+                           getTutorialClass('digit', 4, i)"
                 class="btn text-center {{digit.selected ? 'btn-selected' : 'btn-deselected'}}"><span class="digit">{{ digit.value }}</span></button>
       </td>
     </tr>
@@ -84,10 +83,7 @@
               <td class="text-center">
                 <button [disabled]="!regType.enabled || filterByFound(game.ProgressRegularityInfos, regType.type).length == startGame.ExistRegularityTypeCounts[regType.type]"
                         class="btn btn-info check{{regType.enabled ? '' : ' disabled'}}"
-                        [ngClass]="getTutorialClass(4, 0, regType.type == 1) ||
-                                   getTutorialClass(9, 0, regType.type == 1) ||
-                                   getTutorialClass(11, 0, regType.type == 1) ||
-                                   getTutorialClass(13, 0, regType.type == getEnabledRegularityType())"
+                        [ngClass]="getTutorialClass('btnCheck', 0, regType.type)"
                         (click)="check(regType.type);">Проверить</button>
               </td>
             </ng-container>
@@ -100,7 +96,7 @@
                 <button [disabled]="getAnyDisabled(regularityTypes) || filterByFound(game.ProgressRegularityInfos, regType.type).length == startGame.ExistRegularityTypeCounts[regType.type]"
                         style="margin-top: 5px;"
                         class="btn btn-hint text-center"
-                        [ngClass]="getTutorialClass(10, 0, regType.type == 1)"
+                        [ngClass]="getTutorialClass('hintRegType', 0, regType.type)"
                         (click)="startHintMode(regType.type, null, false)"
                         *ngIf="hintsEnabled">Подсказать</button>
               </td>
@@ -121,7 +117,9 @@
               За подсказанную закономерность очки не начисляются</li>
             <li>Если вам мешают кнопки-подсказки, нажмите <button disabled="disabled" class="btn btn-info text-center">Убрать кнопки-подсказки</button> выше. Их можно будет вернуть в любое время в течение игры.</li>
             <li>После завершения игры, по истечению времени либо нажатием кнопки <button disabled="disabled" class="btn btn-primary text-center">Завершить игру</button>, вы сможете просмотреть все ненайденные вами закономерности.</li>
-            <li>Нажмите кнопку <button class="btn btn-info" [ngClass]="getTutorialClass(1)" (click)="understand()">Понятно</button> чтобы скрыть описание.</li>
+            <li>Нажмите кнопку <button class="btn btn-info"
+                                       [ngClass]="getTutorialClass('understand')"
+                                       (click)="understand()">Понятно</button> чтобы скрыть описание.</li>
           </ng-container>
         </ul>
       </td>
@@ -134,19 +132,22 @@
         <tr class="result-progress reg-type-summary">
           <td [colSpan]="positions.length + 1"
               (click)="rowClick(regType.type)"
-              [ngClass]="getTutorialClass(2, 0, regType.type == 1)">
-            <span class="reg-tooltip-container" [ngClass]="getTutorialClass(5, i)" *ngIf="regType.regularityNumberHint">
+              [ngClass]="getTutorialClass('row', 0, regType.type)">
+            <span class="reg-tooltip-container"
+                  [ngClass]="getTutorialClass('tooltip', i)"
+                  *ngIf="regType.regularityNumberHint">
               <i #tooltip="matTooltip"
                  matTooltip="Число-подсказка - {{regType.regularityNumberHint}}"
                  matTooltipClass="tooltip-regularity-type"
                  (click)="toggleTooltip(tooltip, i)"
-                 class="bi bi-question-circle"></i></span>
+                 class="bi bi-question-circle"></i>
+            </span>
             <b> {{regType.label}}</b> (найдено: {{filterByFound(game.ProgressRegularityInfos, regType.type).length}}/{{startGame.ExistRegularityTypeCounts[regType.type]}}), числа-подсказки:
             <span *ngFor="let regularity of game.ProgressRegularityInfos[regType.type]">
               <button *ngIf="!endGame && !getHintDisabled(regularity.FoundStatus) && hintsEnabled"
                       class="btn btn-hint btn-small"
                       [disabled]="getAnyDisabled(regularityTypes)"
-                      [ngClass]="getTutorialClass(8, 0, regType.type == 1)"
+                      [ngClass]="getTutorialClass('hintRegNum', 0, regType.type)"
                       (click)="startHintMode(regType.type, regularity.RegularityNumber, true)">?</button>
               {{regularity.ReverseRegularityNumber ? '1/' + regularity.ReverseRegularityNumber : regularity.RegularityNumber}}
               <span class="{{getHintClass(regularity.FoundStatus)}}">

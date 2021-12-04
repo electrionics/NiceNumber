@@ -33,7 +33,7 @@ export class GameComponent {
 
   public currentLevel: TutorialLevel;
   public currentTaskIndex: number;
-  public tasks: { anySubtask: boolean, subtasks: number[]}[]; // if not any - then all
+  public tasks: { controlName: string, anySubtask: boolean, subtasks: number[], additionalCondition: Predicate<number, number>}[]; // if not any - then all
 
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog) {
     this.initLists();
@@ -137,7 +137,7 @@ export class GameComponent {
             this.increaseTask(4, 0, regularityType == 1);
             this.increaseTask(9, 0, regularityType == 1);
             this.increaseTask(11, 0, regularityType == 1);
-            this.increaseTask(13, 0, regularityType == this.getEnabledRegularityType());
+            this.increaseTask(13, 0, regularityType == this.getEnabledRegularityType(this));
 
             this.game.Score = result.NewTotalPoints;
 
@@ -465,17 +465,99 @@ export class GameComponent {
       this.tasks = [];
       for (let i = 0; i <= 15; i++){
         this.tasks.push({
+          controlName: null,
           anySubtask: true,
-          subtasks: []
+          subtasks: [],
+          additionalCondition: truePredicate
         });
         this.tasks[i].subtasks.push(0);
       }
 
+      function truePredicate(param1, param2){
+        return true;
+      }
+
+      function fixedTypePredicate(comparison){
+        function result(param1, type){
+          return type == comparison;
+        }
+        return result;
+      }
+
+      function dynamicTypePredicate(getTypeFunction, that){
+        function result(param1, type){
+          return type == getTypeFunction(that);
+        }
+        return result;
+      }
+
+      function subIndexPredicate(subIndex, comparison){
+        return subIndex == comparison;
+      }
+
+      this.tasks[1].controlName = 'understand';
+
+      this.tasks[2].controlName = 'row';
+      this.tasks[2].additionalCondition = fixedTypePredicate(1);
+
+      this.tasks[3].controlName = 'digit';
+      this.tasks[3].additionalCondition = subIndexPredicate
       this.tasks[3].anySubtask = false;
       this.tasks[3].subtasks.push(1,1,1,0,1);
+
+      this.tasks[4].controlName = 'btnCheck';
+      this.tasks[4].additionalCondition = fixedTypePredicate(1);
+
+      this.tasks[5].controlName = 'tooltip';
       this.tasks[5].anySubtask = false;
       this.tasks[5].subtasks.push(0,0);
+
+      this.tasks[6].controlName = 'toggleHints';
+      this.tasks[7].controlName = 'toggleHints';
+
+      this.tasks[8].controlName = 'hintRegNum';
+      this.tasks[8].additionalCondition = fixedTypePredicate(1);
+
+      this.tasks[9].controlName = 'btnCheck';
+      this.tasks[9].additionalCondition = fixedTypePredicate(1);
+
+      this.tasks[10].controlName = 'hintRegType';
+      this.tasks[10].additionalCondition = fixedTypePredicate(1);
+
+      this.tasks[11].controlName = 'btnCheck';
+      this.tasks[11].additionalCondition = fixedTypePredicate(1);
+
+      this.tasks[12].controlName = 'hintRandom';
+
+      this.tasks[13].controlName = 'btnCheck';
+      this.tasks[13].additionalCondition = dynamicTypePredicate(this.getEnabledRegularityType, this);
+
+      this.tasks[14].controlName = 'endGame';
+      this.tasks[15].controlName = 'showNotFound';
     }
+  }
+
+  public getTutorialClass(controlName, subIndex = 0, type = null){
+    let indexes = [];
+    for (let i = 0; i < this.tasks.length; i++){
+      if (this.tasks[i].controlName == controlName){
+        indexes.push(i);
+      }
+    }
+
+    for (let i = 0; i < indexes.length; i++){
+      let index = indexes[i];
+      let task = this.tasks[index];
+
+      if (index){
+        let result = this.getTutorialClassInner(index, subIndex, task.additionalCondition(subIndex, type));
+        if (result){
+          return result;
+        }
+      }
+    }
+
+    return null;
   }
 
   private increaseTask(index, subtaskIndex = 0, additionalCondition = true, that = this){
@@ -491,7 +573,7 @@ export class GameComponent {
     }
   }
 
-  public getTutorialClass(index, subtaskIndex = 0, additionalCondition = true, that = this){
+  public getTutorialClassInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
     if (that.difficultyLevel == 0 && additionalCondition && that.currentTaskIndex == index && that.tasks[index].subtasks[subtaskIndex] == 0){
       return 'highlighted-control';
     }
@@ -503,8 +585,8 @@ export class GameComponent {
     this.increaseTask(2, 0, regularityType == 1);
   }
 
-  public getEnabledRegularityType(){
-    return this.regularityTypes.find(x => x.enabled)?.type;
+  public getEnabledRegularityType(that){
+    return that.regularityTypes.find(x => x.enabled)?.type;
   }
 }
 
@@ -598,4 +680,8 @@ interface TutorialLevel{
 interface TutorialTask {
   Order: number;
   Text: string;
+}
+
+interface Predicate<T1, T2> {
+  (value1: T1, value2: T2): boolean;
 }
