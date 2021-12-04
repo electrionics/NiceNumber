@@ -90,6 +90,7 @@ header {
     height: 45px;
     font-weight: bold;
 }
+
 #checks tr {
   background: none;
 }
@@ -151,6 +152,10 @@ tr.result-progress.found{
 .reg-type-summary{
   line-height: 40px;
   box-shadow: 1px 1px 6px 2px black;
+}
+
+.reg-type-summary td {
+  background: linear-gradient(90deg, #8a8a8a7d, #91acbf) no-repeat fixed;
 }
 
 .reg-type-summary .minus, .reg-type-summary .plus, .reg-type-summary .hint{
@@ -247,13 +252,9 @@ tr.result-progress.found{
 }
 
 .highlighted-control {
-  /*border: none;*/
-  outline: none;
-  color: #FFF;
   cursor: pointer;
   position: relative;
   z-index: 0;
-  /*border-radius: 10px;*/
 }
 
 .highlighted-control:before {

@@ -33,7 +33,7 @@ export class GameComponent {
 
   public currentLevel: TutorialLevel;
   public currentTaskIndex: number;
-
+  public tasks: { anySubtask: boolean, subtasks: number[]}[]; // if not any - then all
 
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog) {
     this.initLists();
@@ -52,10 +52,7 @@ export class GameComponent {
     }
 
     this.http.get<StartModel>(url).subscribe(result => {
-      if (this.difficultyLevel == 0){
-        this.currentTaskIndex = 1;
-        this.timerSet = true; // don't start the timer
-      }
+      this.initTutorial();
 
       this.hintsEnabled = true;
       this.understandDescription = false;
@@ -108,7 +105,7 @@ export class GameComponent {
     }, error => console.error(error));
   }
 
-  public toggleSelected(digit){
+  public toggleSelected(digit, index){
     if (this.endGame) return;
 
     digit.selected = !digit.selected;
@@ -117,6 +114,8 @@ export class GameComponent {
         this.positions[pos].selected = digit.selected;
       }
     }
+
+    this.increaseTask(3, index);
   }
 
   public check(regularityType){
@@ -135,9 +134,10 @@ export class GameComponent {
           info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
           this.alertDialog(result.PointsAdded + ' очков заработано!', 'Поздравляем!', 'points-added-dialog', () =>{
-            this.increaseTask(5, 5, regularityType == 1);
-            this.increaseTask(7, 7, regularityType == 1);
-            this.increaseTask(9, 9, regularityType == this.getEnabledRegularityType());
+            this.increaseTask(4, 0, regularityType == 1);
+            this.increaseTask(9, 0, regularityType == 1);
+            this.increaseTask(11, 0, regularityType == 1);
+            this.increaseTask(13, 0, regularityType == this.getEnabledRegularityType());
 
             this.game.Score = result.NewTotalPoints;
 
@@ -187,7 +187,7 @@ export class GameComponent {
           self.showNotFound();
         });
 
-        self.increaseTask(13);
+        self.increaseTask(14);
       }, error => console.error(error));
     }
 
@@ -226,7 +226,7 @@ export class GameComponent {
         });
         this.endGame.HintsIterated = true;
 
-        this.increaseTask(14);
+        this.increaseTask(15);
       });
     }
     else{
@@ -237,7 +237,8 @@ export class GameComponent {
   public toggleHints(){
     this.hintsEnabled = !this.hintsEnabled;
 
-    this.increaseTask(2,3);
+    this.increaseTask(7);
+    this.increaseTask(6);
   }
 
   public startHintMode(regularityType, regularityNumber, needConfirm){
@@ -271,9 +272,9 @@ export class GameComponent {
             regType.enabled = result.Type == regType.type;
           });
 
-          self.increaseTask(4,4, regularityType == 1 && regularityNumber == self.getFirstRegularity(regularityType)?.RegularityNumber); //TODO: change to more accurate comparison
-          self.increaseTask(6,6, regularityType == 1);
-          self.increaseTask(8);
+          self.increaseTask(8,0, regularityType == 1); //TODO: change to more accurate comparison
+          self.increaseTask(10,0, regularityType == 1);
+          self.increaseTask(12);
         }
       }, error => console.error(error));
     }
@@ -297,7 +298,7 @@ export class GameComponent {
   public toggleTooltip(tooltip, index){
     tooltip.toggle();
 
-    this.increaseTask(10 + index);
+    this.increaseTask(5, index);
   }
 
   public filterByFound(progressRegularityInfos, type){
@@ -455,26 +456,55 @@ export class GameComponent {
   }
 
   /* tutorial */
-  public increaseTask(minIndex, maxIndex = null, additionalCondition = true, that = this){
-    if (that.difficultyLevel == 0 && additionalCondition && ((!maxIndex && that.currentTaskIndex == minIndex) || (that.currentTaskIndex <= maxIndex && that.currentTaskIndex >= minIndex))){
-      that.currentTaskIndex++;
+  private initTutorial(){
+    if (this.difficultyLevel == 0){
+      this.currentTaskIndex = 1;
+      this.timerSet = true; // don't start the timer
+
+
+      this.tasks = [];
+      for (let i = 0; i <= 15; i++){
+        this.tasks.push({
+          anySubtask: true,
+          subtasks: []
+        });
+        this.tasks[i].subtasks.push(0);
+      }
+
+      this.tasks[3].anySubtask = false;
+      this.tasks[3].subtasks.push(1,1,1,0,1);
+      this.tasks[5].anySubtask = false;
+      this.tasks[5].subtasks.push(0,0);
     }
   }
 
-  public getTutorialClass(minIndex, maxIndex = null, additionalCondition = true, that = this){
-    if (that.difficultyLevel == 0 && additionalCondition && ((!maxIndex && that.currentTaskIndex == minIndex) || (that.currentTaskIndex <= maxIndex && that.currentTaskIndex >= minIndex))){
+  private increaseTask(index, subtaskIndex = 0, additionalCondition = true, that = this){
+    if (that.difficultyLevel == 0 && additionalCondition && that.currentTaskIndex == index){
+      that.tasks[index].subtasks[subtaskIndex]++;
+
+      if (that.tasks[index].anySubtask){
+        that.currentTaskIndex++;
+      }
+      else if (that.tasks[index].subtasks.every(x => x)){
+        that.currentTaskIndex++;
+      }
+    }
+  }
+
+  public getTutorialClass(index, subtaskIndex = 0, additionalCondition = true, that = this){
+    if (that.difficultyLevel == 0 && additionalCondition && that.currentTaskIndex == index && that.tasks[index].subtasks[subtaskIndex] == 0){
       return 'highlighted-control';
     }
 
     return null;
   }
 
-  public getEnabledRegularityType(){
-    return this.regularityTypes.find(x => x.enabled)?.type;
+  public rowClick(regularityType){
+    this.increaseTask(2, 0, regularityType == 1);
   }
 
-  public getFirstRegularity(regularityType){
-    return this.startGame.ExistRegularityInfos[regularityType];
+  public getEnabledRegularityType(){
+    return this.regularityTypes.find(x => x.enabled)?.type;
   }
 }
 
