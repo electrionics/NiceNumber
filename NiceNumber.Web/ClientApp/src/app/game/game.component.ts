@@ -458,12 +458,12 @@ export class GameComponent {
 
   private initTutorial(){
     if (this.difficultyLevel == 0){
-      this.currentTaskIndex = 1;
+      this.currentTaskIndex = 0;
       this.timerSet = true; // don't start the timer
 
 
       this.tasks = [];
-      for (let i = 0; i <= 15; i++){
+      for (let i = 0; i < 15; i++){
         this.tasks.push({
           controlName: null,
           anySubtask: true,
@@ -495,49 +495,53 @@ export class GameComponent {
         return subIndex == comparison;
       }
 
-      this.tasks[1].controlName = 'understand';
+      this.tasks[0].controlName = 'understand';
 
-      this.tasks[2].controlName = 'row';
-      this.tasks[2].additionalCondition = fixedTypePredicate(1);
+      this.tasks[1].controlName = 'row';
+      this.tasks[1].additionalCondition = fixedTypePredicate(1);
 
-      this.tasks[3].controlName = 'digit';
-      this.tasks[3].additionalCondition = subIndexPredicate
-      this.tasks[3].anySubtask = false;
-      this.tasks[3].subtasks.push(1,1,1,0,1);
+      this.tasks[2].controlName = 'digit';
+      this.tasks[2].additionalCondition = subIndexPredicate
+      this.tasks[2].anySubtask = false;
+      this.tasks[2].subtasks.push(1,1,1,0,1);
 
-      this.tasks[4].controlName = 'btnCheck';
-      this.tasks[4].additionalCondition = fixedTypePredicate(1);
+      this.tasks[3].controlName = 'btnCheck';
+      this.tasks[3].additionalCondition = fixedTypePredicate(1);
 
-      this.tasks[5].controlName = 'tooltip';
-      this.tasks[5].anySubtask = false;
-      this.tasks[5].subtasks.push(0,0);
+      this.tasks[4].controlName = 'tooltip';
+      this.tasks[4].anySubtask = false;
+      this.tasks[4].subtasks.push(0,0);
 
+      this.tasks[5].controlName = 'toggleHints';
       this.tasks[6].controlName = 'toggleHints';
-      this.tasks[7].controlName = 'toggleHints';
 
-      this.tasks[8].controlName = 'hintRegNum';
+      this.tasks[7].controlName = 'hintRegNum';
+      this.tasks[7].additionalCondition = fixedTypePredicate(1);
+
+      this.tasks[8].controlName = 'btnCheck';
       this.tasks[8].additionalCondition = fixedTypePredicate(1);
 
-      this.tasks[9].controlName = 'btnCheck';
+      this.tasks[9].controlName = 'hintRegType';
       this.tasks[9].additionalCondition = fixedTypePredicate(1);
 
-      this.tasks[10].controlName = 'hintRegType';
+      this.tasks[10].controlName = 'btnCheck';
       this.tasks[10].additionalCondition = fixedTypePredicate(1);
 
-      this.tasks[11].controlName = 'btnCheck';
-      this.tasks[11].additionalCondition = fixedTypePredicate(1);
+      this.tasks[11].controlName = 'hintRandom';
 
-      this.tasks[12].controlName = 'hintRandom';
+      this.tasks[12].controlName = 'btnCheck';
+      this.tasks[12].additionalCondition = dynamicTypePredicate(this.getEnabledRegularityType, this);
 
-      this.tasks[13].controlName = 'btnCheck';
-      this.tasks[13].additionalCondition = dynamicTypePredicate(this.getEnabledRegularityType, this);
-
-      this.tasks[14].controlName = 'endGame';
-      this.tasks[15].controlName = 'showNotFound';
+      this.tasks[13].controlName = 'endGame';
+      this.tasks[14].controlName = 'showNotFound';
     }
   }
 
   public getTutorialClass(controlName, subIndex = 0, type = null){
+    if (!this.tasks){
+      return null;
+    }
+
     let indexes = [];
     for (let i = 0; i < this.tasks.length; i++){
       if (this.tasks[i].controlName == controlName){
@@ -561,6 +565,10 @@ export class GameComponent {
   }
 
   public increaseTask(controlName, subIndex = 0, type = null){
+    if (!this.tasks){
+      return null;
+    }
+
     let indexes = [];
     for (let i = this.tasks.length - 1; i >= 0; i--){
       if (this.tasks[i].controlName == controlName){
