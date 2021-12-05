@@ -115,7 +115,7 @@ export class GameComponent {
       }
     }
 
-    this.increaseTask(3, index);
+    this.increaseTask('digit', index, index);
   }
 
   public check(regularityType){
@@ -134,10 +134,7 @@ export class GameComponent {
           info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
           this.alertDialog(result.PointsAdded + ' очков заработано!', 'Поздравляем!', 'points-added-dialog', () =>{
-            this.increaseTask(4, 0, regularityType == 1);
-            this.increaseTask(9, 0, regularityType == 1);
-            this.increaseTask(11, 0, regularityType == 1);
-            this.increaseTask(13, 0, regularityType == this.getEnabledRegularityType(this));
+            this.increaseTask('btnCheck', 0, regularityType);
 
             this.game.Score = result.NewTotalPoints;
 
@@ -187,7 +184,7 @@ export class GameComponent {
           self.showNotFound();
         });
 
-        self.increaseTask(14);
+        self.increaseTask('endGame');
       }, error => console.error(error));
     }
 
@@ -226,7 +223,7 @@ export class GameComponent {
         });
         this.endGame.HintsIterated = true;
 
-        this.increaseTask(15);
+        this.increaseTask('showNotFound');
       });
     }
     else{
@@ -237,8 +234,7 @@ export class GameComponent {
   public toggleHints(){
     this.hintsEnabled = !this.hintsEnabled;
 
-    this.increaseTask(7);
-    this.increaseTask(6);
+    this.increaseTask('toggleHints');
   }
 
   public startHintMode(regularityType, regularityNumber, needConfirm){
@@ -272,9 +268,9 @@ export class GameComponent {
             regType.enabled = result.Type == regType.type;
           });
 
-          self.increaseTask(8,0, regularityType == 1); //TODO: change to more accurate comparison
-          self.increaseTask(10,0, regularityType == 1);
-          self.increaseTask(12);
+          self.increaseTask('hintRegNum',0, regularityType);
+          self.increaseTask('hintRegType',0, regularityType);
+          self.increaseTask('hintRandom');
         }
       }, error => console.error(error));
     }
@@ -292,13 +288,13 @@ export class GameComponent {
   public understand(){
     this.understandDescription = true;
 
-    this.increaseTask(1);
+    this.increaseTask('understand');
   }
 
   public toggleTooltip(tooltip, index){
     tooltip.toggle();
 
-    this.increaseTask(5, index);
+    this.increaseTask('tooltip', index);
   }
 
   public filterByFound(progressRegularityInfos, type){
@@ -456,6 +452,10 @@ export class GameComponent {
   }
 
   /* tutorial */
+  public rowClick(regularityType){
+    this.increaseTask('row', 0, regularityType);
+  }
+
   private initTutorial(){
     if (this.difficultyLevel == 0){
       this.currentTaskIndex = 1;
@@ -549,7 +549,7 @@ export class GameComponent {
       let index = indexes[i];
       let task = this.tasks[index];
 
-      if (index){
+      if (task){
         let result = this.getTutorialClassInner(index, subIndex, task.additionalCondition(subIndex, type));
         if (result){
           return result;
@@ -560,7 +560,25 @@ export class GameComponent {
     return null;
   }
 
-  private increaseTask(index, subtaskIndex = 0, additionalCondition = true, that = this){
+  public increaseTask(controlName, subIndex = 0, type = null){
+    let indexes = [];
+    for (let i = this.tasks.length - 1; i >= 0; i--){
+      if (this.tasks[i].controlName == controlName){
+        indexes.push(i);
+      }
+    }
+
+    for (let i = 0; i < indexes.length; i++){
+      let index = indexes[i];
+      let task = this.tasks[index];
+
+      if (task){
+        this.increaseTaskInner(index, subIndex, task.additionalCondition(subIndex, type));
+      }
+    }
+  }
+
+  private increaseTaskInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
     if (that.difficultyLevel == 0 && additionalCondition && that.currentTaskIndex == index){
       that.tasks[index].subtasks[subtaskIndex]++;
 
@@ -573,7 +591,7 @@ export class GameComponent {
     }
   }
 
-  public getTutorialClassInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
+  private getTutorialClassInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
     if (that.difficultyLevel == 0 && additionalCondition && that.currentTaskIndex == index && that.tasks[index].subtasks[subtaskIndex] == 0){
       return 'highlighted-control';
     }
@@ -581,11 +599,7 @@ export class GameComponent {
     return null;
   }
 
-  public rowClick(regularityType){
-    this.increaseTask(2, 0, regularityType == 1);
-  }
-
-  public getEnabledRegularityType(that){
+  private getEnabledRegularityType(that){
     return that.regularityTypes.find(x => x.enabled)?.type;
   }
 }
