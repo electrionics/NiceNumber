@@ -4,7 +4,6 @@ import {UpdateRecordDialogComponent} from "./updateRecordDialog.component";
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from "../common/confirm.component";
 import {AlertDialogComponent} from "../common/alert.component";
-import {min} from "rxjs/operators";
 
 @Component({
   selector: 'app-game',
@@ -463,81 +462,139 @@ export class GameComponent {
 
 
       this.tasks = [];
-      for (let i = 0; i < 15; i++){
-        this.tasks.push({
-          controlName: null,
-          anySubtask: true,
-          subtasks: [],
-          additionalCondition: truePredicate
-        });
-        this.tasks[i].subtasks.push(0);
-      }
+      let currentTask;
 
-      function truePredicate(param1, param2){
-        return true;
-      }
+      currentTask = createTask('understand');
+      this.tasks.push(currentTask);
 
-      function fixedTypePredicate(comparison){
-        function result(param1, type){
-          return type == comparison;
+      currentTask = createTask('row');
+      currentTask.additionalCondition = fixedTypePredicate(1);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('digit');
+      currentTask.additionalCondition = subIndexPredicate;
+      currentTask.anySubtask = false;
+      currentTask.subtasks = [];
+      currentTask.subtasks.push(0,1,1,1,0,1);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('btnCheck');
+      currentTask.additionalCondition = fixedTypePredicate(1);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('tooltip');
+      currentTask.anySubtask = false;
+      currentTask.subtasks = [];
+      currentTask.subtasks.push(0,0,0);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('toggleHints');
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('toggleHints');
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('hintRegNum');
+      currentTask.additionalCondition = fixedTypePredicate(1);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('btnCheck');
+      currentTask.additionalCondition = fixedTypePredicate(1);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('hintRegType');
+      currentTask.additionalCondition = fixedTypePredicate(1);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('btnCheck');
+      currentTask.additionalCondition = fixedTypePredicate(1);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('hintRandom');
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('btnCheck');
+      currentTask.additionalCondition = dynamicTypePredicate(this.getEnabledRegularityType, this);
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('endGame');
+      this.tasks.push(currentTask);
+
+      currentTask = createTask('showNotFound');
+      this.tasks.push(currentTask);
+
+
+      postProcessTasks(this);
+    }
+
+    function createTask(controlName){
+      return {
+        controlName: controlName,
+        anySubtask: null,
+        subtasks: null,
+        additionalCondition: null
+      };
+    }
+
+    function postProcessTasks(that){
+      for (let i = 0; i < that.tasks.length; i++){
+        let task = that.tasks[i];
+        if (task.anySubtask === null){
+          task.anySubtask = true;
         }
-        return result;
-      }
-
-      function dynamicTypePredicate(getTypeFunction, that){
-        function result(param1, type){
-          return type == getTypeFunction(that);
+        if (task.subtasks === null){
+          task.subtasks = [];
+          task.subtasks.push(0);
         }
-        return result;
+        if (task.additionalCondition === null){
+          task.additionalCondition = truePredicate;
+        }
       }
+    }
 
-      function subIndexPredicate(subIndex, comparison){
-        return subIndex == comparison;
+    // Predicates
+    function truePredicate(param1, param2){
+      return true;
+    }
+
+    function fixedTypePredicate(comparison){
+      function result(param1, type){
+        return type == comparison;
       }
+      return result;
+    }
 
-      this.tasks[0].controlName = 'understand';
+    function dynamicTypePredicate(getTypeFunction, that){
+      function result(param1, type){
+        return type == getTypeFunction(that);
+      }
+      return result;
+    }
 
-      this.tasks[1].controlName = 'row';
-      this.tasks[1].additionalCondition = fixedTypePredicate(1);
-
-      this.tasks[2].controlName = 'digit';
-      this.tasks[2].additionalCondition = subIndexPredicate
-      this.tasks[2].anySubtask = false;
-      this.tasks[2].subtasks.push(1,1,1,0,1);
-
-      this.tasks[3].controlName = 'btnCheck';
-      this.tasks[3].additionalCondition = fixedTypePredicate(1);
-
-      this.tasks[4].controlName = 'tooltip';
-      this.tasks[4].anySubtask = false;
-      this.tasks[4].subtasks.push(0,0);
-
-      this.tasks[5].controlName = 'toggleHints';
-      this.tasks[6].controlName = 'toggleHints';
-
-      this.tasks[7].controlName = 'hintRegNum';
-      this.tasks[7].additionalCondition = fixedTypePredicate(1);
-
-      this.tasks[8].controlName = 'btnCheck';
-      this.tasks[8].additionalCondition = fixedTypePredicate(1);
-
-      this.tasks[9].controlName = 'hintRegType';
-      this.tasks[9].additionalCondition = fixedTypePredicate(1);
-
-      this.tasks[10].controlName = 'btnCheck';
-      this.tasks[10].additionalCondition = fixedTypePredicate(1);
-
-      this.tasks[11].controlName = 'hintRandom';
-
-      this.tasks[12].controlName = 'btnCheck';
-      this.tasks[12].additionalCondition = dynamicTypePredicate(this.getEnabledRegularityType, this);
-
-      this.tasks[13].controlName = 'endGame';
-      this.tasks[14].controlName = 'showNotFound';
+    function subIndexPredicate(subIndex, comparison){
+      return subIndex == comparison;
     }
   }
 
+  public getOverOverlayClass(controlName, subIndex = 0, type = null){
+    return this.isTutorialActiveElement(controlName, subIndex, type)
+      ? 'over-tutorial-overlay'
+      : null;
+  }
+
+  public getOverlayedClass(controlName, subIndex = 0, type = null){
+    return this.isTutorialActiveElement(controlName, subIndex, type)
+      ? 'overlayed-control'
+      : null;
+  }
+
   public getTutorialClass(controlName, subIndex = 0, type = null){
+    return this.isTutorialActiveElement(controlName, subIndex, type)
+      ? 'highlighted-control'
+      : null;
+  }
+
+  public isTutorialActiveElement(controlName, subIndex = 0, type = null){
     if (!this.tasks){
       return null;
     }
@@ -554,14 +611,14 @@ export class GameComponent {
       let task = this.tasks[index];
 
       if (task){
-        let result = this.getTutorialClassInner(index, subIndex, task.additionalCondition(subIndex, type));
+        let result = this.isTutorialActiveElementInner(index, subIndex, task.additionalCondition(subIndex, type));
         if (result){
           return result;
         }
       }
     }
 
-    return null;
+    return false;
   }
 
   public increaseTask(controlName, subIndex = 0, type = null){
@@ -599,12 +656,12 @@ export class GameComponent {
     }
   }
 
-  private getTutorialClassInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
+  private isTutorialActiveElementInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
     if (that.difficultyLevel == 0 && additionalCondition && that.currentTaskIndex == index && that.tasks[index].subtasks[subtaskIndex] == 0){
-      return 'highlighted-control';
+      return true;
     }
 
-    return null;
+    return false;
   }
 
   private getEnabledRegularityType(that){

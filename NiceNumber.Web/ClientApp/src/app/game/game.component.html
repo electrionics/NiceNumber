@@ -7,7 +7,8 @@
   </select>
   <button class="btn btn-success" (click)="start()">Начать игру</button>
 </div>
-
+<div *ngIf="difficultyLevel == 0 && game && tasks && currentTaskIndex < tasks.length" class="tutorial-overlay">
+</div>
 <table class='table table-striped game-table' aria-labelledby="tableLabel" *ngIf="number" style="margin-bottom: 0;">
   <tbody>
     <tr *ngIf="difficultyLevel === 0">
@@ -106,7 +107,9 @@
         </tbody>
       </table>
     </td></tr>
-    <tr class="result-progress" *ngIf="!understandDescription">
+    <tr class="result-progress"
+        *ngIf="!understandDescription"
+        [ngClass]="getOverOverlayClass('understand')">
       <td [colSpan]="number.length + 1">
         <ul style="margin-top: 1rem;">
           <li>Нажмите на знак вопроса <i class="bi bi-question-circle"></i> в таблице, чтобы узнать, что означает число-посказка для выбранного типа закономерности.</li>
@@ -146,7 +149,8 @@
             <span *ngFor="let regularity of game.ProgressRegularityInfos[regType.type]">
               <button *ngIf="!endGame && !getHintDisabled(regularity.FoundStatus) && hintsEnabled"
                       class="btn btn-hint btn-small"
-                      [disabled]="getAnyDisabled(regularityTypes)"
+                      [disabled]="getAnyDisabled(regularityTypes) ||
+                                  isTutorialActiveElement('row', 0, regType.type)"
                       [ngClass]="getTutorialClass('hintRegNum', 0, regType.type)"
                       (click)="startHintMode(regType.type, regularity.RegularityNumber, true)">?</button>
               {{regularity.ReverseRegularityNumber ? '1/' + regularity.ReverseRegularityNumber : regularity.RegularityNumber}}
