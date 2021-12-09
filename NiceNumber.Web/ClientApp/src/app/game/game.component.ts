@@ -31,8 +31,9 @@ export class GameComponent {
 
 
   public currentLevel: TutorialLevel;
+  public countLevels: number;
   public currentTaskIndex: number;
-  public tasks: { controlName: string, anySubtask: boolean, subtasks: number[], additionalCondition: Predicate<number, number>}[]; // if not any - then all
+  public tasks: { controlName: string, anySubtask: boolean, subtasks: number[], additionalCondition: Predicate<number, number>, text: string}[]; // if not any - then all
 
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog) {
     this.initLists();
@@ -52,7 +53,7 @@ export class GameComponent {
         nextLevelIndex = 1;
       }
       else{
-        nextLevelIndex = this.currentLevel.Order + 1;
+        nextLevelIndex = this.currentLevel.Level + 1;
       }
       url += ('&tutorialLevel=' + nextLevelIndex);
     }
@@ -121,7 +122,7 @@ export class GameComponent {
       }
     }
 
-    this.increaseTask('digit', index, index);
+    this.increaseTask('digit', index);
   }
 
   public check(regularityType){
@@ -140,7 +141,8 @@ export class GameComponent {
           info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
           this.alertDialog(result.PointsAdded + ' очков заработано!', 'Поздравляем!', 'points-added-dialog', () =>{
-            this.increaseTask('btnCheckSuccess', 0, regularityType);
+            this.increaseTask('btnCheckSuccess', 0, regularityType) ||
+            this.increaseTask('digitsAndBtnCheckSuccess', 0, regularityType);
 
             this.game.Score = result.NewTotalPoints;
 
@@ -274,8 +276,8 @@ export class GameComponent {
             regType.enabled = result.Type == regType.type;
           });
 
-          self.increaseTask('hintRegNum',0, regularityType);
-          self.increaseTask('hintRegType',0, regularityType);
+          self.increaseTask('hintRegNum',0, regularityType) ||
+          self.increaseTask('hintRegType',0, regularityType) ||
           self.increaseTask('hintRandom');
         }
       }, error => console.error(error));
@@ -462,80 +464,94 @@ export class GameComponent {
     this.increaseTask('row', 0, regularityType);
   }
 
+  public showCurrentTask(){
+    if (this.tasks.length > this.currentTaskIndex){
+      let text = this.tasks[this.currentTaskIndex].text;
+      if (text){
+        this.alertDialog(text, 'Задание ' + (this.currentTaskIndex + 1), 'current-task-dialog');
+      }
+    }
+  }
+
   private initTutorialLevel(startResult){
     if (this.difficultyLevel == 0){
+      this.countLevels = 2;
+
       this.currentTaskIndex = 0;
       this.timerSet = true; // don't start the timer
-      this.currentLevel = startResult.
+      this.currentLevel = startResult.TutorialLevel;
 
       this.tasks = [];
-      if (this.currentLevel.Order == 1){
+      if (this.currentLevel.Level == 1){
         initLevel1(this);
       }
-      if (this.currentLevel.Order == 2){
+      if (this.currentLevel.Level == 2){
         initLevel2(this);
       }
 
       postProcessTasks(this);
+
+      this.showCurrentTask();
     }
 
     function initLevel1(self){
       let currentTask;
 
-      currentTask = createTask('understand');
+      currentTask = createTask('understand', 'Прочитайте описание и нажмите на подсвеченную кнопку "Понятно".');
       self.tasks.push(currentTask);
 
-      currentTask = createTask('row');
+      currentTask = createTask('row', 'Подсвеченная строка таблицы содержит числа-подсказки и информацию о прогрессе для выбранного типа закономерности: количество найденных и ' +
+        'количество существующих закономерностей в числе. Нажмите на подсвеченную строку таблицы, чтобы перейти к следующему заданию.');
       currentTask.additionalCondition = fixedTypePredicate(1);
       self.tasks.push(currentTask);
 
-      currentTask = createTask('digit');
+      currentTask = createTask('digit', 'Выделите подсвеченные цифры.');
       currentTask.anySubtask = false;
       currentTask.subtasks = [0,1,1,1,0,1];
       self.tasks.push(currentTask);
 
-      currentTask = createTask('btnCheckSuccess');
+      currentTask = createTask('btnCheckSuccess', 'Нажмите на подсвеченную кнопку "Проверить", чтобы найти закономерность выбранного типа.');
       currentTask.additionalCondition = fixedTypePredicate(1);
       self.tasks.push(currentTask);
 
-      currentTask = createTask('tooltip');
+      currentTask = createTask('tooltip', 'Нажмите на подсвеченные знаки вопроса рядом с названиями в таблице, чтобы посмотреть значение числа-подсказки для каждого из типов закономерностей.');
       currentTask.anySubtask = false;
       currentTask.subtasks = [0,0,0];
       self.tasks.push(currentTask);
 
-      currentTask = createTask('toggleHints');
+      currentTask = createTask('toggleHints', 'Нажмите на подсвеченную кнопку "Убрать кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки исчезают.');
       self.tasks.push(currentTask);
 
-      currentTask = createTask('toggleHints');
+      currentTask = createTask('toggleHints', 'Нажмите на подсвеченную кнопку "Вернуть кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки вновь появляются.');
       self.tasks.push(currentTask);
 
-      currentTask = createTask('hintRegNum');
+      currentTask = createTask('hintRegNum', 'Заменить текст');
       currentTask.additionalCondition = fixedTypePredicate(1);
       self.tasks.push(currentTask);
 
-      currentTask = createTask('btnCheckSuccess');
+      currentTask = createTask('btnCheckSuccess', 'Заменить текст');
       currentTask.additionalCondition = fixedTypePredicate(1);
       self.tasks.push(currentTask);
 
-      currentTask = createTask('hintRegType');
+      currentTask = createTask('hintRegType', 'Заменить текст');
       currentTask.additionalCondition = fixedTypePredicate(1);
       self.tasks.push(currentTask);
 
-      currentTask = createTask('btnCheckSuccess');
+      currentTask = createTask('btnCheckSuccess', 'Заменить текст');
       currentTask.additionalCondition = fixedTypePredicate(1);
       self.tasks.push(currentTask);
 
-      currentTask = createTask('hintRandom');
+      currentTask = createTask('hintRandom', 'Заменить текст');
       self.tasks.push(currentTask);
 
-      currentTask = createTask('btnCheckSuccess');
+      currentTask = createTask('btnCheckSuccess', 'Заменить текст');
       currentTask.additionalCondition = dynamicTypePredicate(self.getEnabledRegularityType, self);
       self.tasks.push(currentTask);
 
-      currentTask = createTask('endGame');
+      currentTask = createTask('endGame', 'Заменить текст');
       self.tasks.push(currentTask);
 
-      currentTask = createTask('showNotFound');
+      currentTask = createTask('showNotFound', 'Заменить текст');
       self.tasks.push(currentTask);
     }
 
@@ -551,17 +567,18 @@ export class GameComponent {
       currentTask.additionalCondition = fixedTypePredicate(1);
       self.tasks.push(currentTask);
 
-      currentTask = createTask('digitRowAndBtnCheckSuccess');
+      currentTask = createTask('digitsAndBtnCheckSuccess');
       currentTask.additionalCondition = fixedTypePredicate(1);
       self.tasks.push(currentTask);
     }
 
-    function createTask(controlName){
+    function createTask(controlName, text = null){
       return {
         controlName: controlName,
         anySubtask: null,
         subtasks: null,
-        additionalCondition: null
+        additionalCondition: null,
+        text: text
       };
     }
 
@@ -588,14 +605,14 @@ export class GameComponent {
 
     function fixedTypePredicate(comparison){
       function result(param1, type){
-        return type == comparison;
+        return !type || type == comparison;
       }
       return result;
     }
 
     function dynamicTypePredicate(getTypeFunction, that){
       function result(param1, type){
-        return type == getTypeFunction(that);
+        return !type || type == getTypeFunction(that);
       }
       return result;
     }
@@ -648,7 +665,7 @@ export class GameComponent {
 
   public increaseTask(controlName, subIndex = 0, type = null){
     if (!this.tasks){
-      return null;
+      return false;
     }
 
     let indexes = [];
@@ -658,14 +675,19 @@ export class GameComponent {
       }
     }
 
+    var result = false;
+
     for (let i = 0; i < indexes.length; i++){
       let index = indexes[i];
       let task = this.tasks[index];
 
       if (task){
-        this.increaseTaskInner(index, subIndex, task.additionalCondition(subIndex, type));
+        result = this.increaseTaskInner(index, subIndex, task.additionalCondition(subIndex, type)) ||
+                 result;
       }
     }
+
+    return result;
   }
 
   private increaseTaskInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
@@ -674,11 +696,17 @@ export class GameComponent {
 
       if (that.tasks[index].anySubtask){
         that.currentTaskIndex++;
+        that.showCurrentTask();
       }
       else if (that.tasks[index].subtasks.every(x => x)){
         that.currentTaskIndex++;
+        that.showCurrentTask();
       }
+
+      return true;
     }
+
+    return false;
   }
 
   private isTutorialActiveElementInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
@@ -701,6 +729,7 @@ interface StartModel {
   DifficultyLevel: number;
   ExistRegularityInfos: StartRegularityInfo[];
   ExistRegularityTypeCounts: { [key: number]: number };
+  TutorialLevel: TutorialLevel;
 }
 
 interface StartRegularityInfo {
@@ -775,7 +804,7 @@ enum FoundStatus{
 }
 
 interface TutorialLevel{
-  Order: number;
+  Level: number;
   Title: string;
   Text: string;
   Tasks: TutorialTask[];

@@ -251,6 +251,13 @@ tr.result-progress.found{
   }
 }
 
+.alert-dialog.current-task-dialog{
+  max-width: 300px;
+}
+.alert-dialog.current-task-dialog mat-dialog-container{
+  background: linear-gradient(90deg, #fef99c, #9CF87A);
+}
+
 .tutorial-overlay{
   position: fixed;
   top: 0;

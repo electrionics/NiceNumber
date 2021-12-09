@@ -11,14 +11,21 @@
 </div>
 <table class='table table-striped game-table' aria-labelledby="tableLabel" *ngIf="number" style="margin-bottom: 0;">
   <tbody>
-    <tr *ngIf="difficultyLevel === 0">
+    <tr *ngIf="difficultyLevel == 0 && currentLevel">
       <td [colSpan]="number.length + 1">
-<!--        <button (click)="increaseTask()">Следующая задача</button>-->
-<!--        <table>-->
-<!--          <tr>-->
-<!--            <td *ngFor="let level in range(currentLevel.Order)" class="level-progress done"></td>-->
-<!--          </tr>-->
-<!--        </table>-->
+        <h2>{{currentLevel.Title}}</h2>
+        <p><b>Задание уровня</b>: {{currentLevel.Text}}</p>
+        <button *ngIf="currentTaskIndex < tasks.length"
+                (click)="showCurrentTask()"
+                class="btn btn-info text-center over-tutorial-overlay">Текущее задание</button>
+        <button (click)="start()"
+                class="btn btn-primary text-center over-tutorial-overlay">Следующий уровень</button>
+        <table>
+          <tr>
+            <td *ngFor="let level in range(currentLevel.Level)" class="level-progress complete"></td>
+            <td *ngFor="let level in range(countLevels - currentLevel.Level)" class="level-progress incomplete"></td>
+          </tr>
+        </table>
       </td>
     </tr>
     <tr>
@@ -57,12 +64,12 @@
         </div>
       </td>
     </tr>
-    <tr class="digits"
-        [ngClass]="getTutorialClass('digitRowAndBtnCheckSuccess')">
+    <tr class="digits">
       <td *ngFor="let digit of number; let i = index;" class="vertical-center">
         <button (click)="toggleSelected(digit, i)"
                 [disabled]="digit.disabled"
-                [ngClass]="getTutorialClass('digit', i)"
+                [ngClass]="getTutorialClass('digit', i) ||
+                           getTutorialClass('digitsAndBtnCheckSuccess')"
                 class="btn text-center {{digit.selected ? 'btn-selected' : 'btn-deselected'}}"><span class="digit">{{ digit.value }}</span></button>
       </td>
     </tr>
@@ -85,7 +92,7 @@
                 <button [disabled]="!regType.enabled || filterByFound(game.ProgressRegularityInfos, regType.type).length == startGame.ExistRegularityTypeCounts[regType.type]"
                         class="btn btn-info check{{regType.enabled ? '' : ' disabled'}}"
                         [ngClass]="getTutorialClass('btnCheckSuccess', 0, regType.type) ||
-                                   getTutorialClass('digitRowAndBtnCheckSuccess', 0, regType.type)"
+                                   getTutorialClass('digitsAndBtnCheckSuccess', 0, regType.type)"
                         (click)="check(regType.type);">Проверить</button>
               </td>
             </ng-container>
