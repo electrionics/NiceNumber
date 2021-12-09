@@ -1,4 +1,6 @@
-﻿namespace NiceNumber.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace NiceNumber.Domain.Entities
 {
     public class TutorialLevel
     {
@@ -8,10 +10,12 @@
         
         public string Text { get; set; }
         
-        public int Order { get; set; }
+        public int Level { get; set; }
         
         public int NumberId { get; set; }
         
         public Number Number { get; set; }
+        
+        public List<TutorialTask> Tasks { get; set; }
     }
 }

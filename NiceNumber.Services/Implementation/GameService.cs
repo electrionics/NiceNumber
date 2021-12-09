@@ -91,8 +91,8 @@ namespace NiceNumber.Services.Implementation
         {
             var number = await _dbContext.Set<Number>()
                 .Include(x => x.Regularities.Where(y => y.Playable))
-                .Include(x => x.TutorialLevel)
-                .FirstOrDefaultAsync(x => x.TutorialLevel != null && x.TutorialLevel.Order == tutorialLevel);
+                .Include(x => x.TutorialLevel).ThenInclude(x => x.Tasks)
+                .FirstOrDefaultAsync(x => x.TutorialLevel != null && x.TutorialLevel.Level == tutorialLevel);
 
             if (number == null)
             {

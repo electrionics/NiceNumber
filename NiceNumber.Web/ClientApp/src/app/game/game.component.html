@@ -18,8 +18,14 @@
         <button *ngIf="currentTaskIndex < tasks.length"
                 (click)="showCurrentTask()"
                 class="btn btn-info text-center over-tutorial-overlay">Текущее задание</button>
-        <button (click)="start()"
-                class="btn btn-primary text-center over-tutorial-overlay">Следующий уровень</button>
+        <button *ngIf="currentLevel.Level < countLevels"
+                (click)="start()"
+                class="btn btn-primary text-center"
+                [ngClass]="getTutorialClass('nextLevel') ||
+                           'over-tutorial-overlay'">Следующий уровень</button>
+        <button *ngIf="currentTaskIndex == tasks.length && currentLevel.Level == countLevels"
+                (click)="endSession()"
+                [ngClass]="getTutorialClass('endTutorial')"></button>
         <table>
           <tr>
             <td *ngFor="let level in range(currentLevel.Level)" class="level-progress complete"></td>

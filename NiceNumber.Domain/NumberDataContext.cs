@@ -57,6 +57,14 @@ namespace NiceNumber.Domain
                     .WithOne(x => x.TutorialLevel)
                     .HasForeignKey<TutorialLevel>(x => x.NumberId);
             });
+            
+            modelBuilder.Entity<TutorialTask>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.HasOne(x => x.Level)
+                    .WithMany(x => x.Tasks)
+                    .HasForeignKey(x => x.LevelId);
+            });
         }
     }
 }

@@ -2,7 +2,7 @@
     [Id] [int] IDENTITY(1,1) NOT NULL,
     [Title] [nvarchar](200) NOT NULL,
     [Text] [nvarchar](max) NOT NULL,
-    [Order] [int] NOT NULL,
+    [Level] [int] NOT NULL,
     [NumberId] [int] NOT NULL,
     CONSTRAINT [PK_TutorialLevel] PRIMARY KEY CLUSTERED
 (
@@ -20,8 +20,13 @@ GO
 CREATE TABLE [dbo].[TutorialTask](
     [Id] [int] NOT NULL,
     [LevelId] [int] NOT NULL,
-    [Text] [nvarchar](max) NOT NULL,
     [Order] [int] NOT NULL,
+    [Name] [nvarchar](100) NOT NULL,
+    [Text] [nvarchar](max) NOT NULL,
+    [AnySubtask] [bit] NULL,
+    [Subtasks] [nvarchar](100) NULL,
+    [ApplyCondition] [nvarchar](100) NULL,
+    [ConditionParameter] [nvarchar](100) NULL,
     CONSTRAINT [PK_TutorialTask] PRIMARY KEY CLUSTERED
 (
 [Id] ASC

@@ -60,7 +60,17 @@ namespace NiceNumber.Web.Controllers
                         {
                             Title = game.Number.TutorialLevel.Title,
                             Text = game.Number.TutorialLevel.Text,
-                            Level = game.Number.TutorialLevel.Order
+                            Level = game.Number.TutorialLevel.Level,
+                            Tasks = game.Number.TutorialLevel.Tasks.OrderBy(x => x.Order).Select(x => new TutorialTaskModel
+                            {
+                                Name = x.Name,
+                                Text = x.Text,
+                                Order = x.Order,
+                                AnySubtask = x.AnySubtask,
+                                Subtasks = x.Subtasks?.Split(',').Select(int.Parse).ToList(),
+                                ApplyCondition = x.ApplyCondition,
+                                ConditionParameter = x.ConditionParameter
+                            }).ToList()
                         }
             };
 

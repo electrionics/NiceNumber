@@ -214,6 +214,7 @@ export class GameComponent {
       this.game = null;
       this.number = null;
       this.positions = null;
+      this.tasks = null;
     });
   }
 
@@ -482,95 +483,118 @@ export class GameComponent {
       this.currentLevel = startResult.TutorialLevel;
 
       this.tasks = [];
-      if (this.currentLevel.Level == 1){
-        initLevel1(this);
+      for (let i = 0; i < this.currentLevel.Tasks.length; i++){
+        let currentTask = this.currentLevel.Tasks[i];
+
+        let task = createTask(currentTask.Name, currentTask.Text);
+
+        task.anySubtask = currentTask.AnySubtask;
+        task.subtasks = currentTask.Subtasks;
+
+        task.additionalCondition = currentTask.ApplyCondition == null
+          ? null
+          : currentTask.ApplyCondition == 'fixedType'
+            ? fixedTypePredicate(Number.parseInt(currentTask.ConditionParameter))
+            : currentTask.ApplyCondition == 'dynamicType' && currentTask.ConditionParameter == 'getEnabled'
+              ? dynamicTypePredicate(this.getEnabledRegularityType, this)
+              : null;
+
+        this.tasks.push(task);
       }
-      if (this.currentLevel.Level == 2){
-        initLevel2(this);
-      }
+
+      // if (this.currentLevel.Level == 1){
+      //   initLevel1(this);
+      // }
+      // if (this.currentLevel.Level == 2){
+      //   initLevel2(this);
+      // }
 
       postProcessTasks(this);
 
       this.showCurrentTask();
     }
 
-    function initLevel1(self){
-      let currentTask;
-
-      currentTask = createTask('understand', 'Прочитайте описание и нажмите на подсвеченную кнопку "Понятно".');
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('row', 'Подсвеченная строка таблицы содержит числа-подсказки и информацию о прогрессе для выбранного типа закономерности: количество найденных и ' +
-        'количество существующих закономерностей в числе. Нажмите на подсвеченную строку таблицы, чтобы перейти к следующему заданию.');
-      currentTask.additionalCondition = fixedTypePredicate(1);
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('digit', 'Выделите подсвеченные цифры.');
-      currentTask.anySubtask = false;
-      currentTask.subtasks = [0,1,1,1,0,1];
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('btnCheckSuccess', 'Нажмите на подсвеченную кнопку "Проверить", чтобы найти закономерность выбранного типа.');
-      currentTask.additionalCondition = fixedTypePredicate(1);
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('tooltip', 'Нажмите на подсвеченные знаки вопроса рядом с названиями в таблице, чтобы посмотреть значение числа-подсказки для каждого из типов закономерностей.');
-      currentTask.anySubtask = false;
-      currentTask.subtasks = [0,0,0];
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('toggleHints', 'Нажмите на подсвеченную кнопку "Убрать кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки исчезают.');
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('toggleHints', 'Нажмите на подсвеченную кнопку "Вернуть кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки вновь появляются.');
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('hintRegNum', 'Заменить текст');
-      currentTask.additionalCondition = fixedTypePredicate(1);
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('btnCheckSuccess', 'Заменить текст');
-      currentTask.additionalCondition = fixedTypePredicate(1);
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('hintRegType', 'Заменить текст');
-      currentTask.additionalCondition = fixedTypePredicate(1);
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('btnCheckSuccess', 'Заменить текст');
-      currentTask.additionalCondition = fixedTypePredicate(1);
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('hintRandom', 'Заменить текст');
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('btnCheckSuccess', 'Заменить текст');
-      currentTask.additionalCondition = dynamicTypePredicate(self.getEnabledRegularityType, self);
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('endGame', 'Заменить текст');
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('showNotFound', 'Заменить текст');
-      self.tasks.push(currentTask);
-    }
-
-    function initLevel2(self){
-      let currentTask;
-
-      currentTask = createTask('digit');
-      currentTask.anySubtask = false;
-      currentTask.subtasks = [0,1,1,1,0,1];
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('btnCheckSuccess');
-      currentTask.additionalCondition = fixedTypePredicate(1);
-      self.tasks.push(currentTask);
-
-      currentTask = createTask('digitsAndBtnCheckSuccess');
-      currentTask.additionalCondition = fixedTypePredicate(1);
-      self.tasks.push(currentTask);
-    }
+    // function initLevel1(self){
+    //   let currentTask;
+    //
+    //   currentTask = createTask('understand', 'Прочитайте описание и нажмите на подсвеченную кнопку "Понятно".');
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('row', 'Подсвеченная строка таблицы содержит числа-подсказки и информацию о прогрессе для выбранного типа закономерности: количество найденных и количество существующих закономерностей в числе. Нажмите на подсвеченную строку таблицы, чтобы перейти к следующему заданию.');
+    //   currentTask.additionalCondition = fixedTypePredicate(1);
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('digit', 'Выделите подсвеченные цифры.');
+    //   currentTask.anySubtask = false;
+    //   currentTask.subtasks = [0,1,1,1,0,1];
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('btnCheckSuccess', 'Нажмите на подсвеченную кнопку "Проверить", чтобы найти закономерность выбранного типа.');
+    //   currentTask.additionalCondition = fixedTypePredicate(1);
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('tooltip', 'Нажмите на подсвеченные знаки вопроса рядом с названиями в таблице, чтобы посмотреть значение числа-подсказки для каждого из типов закономерностей.');
+    //   currentTask.anySubtask = false;
+    //   currentTask.subtasks = [0,0,0];
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('toggleHints', 'Нажмите на подсвеченную кнопку "Убрать кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки исчезают.');
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('toggleHints', 'Нажмите на подсвеченную кнопку "Вернуть кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки вновь появляются.');
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('hintRegNum', 'Заменить текст');
+    //   currentTask.additionalCondition = fixedTypePredicate(1);
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('btnCheckSuccess', 'Заменить текст');
+    //   currentTask.additionalCondition = fixedTypePredicate(1);
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('hintRegType', 'Заменить текст');
+    //   currentTask.additionalCondition = fixedTypePredicate(1);
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('btnCheckSuccess', 'Заменить текст');
+    //   currentTask.additionalCondition = fixedTypePredicate(1);
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('hintRandom', 'Заменить текст');
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('btnCheckSuccess', 'Заменить текст');
+    //   currentTask.additionalCondition = dynamicTypePredicate(self.getEnabledRegularityType, self);
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('endGame', 'Заменить текст');
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('showNotFound', 'Заменить текст');
+    //   self.tasks.push(currentTask);
+    // }
+    //
+    // function initLevel2(self){
+    //   let currentTask;
+    //
+    //   currentTask = createTask('tooltip');
+    //   currentTask.anySubtask = false;
+    //   currentTask.subtasks = [0];
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('digit');
+    //   currentTask.anySubtask = false;
+    //   currentTask.subtasks = [0,1,1,1,0,1];
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('btnCheckSuccess');
+    //   currentTask.additionalCondition = fixedTypePredicate(1);
+    //   self.tasks.push(currentTask);
+    //
+    //   currentTask = createTask('digitsAndBtnCheckSuccess');
+    //   currentTask.additionalCondition = fixedTypePredicate(1);
+    //   self.tasks.push(currentTask);
+    // }
 
     function createTask(controlName, text = null){
       return {
@@ -583,6 +607,13 @@ export class GameComponent {
     }
 
     function postProcessTasks(that){
+      if (that.currentLevel.Level < that.countLevels){
+        that.tasks.push(createTask('nextLevel', 'Нажмите кнопку "Следующий уровень", чтобы перейти на следующий уровень.'));
+      }
+      if (that.currentLevel.Level == that.countLevels) {
+        that.tasks.push(createTask('endTutorial', 'Нажмите кнопку "Завершить обучение", чтобы завершить обучение.'));
+      }
+
       for (let i = 0; i < that.tasks.length; i++){
         let task = that.tasks[i];
         if (task.anySubtask === null){
@@ -813,6 +844,11 @@ interface TutorialLevel{
 interface TutorialTask {
   Order: number;
   Text: string;
+  Name: string;
+  AnySubtask: boolean;
+  Subtasks: number[];
+  ApplyCondition: string;
+  ConditionParameter: string;
 }
 
 interface Predicate<T1, T2> {
