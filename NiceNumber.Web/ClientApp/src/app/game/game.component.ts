@@ -47,11 +47,18 @@ export class GameComponent {
   public start(){
     var url = this.baseUrl + 'Game/Start?difficultyLevel=' + this.difficultyLevel;
     if (this.difficultyLevel == 0){
-      url += '&tutorialLevel=1';
+      let nextLevelIndex;
+      if (!this.currentLevel){
+        nextLevelIndex = 1;
+      }
+      else{
+        nextLevelIndex = this.currentLevel.Order + 1;
+      }
+      url += ('&tutorialLevel=' + nextLevelIndex);
     }
 
     this.http.get<StartModel>(url).subscribe(result => {
-      this.initTutorial();
+      this.initTutorialLevel(result);
 
       this.hintsEnabled = true;
       this.understandDescription = false;
@@ -133,7 +140,7 @@ export class GameComponent {
           info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
           this.alertDialog(result.PointsAdded + ' очков заработано!', 'Поздравляем!', 'points-added-dialog', () =>{
-            this.increaseTask('btnCheck', 0, regularityType);
+            this.increaseTask('btnCheckSuccess', 0, regularityType);
 
             this.game.Score = result.NewTotalPoints;
 
@@ -455,76 +462,98 @@ export class GameComponent {
     this.increaseTask('row', 0, regularityType);
   }
 
-  private initTutorial(){
+  private initTutorialLevel(startResult){
     if (this.difficultyLevel == 0){
       this.currentTaskIndex = 0;
       this.timerSet = true; // don't start the timer
-
+      this.currentLevel = startResult.
 
       this.tasks = [];
+      if (this.currentLevel.Order == 1){
+        initLevel1(this);
+      }
+      if (this.currentLevel.Order == 2){
+        initLevel2(this);
+      }
+
+      postProcessTasks(this);
+    }
+
+    function initLevel1(self){
       let currentTask;
 
       currentTask = createTask('understand');
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('row');
       currentTask.additionalCondition = fixedTypePredicate(1);
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('digit');
-      currentTask.additionalCondition = subIndexPredicate;
       currentTask.anySubtask = false;
-      currentTask.subtasks = [];
-      currentTask.subtasks.push(0,1,1,1,0,1);
-      this.tasks.push(currentTask);
+      currentTask.subtasks = [0,1,1,1,0,1];
+      self.tasks.push(currentTask);
 
-      currentTask = createTask('btnCheck');
+      currentTask = createTask('btnCheckSuccess');
       currentTask.additionalCondition = fixedTypePredicate(1);
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('tooltip');
       currentTask.anySubtask = false;
-      currentTask.subtasks = [];
-      currentTask.subtasks.push(0,0,0);
-      this.tasks.push(currentTask);
+      currentTask.subtasks = [0,0,0];
+      self.tasks.push(currentTask);
 
       currentTask = createTask('toggleHints');
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('toggleHints');
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('hintRegNum');
       currentTask.additionalCondition = fixedTypePredicate(1);
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
-      currentTask = createTask('btnCheck');
+      currentTask = createTask('btnCheckSuccess');
       currentTask.additionalCondition = fixedTypePredicate(1);
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('hintRegType');
       currentTask.additionalCondition = fixedTypePredicate(1);
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
-      currentTask = createTask('btnCheck');
+      currentTask = createTask('btnCheckSuccess');
       currentTask.additionalCondition = fixedTypePredicate(1);
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('hintRandom');
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
-      currentTask = createTask('btnCheck');
-      currentTask.additionalCondition = dynamicTypePredicate(this.getEnabledRegularityType, this);
-      this.tasks.push(currentTask);
+      currentTask = createTask('btnCheckSuccess');
+      currentTask.additionalCondition = dynamicTypePredicate(self.getEnabledRegularityType, self);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('endGame');
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
 
       currentTask = createTask('showNotFound');
-      this.tasks.push(currentTask);
+      self.tasks.push(currentTask);
+    }
 
+    function initLevel2(self){
+      let currentTask;
 
-      postProcessTasks(this);
+      currentTask = createTask('digit');
+      currentTask.anySubtask = false;
+      currentTask.subtasks = [0,1,1,1,0,1];
+      self.tasks.push(currentTask);
+
+      currentTask = createTask('btnCheckSuccess');
+      currentTask.additionalCondition = fixedTypePredicate(1);
+      self.tasks.push(currentTask);
+
+      currentTask = createTask('digitRowAndBtnCheckSuccess');
+      currentTask.additionalCondition = fixedTypePredicate(1);
+      self.tasks.push(currentTask);
     }
 
     function createTask(controlName){
@@ -569,10 +598,6 @@ export class GameComponent {
         return type == getTypeFunction(that);
       }
       return result;
-    }
-
-    function subIndexPredicate(subIndex, comparison){
-      return subIndex == comparison;
     }
   }
 

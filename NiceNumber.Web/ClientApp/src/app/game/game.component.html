@@ -57,12 +57,12 @@
         </div>
       </td>
     </tr>
-    <tr class="digits">
+    <tr class="digits"
+        [ngClass]="getTutorialClass('digitRowAndBtnCheckSuccess')">
       <td *ngFor="let digit of number; let i = index;" class="vertical-center">
         <button (click)="toggleSelected(digit, i)"
                 [disabled]="digit.disabled"
-                [ngClass]="getTutorialClass('digit', 0, i) ||
-                           getTutorialClass('digit', 4, i)"
+                [ngClass]="getTutorialClass('digit', i)"
                 class="btn text-center {{digit.selected ? 'btn-selected' : 'btn-deselected'}}"><span class="digit">{{ digit.value }}</span></button>
       </td>
     </tr>
@@ -84,7 +84,8 @@
               <td class="text-center">
                 <button [disabled]="!regType.enabled || filterByFound(game.ProgressRegularityInfos, regType.type).length == startGame.ExistRegularityTypeCounts[regType.type]"
                         class="btn btn-info check{{regType.enabled ? '' : ' disabled'}}"
-                        [ngClass]="getTutorialClass('btnCheck', 0, regType.type)"
+                        [ngClass]="getTutorialClass('btnCheckSuccess', 0, regType.type) ||
+                                   getTutorialClass('digitRowAndBtnCheckSuccess', 0, regType.type)"
                         (click)="check(regType.type);">Проверить</button>
               </td>
             </ng-container>
