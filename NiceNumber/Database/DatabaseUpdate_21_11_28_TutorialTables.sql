@@ -18,7 +18,7 @@ ALTER TABLE [dbo].[TutorialLevel] CHECK CONSTRAINT [FK_TutorialLevel_Number]
 GO
 
 CREATE TABLE [dbo].[TutorialTask](
-    [Id] [int] NOT NULL,
+    [Id] [int] NOT NULL IDENTITY(1,1),
     [LevelId] [int] NOT NULL,
     [Order] [int] NOT NULL,
     [Name] [nvarchar](100) NOT NULL,
@@ -40,8 +40,8 @@ GO
 ALTER TABLE [dbo].[TutorialTask] CHECK CONSTRAINT [FK_TutorialTask_TutorialLevel]
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX [IX_TutorialLevel] ON [dbo].[TutorialLevel]
+CREATE NONCLUSTERED INDEX [IX_TutorialTask] ON [dbo].[TutorialTask]
 (
-    [NumberId] ASC
+    [LevelId] ASC
 )
 GO

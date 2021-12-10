@@ -214,7 +214,9 @@ export class GameComponent {
       this.game = null;
       this.number = null;
       this.positions = null;
+
       this.tasks = null;
+      this.currentLevel = null;
     });
   }
 
