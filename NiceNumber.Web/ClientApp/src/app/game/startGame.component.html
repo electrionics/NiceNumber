@@ -1,8 +1,9 @@
 ﻿
 <div class="text-center">
-  <span>Выберите уровень сложности:</span>
+  <button class="btn btn-primary" (click)="navigateTutorial()">Пройти обучение</button>
+  <span>&nbsp;&nbsp;&nbsp;Или выберите уровень сложности:</span>
   <select [(ngModel)]="difficultyLevel" style="margin: 0 10px; background: none;">
     <option *ngFor="let dl of difficultyLevels" [value]="dl.type">{{dl.label}}</option>
   </select>
-  <button class="btn btn-success" (click)="navigateStart()">Начать игру</button>
+  <button class="btn btn-success" (click)="navigateStart()">Начать игру</button><br/>
 </div>

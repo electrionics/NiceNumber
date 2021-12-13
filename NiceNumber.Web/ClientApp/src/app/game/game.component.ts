@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
 import {UpdateRecordDialogComponent} from "./updateRecordDialog.component";
@@ -37,8 +37,16 @@ export class GameComponent implements OnInit, OnDestroy {
   public currentTaskIndex: number;
   public tasks: { controlName: string, anySubtask: boolean, subtasks: number[], additionalCondition: Predicate<number, number>, text: string}[]; // if not any - then all
 
-  constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog, private router: Router, public dataService: PassGameParametersService) {
+  public dialog: MatDialog;
+  public dataService: PassGameParametersService;
+  protected router: Router;
+
+  constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, dialog: MatDialog, router: Router, dataService: PassGameParametersService) {
     this.initLists();
+
+    this.dialog = dialog;
+    this.router = router;
+    this.dataService = dataService;
 
     this.timerSet = false;
 
@@ -67,71 +75,67 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   public start(){
-    var url = this.baseUrl + 'Game/Start?difficultyLevel=' + this.difficultyLevel;
-    if (this.difficultyLevel == 0){
-      let nextLevelIndex;
-      if (!this.currentLevel){
-        nextLevelIndex = 1;
-      }
-      else{
-        nextLevelIndex = this.currentLevel.Level + 1;
-      }
-      url += ('&tutorialLevel=' + nextLevelIndex);
-    }
-
+    let url = this.getStartUrl();
     this.http.get<StartModel>(url).subscribe(result => {
-      this.initTutorialLevel(result);
-
-      this.hintsEnabled = true;
-      this.understandDescription = false;
-      this.endGame = null;
-      this.startGame = result;
-      this.game = new ProgressModel();
-      this.game.ProgressRegularityInfos = {};
-      this.game.Score = 0;
-
-      this.number = [];
-
-      let tempNumber = result.Number;
-      while(tempNumber > 0){
-        let currentDigit = tempNumber % 10;
-        tempNumber = (tempNumber - currentDigit) / 10;
-
-        this.number.push({value: currentDigit, selected: false, disabled: false });
-      }
-      this.number = this.number.reverse();
-
-      this.positions = [];
-      for(let pos = 0; pos < this.startGame.Length; pos++){
-        this.positions.push({value: pos, selected: false});
-      }
-
-      this.regularityTypes.map(x => x.type).forEach(type => {
-        this.game.ProgressRegularityInfos[type] = [];
-        this.startGame.ExistRegularityInfos.filter(x => x.Type == type).forEach(regularityInfo =>{
-          let progressInfo = new ProgressRegularityInfo();
-          progressInfo.FoundStatus = FoundStatus.NotFound;
-          progressInfo.Numbers = null;
-          progressInfo.RegularityNumber = regularityInfo.RegularityNumber;
-          progressInfo.ReverseRegularityNumber = regularityInfo.ReverseRegularityNumber;
-
-          this.game.ProgressRegularityInfos[type].push(progressInfo);
-        });
-      });
-
-      this.game.TimerSeconds = this.getCurrentDifficultyLevel().timer;
-      if (!this.timerSet){
-        setInterval(() => {
-          if (this.game && this.game.TimerSeconds && this.game.TimerSeconds > 0 && !this.endGame){
-            if (--this.game.TimerSeconds == 0){
-              this.end(false);
-            }
-          }
-        }, 1000);
-        this.timerSet = true;
-      }
+      this.successStart(result);
     }, error => console.error(error));
   }
+
+  protected getStartUrl(){
+    return this.baseUrl + 'Game/Start?difficultyLevel=' + this.difficultyLevel;
+  }
+
+  protected successStart(result){
+    this.hintsEnabled = true;
+    this.understandDescription = false;
+    this.endGame = null;
+    this.startGame = result;
+    this.game = new ProgressModel();
+    this.game.ProgressRegularityInfos = {};
+    this.game.Score = 0;
+
+    this.number = [];
+
+    let tempNumber = result.Number;
+    while(tempNumber > 0){
+      let currentDigit = tempNumber % 10;
+      tempNumber = (tempNumber - currentDigit) / 10;
+
+      this.number.push({value: currentDigit, selected: false, disabled: false });
+    }
+    this.number = this.number.reverse();
+
+    this.positions = [];
+    for(let pos = 0; pos < this.startGame.Length; pos++){
+      this.positions.push({value: pos, selected: false});
+    }
+
+    this.regularityTypes.map(x => x.type).forEach(type => {
+      this.game.ProgressRegularityInfos[type] = [];
+      this.startGame.ExistRegularityInfos.filter(x => x.Type == type).forEach(regularityInfo =>{
+        let progressInfo = new ProgressRegularityInfo();
+        progressInfo.FoundStatus = FoundStatus.NotFound;
+        progressInfo.Numbers = null;
+        progressInfo.RegularityNumber = regularityInfo.RegularityNumber;
+        progressInfo.ReverseRegularityNumber = regularityInfo.ReverseRegularityNumber;
+
+        this.game.ProgressRegularityInfos[type].push(progressInfo);
+      });
+    });
+
+    this.game.TimerSeconds = this.getCurrentDifficultyLevel().timer;
+    if (!this.timerSet){
+      setInterval(() => {
+        if (this.game && this.game.TimerSeconds && this.game.TimerSeconds > 0 && !this.endGame){
+          if (--this.game.TimerSeconds == 0){
+            this.end(false);
+          }
+        }
+      }, 1000);
+      this.timerSet = true;
+    }
+  }
+
 
   public toggleSelected(digit, index){
     if (this.endGame) return;
@@ -142,9 +146,8 @@ export class GameComponent implements OnInit, OnDestroy {
         this.positions[pos].selected = digit.selected;
       }
     }
-
-    this.increaseTask('digit', index);
   }
+
 
   public check(regularityType){
     let selectedPositions = this.positions.filter(x => x.selected).map(x => x.value);
@@ -162,20 +165,7 @@ export class GameComponent implements OnInit, OnDestroy {
           info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
           this.alertDialog(result.PointsAdded + ' очков заработано!', 'Поздравляем!', 'points-added-dialog', () =>{
-            this.increaseTask('btnCheckSuccess', 0, regularityType) ||
-            this.increaseTask('digitsAndBtnCheckSuccess', 0, regularityType);
-
-            this.game.Score = result.NewTotalPoints;
-
-            if (!result.Hinted){
-              this.game.TimerSeconds += this.getCurrentDifficultyLevel().bonusTime;
-            }
-
-            this.clearSelections();
-
-            if (!this.regularityTypes.some(x => this.game.ProgressRegularityInfos[x.type].some(info => info.FoundStatus == FoundStatus.NotFound))){
-              this.end(false);
-            }
+            this.successCongratulations(result, regularityType);
           });
         }
         else {
@@ -192,28 +182,26 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected successCongratulations(result, regularityType){
+    this.game.Score = result.NewTotalPoints;
+
+    if (!result.Hinted){
+      this.game.TimerSeconds += this.getCurrentDifficultyLevel().bonusTime;
+    }
+
+    this.clearSelections();
+
+    if (!this.regularityTypes.some(x => this.game.ProgressRegularityInfos[x.type].some(info => info.FoundStatus == FoundStatus.NotFound))){
+      this.end(false);
+    }
+  }
+
+
   public end(needConfirm){
     let self = this;
     let endBody = function(){
       self.http.post<EndModel>(self.baseUrl + 'Game/End?gameId=' + self.startGame.GameId + '&remainingSeconds=' + self.game.TimerSeconds, null).subscribe(result => {
-        self.endGame = result;
-
-        self.game.Score = self.endGame.TotalScore;
-
-        self.clearSelections();
-
-        self.dialog.open(UpdateRecordDialogComponent, {
-          data: {
-            gameId: self.startGame.GameId,
-            totalScore: self.endGame.TotalScore,
-            spentMinutes: self.endGame.SpentMinutes,
-            spentSeconds: self.endGame.SpentSeconds
-          }
-        }).afterClosed().subscribe(result => {
-          self.showNotFound();
-        });
-
-        self.increaseTask('endGame');
+        self.successEnd(result);
       }, error => console.error(error));
     }
 
@@ -228,6 +216,26 @@ export class GameComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  protected successEnd(result){
+    this.endGame = result;
+
+    this.game.Score = this.endGame.TotalScore;
+
+    this.clearSelections();
+
+    this.dialog.open(UpdateRecordDialogComponent, {
+      data: {
+        gameId: this.startGame.GameId,
+        totalScore: this.endGame.TotalScore,
+        spentMinutes: this.endGame.SpentMinutes,
+        spentSeconds: this.endGame.SpentSeconds
+      }
+    }).afterClosed().subscribe(result => {
+      this.showNotFound();
+    });
+  }
+
 
   public endSession(){
     this.confirmDialog('Завершить сеанс и вернуться на главную страницу?', () => {
@@ -246,18 +254,7 @@ export class GameComponent implements OnInit, OnDestroy {
   public showNotFound(){
     if (this.endGame.NotFoundRegularityInfos.length){
       this.confirmDialog('Показать ненайденные закономерности?', () =>{
-        this.endGame.NotFoundRegularityInfos.forEach(hint => {
-          let progressInfos = this.game.ProgressRegularityInfos[hint.Type];
-          let info = progressInfos.find(x => x.RegularityNumber == hint.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
-
-          if (info) {
-            info.Numbers = hint.Numbers;
-            info.FoundStatus = FoundStatus.Hinted;
-          }
-        });
-        this.endGame.HintsIterated = true;
-
-        this.increaseTask('showNotFound');
+        this.successShowNotFound();
       });
     }
     else{
@@ -265,11 +262,24 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected successShowNotFound(){
+    this.endGame.NotFoundRegularityInfos.forEach(hint => {
+      let progressInfos = this.game.ProgressRegularityInfos[hint.Type];
+      let info = progressInfos.find(x => x.RegularityNumber == hint.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
+
+      if (info) {
+        info.Numbers = hint.Numbers;
+        info.FoundStatus = FoundStatus.Hinted;
+      }
+    });
+    this.endGame.HintsIterated = true;
+  }
+
+
   public toggleHints(){
     this.hintsEnabled = !this.hintsEnabled;
-
-    this.increaseTask('toggleHints');
   }
+
 
   public startHintMode(regularityType, regularityNumber, needConfirm){
     let self = this;
@@ -280,31 +290,7 @@ export class GameComponent implements OnInit, OnDestroy {
         RegularityNumber: regularityNumber
       }).subscribe(result => {
         if (result) {
-          self.clearSelections();
-
-          for (let pos = 0; pos < self.startGame.Length; pos++) {
-            let selected = result.Numbers.some(n => {
-              for (var i = 0; i < n.Length; i++){
-                if (n.Position + i == pos){
-                  return true;
-                }
-              }
-
-              return false;
-            });
-
-            self.positions[pos].selected = selected;
-            self.number[pos].selected = selected;
-            self.number[pos].disabled = true;
-          }
-
-          self.regularityTypes.forEach(regType => {
-            regType.enabled = result.Type == regType.type;
-          });
-
-          self.increaseTask('hintRegNum',0, regularityType) ||
-          self.increaseTask('hintRegType',0, regularityType) ||
-          self.increaseTask('hintRandom');
+          self.successHintMode(result, regularityType);
         }
       }, error => console.error(error));
     }
@@ -319,17 +305,40 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected successHintMode(result, regularityType){
+    this.clearSelections();
+
+    for (let pos = 0; pos < this.startGame.Length; pos++) {
+      let selected = result.Numbers.some(n => {
+        for (var i = 0; i < n.Length; i++){
+          if (n.Position + i == pos){
+            return true;
+          }
+        }
+
+        return false;
+      });
+
+      this.positions[pos].selected = selected;
+      this.number[pos].selected = selected;
+      this.number[pos].disabled = true;
+    }
+
+    this.regularityTypes.forEach(regType => {
+      regType.enabled = result.Type == regType.type;
+    });
+  }
+
+
   public understand(){
     this.understandDescription = true;
-
-    this.increaseTask('understand');
   }
+
 
   public toggleTooltip(tooltip, index){
     tooltip.toggle();
-
-    this.increaseTask('tooltip', index);
   }
+
 
   public filterByFound(progressRegularityInfos, type){
     let infos = progressRegularityInfos[type];
@@ -340,9 +349,11 @@ export class GameComponent implements OnInit, OnDestroy {
     return infos.filter(x => x.FoundStatus == FoundStatus.Hinted || x.FoundStatus == FoundStatus.Found);
   }
 
+
   public filterByExists(regularityTypes){
     return regularityTypes.filter(regType => this.startGame.ExistRegularityTypeCounts[regType.type]);
   }
+
 
   public getCurrentDifficultyLevel(){
     let result;
@@ -354,6 +365,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
     return result;
   }
+
 
   public getCurrentLength(numbers: FoundNumber[], position){
     for (let i = 0; i < numbers.length; i++){
@@ -377,6 +389,7 @@ export class GameComponent implements OnInit, OnDestroy {
     }; // empty cell
   }
 
+
   public range(length){
     let result = [];
     for (let i = 0; i < length; i++){
@@ -384,6 +397,7 @@ export class GameComponent implements OnInit, OnDestroy {
     }
     return result;
   }
+
 
   public getHintClass(status){
     return status == FoundStatus.Found
@@ -393,17 +407,21 @@ export class GameComponent implements OnInit, OnDestroy {
         : 'hint';
   }
 
+
   public getHintChar(status){
     return status == FoundStatus.NotFound ? '-' : '+';
   }
+
 
   public getHintDisabled(status) {
     return status != FoundStatus.NotFound;
   }
 
+
   public getAnyDisabled(regularityTypes){
     return regularityTypes.some(x => !x.enabled);
   }
+
 
   private static composeHintMessage(result){
     let digitsToAddMessage = result.AddHint == CheckHint.No
@@ -428,6 +446,7 @@ export class GameComponent implements OnInit, OnDestroy {
       : ', ' + digitsToRemoveMessage);
   }
 
+
   private initLists(){
     this.regularityTypes = [];
     this.regularityTypes.push({type: 1, enabled: true, label: "Одинаковые цифры", regularityNumberHint: "Количество цифр в закономерности. Например, для числа '373177' будет два числа-подсказки, равные 2 для троек и 3 для семерок.", shortLabel: "ОЦ"});
@@ -444,6 +463,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.difficultyLevels.push({type: 3, label: "Тяжелый", timer: 300, bonusTime: 8 });
   }
 
+
   private clearSelections(){
     this.positions.forEach(pos => {
       pos.selected = false;
@@ -456,6 +476,7 @@ export class GameComponent implements OnInit, OnDestroy {
       regType.enabled = true;
     });
   }
+
 
   private confirmDialog(message, successCallback){
     this.dialog.open(ConfirmDialogComponent, {
@@ -470,7 +491,8 @@ export class GameComponent implements OnInit, OnDestroy {
     });
   }
 
-  private alertDialog(message, title = null, cssClass = null, successCallback = null){
+
+  protected alertDialog(message, title = null, cssClass = null, successCallback = null){
     this.dialog.open(AlertDialogComponent, {
       data: {
         title: title,
@@ -485,296 +507,25 @@ export class GameComponent implements OnInit, OnDestroy {
     });
   }
 
+
   /* tutorial */
   public rowClick(regularityType){
-    this.increaseTask('row', 0, regularityType);
   }
+
 
   public showCurrentTask(){
-    if (this.tasks.length > this.currentTaskIndex){
-      let text = this.tasks[this.currentTaskIndex].text;
-      if (text){
-        this.alertDialog(text, 'Задание ' + (this.currentTaskIndex + 1), 'current-task-dialog');
-      }
-    }
   }
 
-  private initTutorialLevel(startResult){
-    if (this.difficultyLevel == 0){
-      this.countLevels = 2;
-
-      this.currentTaskIndex = 0;
-      this.timerSet = true; // don't start the timer
-      this.currentLevel = startResult.TutorialLevel;
-
-      this.tasks = [];
-      for (let i = 0; i < this.currentLevel.Tasks.length; i++){
-        let currentTask = this.currentLevel.Tasks[i];
-
-        let task = createTask(currentTask.Name, currentTask.Text);
-
-        task.anySubtask = currentTask.AnySubtask;
-        task.subtasks = currentTask.Subtasks;
-
-        task.additionalCondition = currentTask.ApplyCondition == null
-          ? null
-          : currentTask.ApplyCondition == 'fixedType'
-            ? fixedTypePredicate(Number.parseInt(currentTask.ConditionParameter))
-            : currentTask.ApplyCondition == 'dynamicType' && currentTask.ConditionParameter == 'getEnabled'
-              ? dynamicTypePredicate(this.getEnabledRegularityType, this)
-              : null;
-
-        this.tasks.push(task);
-      }
-
-      // if (this.currentLevel.Level == 1){
-      //   initLevel1(this);
-      // }
-      // if (this.currentLevel.Level == 2){
-      //   initLevel2(this);
-      // }
-
-      postProcessTasks(this);
-
-      this.showCurrentTask();
-    }
-
-    // function initLevel1(self){
-    //   let currentTask;
-    //
-    //   currentTask = createTask('understand', 'Прочитайте описание и нажмите на подсвеченную кнопку "Понятно".');
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('row', 'Подсвеченная строка таблицы содержит числа-подсказки и информацию о прогрессе для выбранного типа закономерности: количество найденных и количество существующих закономерностей в числе. Нажмите на подсвеченную строку таблицы, чтобы перейти к следующему заданию.');
-    //   currentTask.additionalCondition = fixedTypePredicate(1);
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('digit', 'Выделите подсвеченные цифры.');
-    //   currentTask.anySubtask = false;
-    //   currentTask.subtasks = [0,1,1,1,0,1];
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('btnCheckSuccess', 'Нажмите на подсвеченную кнопку "Проверить", чтобы найти закономерность выбранного типа.');
-    //   currentTask.additionalCondition = fixedTypePredicate(1);
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('tooltip', 'Нажмите на подсвеченные знаки вопроса рядом с названиями в таблице, чтобы посмотреть значение числа-подсказки для каждого из типов закономерностей.');
-    //   currentTask.anySubtask = false;
-    //   currentTask.subtasks = [0,0,0];
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('toggleHints', 'Нажмите на подсвеченную кнопку "Убрать кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки исчезают.');
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('toggleHints', 'Нажмите на подсвеченную кнопку "Вернуть кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки вновь появляются.');
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('hintRegNum', 'Заменить текст');
-    //   currentTask.additionalCondition = fixedTypePredicate(1);
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('btnCheckSuccess', 'Заменить текст');
-    //   currentTask.additionalCondition = fixedTypePredicate(1);
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('hintRegType', 'Заменить текст');
-    //   currentTask.additionalCondition = fixedTypePredicate(1);
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('btnCheckSuccess', 'Заменить текст');
-    //   currentTask.additionalCondition = fixedTypePredicate(1);
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('hintRandom', 'Заменить текст');
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('btnCheckSuccess', 'Заменить текст');
-    //   currentTask.additionalCondition = dynamicTypePredicate(self.getEnabledRegularityType, self);
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('endGame', 'Заменить текст');
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('showNotFound', 'Заменить текст');
-    //   self.tasks.push(currentTask);
-    // }
-    //
-    // function initLevel2(self){
-    //   let currentTask;
-    //
-    //   currentTask = createTask('tooltip');
-    //   currentTask.anySubtask = false;
-    //   currentTask.subtasks = [0];
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('digit');
-    //   currentTask.anySubtask = false;
-    //   currentTask.subtasks = [0,1,1,1,0,1];
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('btnCheckSuccess');
-    //   currentTask.additionalCondition = fixedTypePredicate(1);
-    //   self.tasks.push(currentTask);
-    //
-    //   currentTask = createTask('digitsAndBtnCheckSuccess');
-    //   currentTask.additionalCondition = fixedTypePredicate(1);
-    //   self.tasks.push(currentTask);
-    // }
-
-    function createTask(controlName, text = null){
-      return {
-        controlName: controlName,
-        anySubtask: null,
-        subtasks: null,
-        additionalCondition: null,
-        text: text
-      };
-    }
-
-    function postProcessTasks(that){
-      if (that.currentLevel.Level < that.countLevels){
-        that.tasks.push(createTask('nextLevel', 'Нажмите кнопку "Следующий уровень", чтобы перейти на следующий уровень.'));
-      }
-      if (that.currentLevel.Level == that.countLevels) {
-        that.tasks.push(createTask('endTutorial', 'Нажмите кнопку "Завершить обучение", чтобы завершить обучение.'));
-      }
-
-      for (let i = 0; i < that.tasks.length; i++){
-        let task = that.tasks[i];
-        if (task.anySubtask === null){
-          task.anySubtask = true;
-        }
-        if (task.subtasks === null){
-          task.subtasks = [];
-          task.subtasks.push(0);
-        }
-        if (task.additionalCondition === null){
-          task.additionalCondition = truePredicate;
-        }
-      }
-    }
-
-    // Predicates
-    function truePredicate(param1, param2){
-      return true;
-    }
-
-    function fixedTypePredicate(comparison){
-      function result(param1, type){
-        return !type || type == comparison;
-      }
-      return result;
-    }
-
-    function dynamicTypePredicate(getTypeFunction, that){
-      function result(param1, type){
-        return !type || type == getTypeFunction(that);
-      }
-      return result;
-    }
+  public getTutorialClass(controlName, subIndex = 0, type = null) {
+    return null;
   }
 
   public getOverOverlayClass(controlName, subIndex = 0, type = null){
-    return this.isTutorialActiveElement(controlName, subIndex, type)
-      ? 'over-tutorial-overlay'
-      : null;
+    return null;
   }
 
-  public getOverlayedClass(controlName, subIndex = 0, type = null){
-    return this.isTutorialActiveElement(controlName, subIndex, type)
-      ? 'overlayed-control'
-      : null;
-  }
-
-  public getTutorialClass(controlName, subIndex = 0, type = null){
-    return this.isTutorialActiveElement(controlName, subIndex, type)
-      ? 'highlighted-control'
-      : null;
-  }
-
-  public isTutorialActiveElement(controlName, subIndex = 0, type = null){
-    if (!this.tasks){
-      return null;
-    }
-
-    let indexes = [];
-    for (let i = 0; i < this.tasks.length; i++){
-      if (this.tasks[i].controlName == controlName){
-        indexes.push(i);
-      }
-    }
-
-    for (let i = 0; i < indexes.length; i++){
-      let index = indexes[i];
-      let task = this.tasks[index];
-
-      if (task){
-        let result = this.isTutorialActiveElementInner(index, subIndex, task.additionalCondition(subIndex, type));
-        if (result){
-          return result;
-        }
-      }
-    }
-
+  public isTutorialActiveElement(controlName, subIndex = 0, type = null) {
     return false;
-  }
-
-  public increaseTask(controlName, subIndex = 0, type = null){
-    if (!this.tasks){
-      return false;
-    }
-
-    let indexes = [];
-    for (let i = this.tasks.length - 1; i >= 0; i--){
-      if (this.tasks[i].controlName == controlName){
-        indexes.push(i);
-      }
-    }
-
-    var result = false;
-
-    for (let i = 0; i < indexes.length; i++){
-      let index = indexes[i];
-      let task = this.tasks[index];
-
-      if (task){
-        result = this.increaseTaskInner(index, subIndex, task.additionalCondition(subIndex, type)) ||
-                 result;
-      }
-    }
-
-    return result;
-  }
-
-  private increaseTaskInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
-    if (that.difficultyLevel == 0 && additionalCondition && that.currentTaskIndex == index){
-      that.tasks[index].subtasks[subtaskIndex]++;
-
-      if (that.tasks[index].anySubtask){
-        that.currentTaskIndex++;
-        that.showCurrentTask();
-      }
-      else if (that.tasks[index].subtasks.every(x => x)){
-        that.currentTaskIndex++;
-        that.showCurrentTask();
-      }
-
-      return true;
-    }
-
-    return false;
-  }
-
-  private isTutorialActiveElementInner(index, subtaskIndex = 0, additionalCondition = true, that = this){
-    if (that.difficultyLevel == 0 && additionalCondition && that.currentTaskIndex == index && that.tasks[index].subtasks[subtaskIndex] == 0){
-      return true;
-    }
-
-    return false;
-  }
-
-  private getEnabledRegularityType(that){
-    return that.regularityTypes.find(x => x.enabled)?.type;
   }
 }
 

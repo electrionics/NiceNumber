@@ -22,6 +22,7 @@ import { ConfirmDialogComponent } from "./common/confirm.component";
 import { AlertDialogComponent } from "./common/alert.component";
 import { CookieService } from "./common/cookieService.component";
 import {PassGameParametersService} from "./game/passGameParametersService";
+import {TutorialComponent} from "./game/tutorial.component";
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import {PassGameParametersService} from "./game/passGameParametersService";
     AuthorComponent,
     StartGameComponent,
     GameComponent,
+    TutorialComponent,
     UpdateRecordDialogComponent,
     RecordsComponent,
     ConfirmDialogComponent,
@@ -45,6 +47,7 @@ import {PassGameParametersService} from "./game/passGameParametersService";
     RouterModule.forRoot([
       {path: '', component: StartGameComponent, pathMatch: 'full'},
       {path: 'game', component: GameComponent},
+      {path: 'tutorial', component: TutorialComponent},
       {path: 'records', component: RecordsComponent},
       {path: 'about', component: AboutComponent},
       {path: 'author', component: AuthorComponent},
