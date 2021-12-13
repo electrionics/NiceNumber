@@ -68,7 +68,17 @@ export class TutorialComponent extends GameComponent{
   }
 
 
+  protected successEndSession(){
+    this.tasks = null;
+    this.currentLevel = null;
+
+    super.successEndSession();
+  }
+
+
   protected successShowNotFound() {
+    super.successShowNotFound();
+
     this.increaseTask('showNotFound');
   }
 
@@ -102,8 +112,6 @@ export class TutorialComponent extends GameComponent{
 
 
   public showCurrentTask(){
-    super.showCurrentTask();
-
     if (this.tasks.length > this.currentTaskIndex){
       let text = this.tasks[this.currentTaskIndex].text;
       if (text){
@@ -238,7 +246,7 @@ export class TutorialComponent extends GameComponent{
     return false;
   }
 
-  public increaseTask(controlName, subIndex = 0, type = null){
+  private increaseTask(controlName, subIndex = 0, type = null){
     if (!this.tasks){
       return false;
     }

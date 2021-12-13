@@ -12,6 +12,16 @@ import {PassGameParametersService} from "./passGameParametersService";
   templateUrl: './game.component.html'
 })
 export class GameComponent implements OnInit, OnDestroy {
+  private http: HttpClient;
+  private readonly baseUrl: string;
+
+  protected dialog: MatDialog;
+  protected dataService: PassGameParametersService;
+  protected router: Router;
+
+  public regularityTypes: { type: number; enabled: boolean; label: string; shortLabel: string; regularityNumberHint: string; }[];
+  public difficultyLevels: { type: number; label: string; timer: number; bonusTime: number; }[];
+
   public startGame: StartModel;
   public game: ProgressModel;
   public endGame: EndModel;
@@ -23,23 +33,7 @@ export class GameComponent implements OnInit, OnDestroy {
   public number: { value: number; selected: boolean; disabled: boolean; }[];
   public positions: { value: number; selected: boolean; }[];
 
-  public regularityTypes: { type: number; enabled: boolean; label: string; shortLabel: string; regularityNumberHint: string; }[];
-  public difficultyLevels: { type: number; label: string; timer: number; bonusTime: number; }[];
-
   public timerSet: boolean;
-
-  private http: HttpClient;
-  private readonly baseUrl: string;
-
-
-  public currentLevel: TutorialLevel;
-  public countLevels: number;
-  public currentTaskIndex: number;
-  public tasks: { controlName: string, anySubtask: boolean, subtasks: number[], additionalCondition: Predicate<number, number>, text: string}[]; // if not any - then all
-
-  public dialog: MatDialog;
-  public dataService: PassGameParametersService;
-  protected router: Router;
 
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, dialog: MatDialog, router: Router, dataService: PassGameParametersService) {
     this.initLists();
@@ -73,6 +67,7 @@ export class GameComponent implements OnInit, OnDestroy {
       difficultyLevel: this.difficultyLevel
     };
   }
+
 
   public start(){
     let url = this.getStartUrl();
@@ -239,17 +234,19 @@ export class GameComponent implements OnInit, OnDestroy {
 
   public endSession(){
     this.confirmDialog('Завершить сеанс и вернуться на главную страницу?', () => {
-      this.startGame = null;
-      this.game = null;
-      this.number = null;
-      this.positions = null;
-
-      this.tasks = null;
-      this.currentLevel = null;
-
-      this.router.navigateByUrl('/');
+      this.successEndSession();
     });
   }
+
+  protected successEndSession() {
+    this.startGame = null;
+    this.game = null;
+    this.number = null;
+    this.positions = null;
+
+    this.router.navigateByUrl('/');
+  }
+
 
   public showNotFound(){
     if (this.endGame.NotFoundRegularityInfos.length){
@@ -509,9 +506,15 @@ export class GameComponent implements OnInit, OnDestroy {
 
 
   /* tutorial */
+
+  public currentLevel: TutorialLevel;
+  public countLevels: number;
+  public currentTaskIndex: number;
+  public tasks: { controlName: string, anySubtask: boolean, subtasks: number[], additionalCondition: Predicate<number, number>, text: string}[]; // if not any - then all
+
+
   public rowClick(regularityType){
   }
-
 
   public showCurrentTask(){
   }
