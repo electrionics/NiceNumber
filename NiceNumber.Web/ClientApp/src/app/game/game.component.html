@@ -1,12 +1,5 @@
-<p *ngIf="!difficultyLevels"><em>Загрузка...</em></p>
+<p *ngIf="!number"><em>Загрузка...</em></p>
 
-<div *ngIf="!game" class="text-center">
-  <span>Выберите уровень сложности:</span>
-  <select [(ngModel)]="difficultyLevel" style="margin: 0 10px; background: none;">
-    <option *ngFor="let dl of difficultyLevels" [value]="dl.type">{{dl.label}}</option>
-  </select>
-  <button class="btn btn-success" (click)="start()">Начать игру</button>
-</div>
 <div *ngIf="difficultyLevel == 0 && game && tasks && currentTaskIndex < tasks.length" class="tutorial-overlay">
 </div>
 <table class='table table-striped game-table' aria-labelledby="tableLabel" *ngIf="number" style="margin-bottom: 0;">

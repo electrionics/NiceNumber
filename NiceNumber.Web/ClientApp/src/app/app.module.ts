@@ -10,6 +10,7 @@ import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { AuthorComponent } from './author/author.component';
+import { StartGameComponent } from "./game/startGame.component";
 import { GameComponent } from "./game/game.component";
 import { RecordsComponent } from "./records/records.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,6 +21,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { ConfirmDialogComponent } from "./common/confirm.component";
 import { AlertDialogComponent } from "./common/alert.component";
 import { CookieService } from "./common/cookieService.component";
+import {PassGameParametersService} from "./game/passGameParametersService";
 
 @NgModule({
   declarations: [
@@ -29,6 +31,7 @@ import { CookieService } from "./common/cookieService.component";
     HomeComponent,
     AboutComponent,
     AuthorComponent,
+    StartGameComponent,
     GameComponent,
     UpdateRecordDialogComponent,
     RecordsComponent,
@@ -40,7 +43,8 @@ import { CookieService } from "./common/cookieService.component";
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      {path: '', component: GameComponent, pathMatch: 'full'},
+      {path: '', component: StartGameComponent, pathMatch: 'full'},
+      {path: 'game', component: GameComponent},
       {path: 'records', component: RecordsComponent},
       {path: 'about', component: AboutComponent},
       {path: 'author', component: AuthorComponent},
@@ -58,7 +62,7 @@ import { CookieService } from "./common/cookieService.component";
   ],
   providers: [
     {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true, disableClose: true}},
-    CookieService
+    CookieService, PassGameParametersService
   ],
   bootstrap: [AppComponent]
 })

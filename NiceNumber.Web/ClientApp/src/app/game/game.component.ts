@@ -1,15 +1,17 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
-import {UpdateRecordDialogComponent} from "./updateRecordDialog.component";
 import {MatDialog} from '@angular/material/dialog';
+import {UpdateRecordDialogComponent} from "./updateRecordDialog.component";
 import {ConfirmDialogComponent} from "../common/confirm.component";
 import {AlertDialogComponent} from "../common/alert.component";
+import {PassGameParametersService} from "./passGameParametersService";
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html'
 })
-export class GameComponent {
+export class GameComponent implements OnInit, OnDestroy {
   public startGame: StartModel;
   public game: ProgressModel;
   public endGame: EndModel;
@@ -27,7 +29,7 @@ export class GameComponent {
   public timerSet: boolean;
 
   private http: HttpClient;
-  private baseUrl: string;
+  private readonly baseUrl: string;
 
 
   public currentLevel: TutorialLevel;
@@ -35,14 +37,33 @@ export class GameComponent {
   public currentTaskIndex: number;
   public tasks: { controlName: string, anySubtask: boolean, subtasks: number[], additionalCondition: Predicate<number, number>, text: string}[]; // if not any - then all
 
-  constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog) {
+  constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, public dialog: MatDialog, private router: Router, public dataService: PassGameParametersService) {
     this.initLists();
 
-    this.difficultyLevel = 1;
     this.timerSet = false;
 
     this.http = http;
     this.baseUrl = baseUrl;
+  }
+
+  ngOnInit() {
+    if (this.dataService.parameter){
+      this.difficultyLevel = this.dataService.parameter.difficultyLevel;
+
+      this.start();
+    }
+    else{
+      this.dataService.parameter = {
+        difficultyLevel: null
+      };
+      this.router.navigateByUrl('/');
+    }
+  }
+
+  ngOnDestroy() {
+    this.dataService.parameter = {
+      difficultyLevel: this.difficultyLevel
+    };
   }
 
   public start(){
@@ -217,6 +238,8 @@ export class GameComponent {
 
       this.tasks = null;
       this.currentLevel = null;
+
+      this.router.navigateByUrl('/');
     });
   }
 
