@@ -183,10 +183,6 @@ tr.result-progress.found{
   font-weight: bold;
 }
 
-.reg-tooltip-container{
-  margin-left: 10px;
-}
-
 .tooltip-regularity-type{
   font-size: 12px;
 }
@@ -231,23 +227,13 @@ tr.result-progress.found{
   width: 100%;
 }
 
-.progress-table .level-progress.complete{
+.tutorial-progress.complete{
   background-color: green;
 }
-.progress-table .level-progress.current{
+.tutorial-progress.current{
   background-color: orange;
 }
-.progress-table .level-progress.incomplete{
-  background-color: darkred;
-}
-
-.progress-table .task-progress.complete{
-  background-color: green;
-}
-.progress-table .task-progress.current{
-  background-color: orange;
-}
-.progress-table .task-progress.incomplete{
+.tutorial-progress.incomplete{
   background-color: darkred;
 }
 
@@ -265,7 +251,7 @@ tr.result-progress.found{
   width: 100%;
   height: 100%;
   z-index: 900;
-  background: rgba(0,0,0,.16);
+  background: rgba(0,0,0,.32);
 }
 
 .over-tutorial-overlay{
@@ -323,4 +309,9 @@ tr.result-progress.found{
   0% { background-position: 0 0; }
   50% { background-position: 400% 0; }
   100% { background-position: 0 0; }
+}
+
+.reg-tooltip-container.over-tutorial-overlay{
+  background: #98a3a9;/*linear-gradient(90deg,#8a8a8a7d,#91acbf) no-repeat fixed;*/
+  border-radius: 8px;
 }

@@ -8,21 +8,28 @@
       <td [colSpan]="number.length + 1">
         <h2>{{currentLevel.Title}}</h2>
         <p><b>Задание уровня</b>: {{currentLevel.Text}}</p>
+        <p>*Уровень содержит закономерности только тех типов, которые указаны в названии.</p>
+        <p>**Ниже расположены две полоски - прогресс уровней и задач:
+          <span class="tutorial-progress complete">&nbsp;&nbsp;&nbsp;</span> - пройден(а)
+          <span class="tutorial-progress current">&nbsp;&nbsp;&nbsp;</span> - текущий(ая)
+          <span class="tutorial-progress incomplete">&nbsp;&nbsp;&nbsp;</span> - непройден(а)</p>
+        <div class="text-center"><b>Прогресс уровней:</b></div>
         <table class='table table-striped progress-table'>
           <tbody>
           <tr>
-            <td *ngFor="let level of range(currentLevel.Level - 1)" class="level-progress complete"></td>
-            <td class="level-progress" [ngClass]="(currentTaskIndex == tasks.length - 1) ? 'complete' : 'current'"></td>
-            <td *ngFor="let level of range(countLevels - currentLevel.Level)" class="level-progress incomplete"></td>
+            <td *ngFor="let level of range(currentLevel.Level - 1)" class="tutorial-progress complete"></td>
+            <td class="tutorial-progress" [ngClass]="(currentTaskIndex == tasks.length - 1) ? 'complete' : 'current'"></td>
+            <td *ngFor="let level of range(countLevels - currentLevel.Level)" class="tutorial-progress incomplete"></td>
           </tr>
           </tbody>
         </table>
+        <div class="text-center"><b>Прогресс задач:</b></div>
         <table class='table table-striped progress-table'>
           <tbody>
           <tr>
-            <td *ngFor="let level of range(currentTaskIndex)" class="task-progress complete"></td>
-            <td class="task-progress current" *ngIf="currentTaskIndex < tasks.length - 1"></td>
-            <td *ngFor="let level of range(tasks.length - currentTaskIndex - 2)" class="task-progress incomplete"></td>
+            <td *ngFor="let level of range(currentTaskIndex)" class="tutorial-progress complete"></td>
+            <td class="tutorial-progress current" *ngIf="currentTaskIndex < tasks.length - 1"></td>
+            <td *ngFor="let level of range(tasks.length - currentTaskIndex - 2)" class="tutorial-progress incomplete"></td>
           </tr>
           </tbody>
         </table>
@@ -141,7 +148,8 @@
             <li>Если вам мешают кнопки-подсказки, нажмите <button disabled="disabled" class="btn btn-info text-center">Убрать кнопки-подсказки</button> выше. Их можно будет вернуть в любое время в течение игры.</li>
             <li>После завершения игры, по истечению времени либо нажатием кнопки <button disabled="disabled" class="btn btn-primary text-center">Завершить игру</button>, вы сможете просмотреть все ненайденные вами закономерности.</li>
             <li>Нажмите кнопку <button class="btn btn-info"
-                                       [ngClass]="getTutorialClass('understand')"
+                                       [ngClass]="getTutorialClass('understand') ||
+                                                  'over-tutorial-overlay'"
                                        (click)="understand()">Понятно</button> чтобы скрыть описание.</li>
           </ng-container>
         </ul>
@@ -156,16 +164,17 @@
           <td [colSpan]="positions.length + 1"
               (click)="rowClick(regType.type)"
               [ngClass]="getTutorialClass('row', 0, regType.type)">
+            <b> {{regType.label}}</b> (найдено: {{filterByFound(game.ProgressRegularityInfos, regType.type).length}}/{{startGame.ExistRegularityTypeCounts[regType.type]}}),
             <span class="reg-tooltip-container"
-                  [ngClass]="getTutorialClass('tooltip', i)"
+                  [ngClass]="getTutorialClass('tooltip', i) ||
+                             'over-tutorial-overlay'"
                   *ngIf="regType.regularityNumberHint">
               <i #tooltip="matTooltip"
                  matTooltip="Число-подсказка - {{regType.regularityNumberHint}}"
                  matTooltipClass="tooltip-regularity-type"
                  (click)="toggleTooltip(tooltip, i)"
                  class="bi bi-question-circle"></i>
-            </span>
-            <b> {{regType.label}}</b> (найдено: {{filterByFound(game.ProgressRegularityInfos, regType.type).length}}/{{startGame.ExistRegularityTypeCounts[regType.type]}}), числа-подсказки:
+            </span><b> числа-подсказки:</b>
             <span *ngFor="let regularity of game.ProgressRegularityInfos[regType.type]">
               <button *ngIf="!endGame && !getHintDisabled(regularity.FoundStatus) && hintsEnabled"
                       class="btn btn-hint btn-small"

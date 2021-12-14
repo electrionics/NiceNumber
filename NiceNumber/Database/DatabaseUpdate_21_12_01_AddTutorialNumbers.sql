@@ -40,7 +40,7 @@ INSERT INTO [dbo].[TutorialLevel]
 (
     Title,
     [Text],
-[Level],
+    [Level],
     NumberId)
 VALUES (
     N'Одинаковые цифры. Продолжение.',

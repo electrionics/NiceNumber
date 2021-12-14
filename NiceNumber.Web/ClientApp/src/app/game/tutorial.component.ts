@@ -130,7 +130,15 @@ export class TutorialComponent extends GameComponent{
     if (this.tasks.length > this.currentTaskIndex){
       let text = this.tasks[this.currentTaskIndex].text;
       if (text){
-        this.alertDialog(text, 'Задание ' + (this.currentTaskIndex + 1), 'current-task-dialog');
+        this.alertDialog(text, 'Задание ' + (this.currentTaskIndex + 1), 'current-task-dialog', () =>{
+          let element = document.querySelector('.highlighted-control');
+          if (element){
+            element.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }
+        });
       }
     }
   }
