@@ -18,13 +18,15 @@ namespace NiceNumber.Web.Controllers
     {
         private readonly IGameService _gameService;
         private readonly ICheckService _checkService;
+        private readonly ITutorialService _tutorialService;
 
         private string SessionId => HttpContext.Session.GetString(SessionIdFilter.CookieSessionForGameKey);
 
-        public GameController(IGameService gameService, ICheckService checkService)
+        public GameController(IGameService gameService, ICheckService checkService, ITutorialService tutorialService)
         {
             _gameService = gameService;
             _checkService = checkService;
+            _tutorialService = tutorialService;
         }
 
         #region Start
@@ -318,6 +320,27 @@ namespace NiceNumber.Web.Controllers
                         x.Value.Errors.Select(e => new KeyValuePair<string, string>(x.Key, e.ErrorMessage)))
                     .ToList()
             };
+        }
+
+        #endregion
+
+
+        #region TutorialDetails
+
+        
+        [HttpGet]
+        [ApiRoute("Game/TutorialDetails")]
+        public async Task<TutorialDetailsModel> GetTutorialDetails()
+        {
+            var (levelsCount, tasksCount) = await _tutorialService.GetTutorialCounts();
+
+            var model = new TutorialDetailsModel
+            {
+                TotalLevels = levelsCount,
+                TotalTasks = tasksCount
+            };
+            
+            return model;
         }
 
         #endregion

@@ -15,7 +15,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 2, 'row', N'Подсвеченная строка таблицы содержит числа-подсказки и информацию о прогрессе для выбранного типа закономерности: количество найденных и общее количество закономерностей в числе. Нажмите на подсвеченную строку таблицы, чтобы перейти к следующему заданию.', 
+VALUES (@LevelId, 2, 'row', N'Подсвеченная строка таблицы содержит числа-подсказки и информацию о прогрессе для выбранного типа закономерности: количество найденных и общее количество закономерностей в числе. Нажмите на подсвеченную строку таблицы.', 
   NULL, NULL, 'fixedType', '1')
 END
 
@@ -172,6 +172,47 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 4, 'digitsAndBtnCheckSuccess', N'Выделите те из подсвеченных цифр, которые составляют еще не найденную закономерность и нажмите "Проверить", чтобы найти её.',
+VALUES (@LevelId, 4, 'digitsAndBtnCheckSuccess', N'Выделите все тройки и нажмите "Проверить", чтобы найти закономерность.',
+    NULL, NULL, 'fixedType', '1')
+END
+
+
+
+SELECT TOP 1 @LevelId = Id FROM [dbo].[TutorialLevel] WHERE [Level] = 3
+
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 1)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 1, 'digit', N'Выделите подсвеченные цифры.',
+    0, '1,0,0,1,1,1,1', NULL, NULL)
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 2)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 2, 'btnCheckSuccess', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти закономерность.',
+    NULL, NULL, 'fixedType', '1')
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 3)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 3, 'digitsAndBtnCheckSuccess', N'Выделите цифры, составляющие одну из ненайденных закономерностей и нажмите "Проверить", чтобы найти её.',
+    NULL, NULL, 'fixedType', '1')
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 4)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 4, 'digitsAndBtnCheckSuccess', N'Выделите цифры, составляющие ненайденную закономерность и нажмите "Проверить", чтобы найти её.',
     NULL, NULL, 'fixedType', '1')
 END
