@@ -4,14 +4,27 @@ import {HttpClient} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
 import {PassGameParametersService} from "./passGameParametersService";
 import {GameComponent} from "./game.component";
+import {CookieService} from "../common/cookieService.component";
 
 @Component({
   selector: 'app-tutorial',
   templateUrl: './game.component.html'
 })
 export class TutorialComponent extends GameComponent{
-  constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, dialog: MatDialog, router: Router, dataService: PassGameParametersService) {
+  private cookies: CookieService;
+
+  public countLevels: number;
+
+  constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, dialog: MatDialog, router: Router, dataService: PassGameParametersService, cookies: CookieService) {
     super(http, baseUrl, dialog, router, dataService);
+
+    this.cookies = cookies;
+  }
+
+  ngOnInit() {
+    super.ngOnInit();
+
+    this.countLevels = this.dataService.parameter.totalTutorialLevels;
   }
 
   protected getStartUrl(): string {
@@ -72,6 +85,8 @@ export class TutorialComponent extends GameComponent{
     this.tasks = null;
     this.currentLevel = null;
 
+    this.cookies.setCookie('tutorial_passed', '1', 100);
+
     super.successEndSession();
   }
 
@@ -123,8 +138,6 @@ export class TutorialComponent extends GameComponent{
 
   private initTutorialLevel(startResult){
     if (this.difficultyLevel == 0){
-      this.countLevels = 2;
-
       this.currentTaskIndex = 0;
       this.timerSet = true; // don't start the timer
       this.currentLevel = startResult.TutorialLevel;

@@ -70,6 +70,7 @@ namespace NiceNumber.Web
 
             services.AddScoped<ICheckService, CheckService>();
             services.AddScoped<IGameService, GameService>();
+            services.AddScoped<ITutorialService, TutorialService>();
             // services.AddScoped<INumberService, NumberService>();
             // services.AddScoped<IRegularityService, RegularityService>();
         }

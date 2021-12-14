@@ -56,7 +56,8 @@ export class GameComponent implements OnInit, OnDestroy {
     }
     else{
       this.dataService.parameter = {
-        difficultyLevel: null
+        difficultyLevel: null,
+        totalTutorialLevels: null
       };
       this.router.navigateByUrl('/');
     }
@@ -64,7 +65,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.dataService.parameter = {
-      difficultyLevel: this.difficultyLevel
+      difficultyLevel: this.difficultyLevel,
+      totalTutorialLevels: null
     };
   }
 
