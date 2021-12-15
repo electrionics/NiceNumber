@@ -6,7 +6,7 @@
   <tbody>
     <tr *ngIf="difficultyLevel == 0 && currentLevel">
       <td [colSpan]="number.length + 1">
-        <h2>{{currentLevel.Title}}</h2>
+        <h2>Обучение. Уровень {{currentLevel.Level}}. {{currentLevel.Title}}</h2>
         <p><b>Задание уровня</b>: {{currentLevel.Text}}</p>
         <p>*Уровень содержит закономерности только тех типов, которые указаны в названии.</p>
         <p>**Ниже расположены две полоски - прогресс уровней и задач:
