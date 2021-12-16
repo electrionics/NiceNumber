@@ -448,3 +448,80 @@ INSERT INTO [dbo].[TutorialTask]
 VALUES (@LevelId, 6, 'digitsAndBtnCheckSuccess', N'Выделите цифры, составляющие ненайденную закономерность и нажмите "Проверить", чтобы найти её. Обратите внимание на число-подсказку.',
     NULL, NULL, 'fixedType', '6')
 END
+
+
+--------------------------------------------LEVEL 9--------------------------------------------
+SELECT TOP 1 @LevelId = Id FROM [dbo].[TutorialLevel] WHERE [Level] = 9
+
+
+    IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 1)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 1, 'tooltip', N'Нажмите на подсвеченный знак вопроса в таблице прогресса, чтобы посмотреть, что означает число-подсказка.',
+    0, '0', NULL, NULL)
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 2)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 2, 'digit', N'Будем искать закономерность с множителем (числом-подсказкой), равным 4. Так как x * 4 = y, то последняя цифра произведения последней цифры x на 4 равна последней цифре y. Таким образом, для четверки мы ищем последние цифры, равные 0,0; 1,4; 2,8; 3,(1)2; 4,(1)6; 5,(2)0; 6,(2)4; 7,(2)8; 8,(3)2; 9,(3)6. Из перечисленной комбинации подходят только 8 и 2. Выделите подсвеченные цифры.',
+    0, '1,0,1,1,1,0', NULL, NULL)
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 3)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 3, 'btnCheckAutoHint', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти закономерность. Обратите внимание на автоподсказку.',
+    NULL, NULL, 'fixedType', '4')
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 4)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 4, 'digit', N'Так как вторая двойка не подошла, надо попробовать первую. Нажмите на подсвеченные цифры.',
+    0, '1,1,1,1,0,0', NULL, NULL)
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 5)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 5, 'btnCheckAutoHint', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти закономерность. Обратите внимание на автоподсказку.',
+    NULL, NULL, 'fixedType', '4')
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 6)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 6, 'digit', N'Так как первая двойка не подошла, надо нарастить цифры до кратных чисел влево. Нажмите на подсвеченные цифры.',
+    0, '0,1,0,0,1,1', NULL, NULL)
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 7)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 7, 'btnCheckSuccess', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти закономерность.',
+    NULL, NULL, 'fixedType', '4')
+END
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[TutorialTask] WHERE [LevelId] = @LevelId AND [Order] = 8)
+BEGIN
+
+INSERT INTO [dbo].[TutorialTask]
+([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
+VALUES (@LevelId, 8, 'digitsAndBtnCheckSuccess', N'Выделите цифры, составляющие ненайденную закономерность и нажмите "Проверить", чтобы найти её. Обратите внимание на число-подсказку.',
+    NULL, NULL, 'fixedType', '4')
+END

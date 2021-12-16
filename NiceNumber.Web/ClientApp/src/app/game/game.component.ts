@@ -169,7 +169,9 @@ export class GameComponent implements OnInit, OnDestroy {
           let hintMessage = GameComponent.composeHintMessage(result);
 
           if (hintMessage){
-            this.alertDialog(hintMessage, 'Подсказка!');
+            this.alertDialog(hintMessage, 'Автоподсказка!', null, () =>{
+              this.successAutoHint(regularityType);
+            });
           }
         }
       }, error => console.error(error));
@@ -191,6 +193,9 @@ export class GameComponent implements OnInit, OnDestroy {
     if (!this.regularityTypes.some(x => this.game.ProgressRegularityInfos[x.type].some(info => info.FoundStatus == FoundStatus.NotFound))){
       this.end(false);
     }
+  }
+
+  protected successAutoHint(regularityType){
   }
 
 

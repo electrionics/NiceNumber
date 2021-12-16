@@ -219,7 +219,7 @@ namespace NiceNumber.Web.Controllers
                 days = null;
             }
 
-            if (difficultyLevel != null && !Enum.GetValues<DifficultyLevel>().Contains(difficultyLevel.Value))
+            if (difficultyLevel != null && (!Enum.GetValues<DifficultyLevel>().Contains(difficultyLevel.Value) || difficultyLevel == 0))
             {
                 difficultyLevel = null;
             }
@@ -260,9 +260,7 @@ namespace NiceNumber.Web.Controllers
                 .Select(y => (int)y.RegularityId)
                 .ToHashSet();
             var notFoundRegularities = game.Number.Regularities
-                .Where(x => !foundAndHintedRegularityIds.Contains(x.Id) && 
-                    Math.Abs(x.RegularityNumber) <= 100 &&
-                    (x.Type != RegularityType.GeometricProgression || x.RegularityNumber >= 0.01))//TODO: move this check to 'playable' logic, and use only flag here) //TODO: make status 'not found' and fill missing checks with it in the end of game
+                .Where(x => x.Playable && !foundAndHintedRegularityIds.Contains(x.Id))
                 .ToList();
             // ReSharper disable once PossibleInvalidOperationException
             var spentTime = game.FinishTime.Value - game.StartTime;

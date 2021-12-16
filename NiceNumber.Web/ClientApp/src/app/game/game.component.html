@@ -41,10 +41,11 @@
                 class="btn btn-primary text-center"
                 [ngClass]="getTutorialClass('nextLevel') ||
                            'over-tutorial-overlay'">Следующий уровень</button>
-        <button *ngIf="currentTaskIndex == tasks.length - 1 && currentLevel.Level == countLevels"
+        <button *ngIf="currentLevel.Level == countLevels"
                 (click)="endSession()"
                 class="btn btn-primary text-center"
-                [ngClass]="getTutorialClass('endTutorial')">Завершить обучение</button>
+                [ngClass]="getTutorialClass('endTutorial') ||
+                           'over-tutorial-overlay'">Завершить обучение</button>
       </td>
     </tr>
     <tr>
@@ -111,7 +112,8 @@
                 <button [disabled]="!regType.enabled || filterByFound(game.ProgressRegularityInfos, regType.type).length == startGame.ExistRegularityTypeCounts[regType.type]"
                         class="btn btn-info check{{regType.enabled ? '' : ' disabled'}}"
                         [ngClass]="getTutorialClass('btnCheckSuccess', 0, regType.type) ||
-                                   getTutorialClass('digitsAndBtnCheckSuccess', 0, regType.type)"
+                                   getTutorialClass('digitsAndBtnCheckSuccess', 0, regType.type) ||
+                                   getTutorialClass('btnCheckAutoHint', 0, regType.type)"
                         (click)="check(regType.type);">Проверить</button>
               </td>
             </ng-container>

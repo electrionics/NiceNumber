@@ -51,7 +51,8 @@ namespace NiceNumber.Services.Implementation
                 x.Length >= minLength &&
                 x.Length <= maxLength &&
                 x.Regularities.Count(y => y.Playable) <= maxRegCount &&
-                x.Regularities.Count(y => y.Playable) >= minRegCount;
+                x.Regularities.Count(y => y.Playable) >= minRegCount &&
+                x.TutorialLevel == null;
             
             var limit = await _dbContext.Set<Number>().CountAsync(numberCondition) - 1;
             
@@ -172,17 +173,26 @@ namespace NiceNumber.Services.Implementation
         public async Task<List<Game>> GetTopResults(int? days, DifficultyLevel? difficultyLevel, int count)
         {
             var query = _dbContext.Set<Game>()
-                .Where(x => x.FinishTime != null && x.Score > 0);
+                .Where(x => x.Score > 0);
             if (days != null)
             {
                 var minFinishTime = DateTime.Today.AddDays(1 - days.Value);
+                var maxStartTime = DateTime.Now.AddMinutes(-30);
                 
-                query = query.Where(x => x.FinishTime > minFinishTime);
+                query = query.Where(x => x.FinishTime != null &&
+                                         x.FinishTime > minFinishTime || 
+                                            x.FinishTime == null && 
+                                            x.StartTime > minFinishTime && 
+                                            x.StartTime < maxStartTime);
             }
 
             if (difficultyLevel != null)
             {
                 query = query.Where(x => x.DifficultyLevel == difficultyLevel);
+            }
+            else
+            {
+                query = query.Where(x => x.DifficultyLevel != DifficultyLevel.Tutorial);
             }
 
             var games = await query

@@ -64,6 +64,12 @@ export class TutorialComponent extends GameComponent{
     super.successCongratulations(result, regularityType);
   }
 
+  protected successAutoHint(regularityType) {
+    super.successAutoHint(regularityType);
+
+    this.increaseTask('btnCheckAutoHint', 0, regularityType);
+  }
+
 
   protected successEnd(result) {
     super.successEnd(result);

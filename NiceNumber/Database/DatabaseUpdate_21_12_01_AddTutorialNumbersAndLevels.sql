@@ -164,11 +164,33 @@ INSERT INTO [dbo].[TutorialLevel]
 (
     Title,
     [Text],
-[Level],
+    [Level],
     NumberId)
 VALUES (
     N'Геометрическая прогрессия.',
     N'Геометрическая прогрессия - последовательность чисел, в которой каждое последующее число, начиная со второго, получается из предыдущего умножением его на определённое число, называемое знаменателем прогрессии. Закономерность строится слева направо. Найти закономерность помогают числа-подсказки.',
     8,
     (select top 1 Id from [dbo].[Number] where [Value] = 284321))
+END
+
+
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[Number] WHERE [Value] = 281122)
+BEGIN
+INSERT INTO [dbo].[Number] ([Value], [Length]) VALUES(281122, 6)
+END
+
+IF NOT EXISTS( SELECT [NumberId] FROM [dbo].[TutorialLevel] WHERE [Level] = 9)
+BEGIN
+INSERT INTO [dbo].[TutorialLevel]
+(
+    Title,
+    [Text],
+    [Level],
+    NumberId)
+VALUES (
+    N'Кратные числа. Автоподсказка. Логика.',
+    N'Кратные числа - пара чисел, одно из которых делится на другое без остатка. Одинаковые числа не считаются кратными в игре. Найти закономерность помогают числа-подсказки и автоподсказка.',
+    9,
+    (select top 1 Id from [dbo].[Number] where [Value] = 281122))
 END
