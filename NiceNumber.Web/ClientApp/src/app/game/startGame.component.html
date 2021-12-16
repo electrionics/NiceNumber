@@ -3,7 +3,7 @@
   <div class="text-center">
     <span style="margin-right: 10px;">Обучение: {{totalLevels}} уровней, {{totalTasks}} задач, 3 минуты</span>
     <button class="btn btn-primary"
-            [ngClass]="tutorialPassed() ? '' : 'highlighted-control'"
+            [ngClass]="tutorialPassed ? '' : 'highlighted-control'"
             (click)="navigateTutorial()">Пройти обучение</button><br/>
     <br/>
   </div>

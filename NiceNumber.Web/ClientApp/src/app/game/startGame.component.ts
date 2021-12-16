@@ -11,6 +11,7 @@ import {CookieService} from "../common/cookieService.component";
 })
 export class StartGameComponent implements OnInit, OnDestroy {
   private cookies: CookieService;
+  public tutorialPassed: boolean;
 
   public difficultyLevel: number;
   public difficultyLevels: { type: number; label: string; }[];
@@ -26,6 +27,8 @@ export class StartGameComponent implements OnInit, OnDestroy {
     this.difficultyLevels.push({type: 3, label: "Тяжелый" });
 
     this.cookies = cookies;
+    let cookie = this.cookies.getCookie('tutorial_passed');
+    this.tutorialPassed = cookie == '1';
 
     http.get<TutorialDetailsModel>(baseUrl + 'Game/TutorialDetails').subscribe(result => {
       this.totalLevels = result.TotalLevels;
@@ -40,11 +43,6 @@ export class StartGameComponent implements OnInit, OnDestroy {
   public navigateTutorial(){
     this.difficultyLevel = 0;
     this.router.navigateByUrl('/tutorial');
-  }
-
-  public tutorialPassed(){
-    let cookie = this.cookies.getCookie('tutorial_passed');
-    return cookie == '1';
   }
 
   ngOnInit() {

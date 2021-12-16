@@ -158,7 +158,9 @@
       </td>
     </tr>
     <tr class="result-progress number">
-      <td [colSpan]="positions.length + 1" style="padding: 10px 0!important;"><b>Тип закономерности</b><br/>Число-подсказка</td>
+      <td [colSpan]="positions.length + 1" style="padding: 10px 0!important;">
+        <div class="text-center"><b>Таблица прогресса</b></div>
+        <b>Тип закономерности</b><br/>Число-подсказка</td>
     </tr>
     <ng-container *ngFor="let regType of filterByExists(regularityTypes); let i = index;">
       <ng-container *ngIf="startGame.ExistRegularityTypeCounts[regType.type]">

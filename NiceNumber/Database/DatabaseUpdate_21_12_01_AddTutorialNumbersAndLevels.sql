@@ -194,3 +194,25 @@ VALUES (
     9,
     (select top 1 Id from [dbo].[Number] where [Value] = 281122))
 END
+
+
+
+IF NOT EXISTS( SELECT [Id] FROM [dbo].[Number] WHERE [Value] = 10850)
+BEGIN
+INSERT INTO [dbo].[Number] ([Value], [Length]) VALUES(10850, 5)
+END
+
+IF NOT EXISTS( SELECT [NumberId] FROM [dbo].[TutorialLevel] WHERE [Level] = 10)
+BEGIN
+INSERT INTO [dbo].[TutorialLevel]
+(
+    Title,
+    [Text],
+    [Level],
+    NumberId)
+VALUES (
+    N'Кратные числа. Дополнительное правило.',
+    N'Если при добавлении любой цифры вперед большего из кратных чисел оно останется кратным меньшему, то считается только наименьшее из возможных больших кратных чисел.',
+    10,
+    (select top 1 Id from [dbo].[Number] where [Value] = 10850))
+END
