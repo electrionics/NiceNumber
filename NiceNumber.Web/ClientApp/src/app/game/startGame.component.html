@@ -1,7 +1,7 @@
 ﻿<p *ngIf="!totalLevels"><em>Загрузка...</em></p>
 <ng-container *ngIf="totalLevels">
   <div class="text-center">
-    <span style="margin-right: 10px;">Обучение: {{totalLevels}} уровней, {{totalTasks}} задач, 3 минуты</span>
+    <span style="margin-right: 10px;">Обучение: {{totalLevels}} уровней, {{totalTasks}} задач, 5 минут</span>
     <button class="btn btn-primary"
             [ngClass]="tutorialPassed ? '' : 'highlighted-control'"
             (click)="navigateTutorial()">Пройти обучение</button><br/>
