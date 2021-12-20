@@ -53,7 +53,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 6, 'toggleHints', N'Нажмите на подсвеченную кнопку "Убрать кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки исчезают.', 
+VALUES (@LevelId, 6, 'toggleHints', N'Нажмите на подсвеченную кнопку "Убрать кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки исчезают. Это облегачет интерфейс игры, а также позволяет почувствовать себя Эйнштейном.', 
   NULL, NULL, NULL, NULL)
 END
 
@@ -62,7 +62,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 7, 'toggleHints', N'Нажмите на подсвеченную кнопку "Вернуть кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки вновь появляются.', 
+VALUES (@LevelId, 7, 'toggleHints', N'Нажмите на подсвеченную кнопку "Вернуть кнопки-подсказки". Обратите внимание, что все оранжевые кнопки-подсказки вновь появляются. Они будут использоваться в последующих заданиях.', 
   NULL, NULL, NULL, NULL)
 END
 
@@ -80,7 +80,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 9, 'btnCheckSuccess', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти подсказанную закономерность.', 
+VALUES (@LevelId, 9, 'btnCheckSuccess', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти подсказанную закономерность. За подсказанную закономерность очки не начисляются.', 
   NULL, NULL, 'fixedType', '1')
 END
 
@@ -98,7 +98,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 11, 'btnCheckSuccess', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти подсказанную закономерность.', 
+VALUES (@LevelId, 11, 'btnCheckSuccess', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти подсказанную закономерность. За подсказанную закономерность очки не начисляются.', 
   NULL, NULL, 'fixedType', '1')
 END
 
@@ -116,7 +116,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 13, 'btnCheckSuccess', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти подсказанную закономерность.', 
+VALUES (@LevelId, 13, 'btnCheckSuccess', N'Нажмите на подсвеченную кнопку "Проверить", чтобы найти подсказанную закономерность. За подсказанную закономерность очки не начисляются.', 
   NULL, NULL, 'dynamicType', 'getEnabled')
 END
 
@@ -125,7 +125,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 14, 'endGame', N'Нажмите "Завершить игру", чтобы получить бонусные очки за оставшееся игровое время.', 
+VALUES (@LevelId, 14, 'endGame', N'Нажмите "Завершить игру", чтобы получить бонусные очки за оставшееся игровое время: за каждую оставшуюся секунду начисляется одно очко, при этом сумма бонусных очков не превышает половину уже набранных.', 
   NULL, NULL, NULL, NULL)
 END
 

@@ -21,8 +21,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { ConfirmDialogComponent } from "./common/confirm.component";
 import { AlertDialogComponent } from "./common/alert.component";
 import { CookieService } from "./common/cookieService.component";
-import {PassGameParametersService} from "./game/passGameParametersService";
-import {TutorialComponent} from "./game/tutorial.component";
+import { PassGameParametersService } from "./game/passGameParametersService";
+import { TutorialComponent } from "./game/tutorial.component";
 
 @NgModule({
   declarations: [
