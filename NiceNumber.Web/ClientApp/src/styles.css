@@ -222,9 +222,65 @@ tr.result-progress.found{
   margin: 4px;
 }
 
+.loading-overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  animation: 5s loader;
+}
+
+@keyframes loader {
+  0% {
+    background: rgba(0, 0, 0, 0) no-repeat center;
+    background-size: 48px 48px;
+  }
+  10% {
+    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
+    background-size: 48px 48px;
+  }
+  100% {
+    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
+    background-size: 48px 48px;
+  }
+}
+@-moz-keyframes loader {
+  0% {
+    background: rgba(0, 0, 0, 0) no-repeat center;
+    background-size: 48px 48px;
+  }
+  10% {
+    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
+    background-size: 48px 48px;
+  }
+  100% {
+    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
+    background-size: 48px 48px;
+  }
+}
+@-webkit-keyframes loader {
+  0% {
+    background: rgba(0, 0, 0, 0) no-repeat center;
+    background-size: 48px 48px;
+  }
+  10% {
+    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
+    background-size: 48px 48px;
+  }
+  100% {
+    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
+    background-size: 48px 48px;
+  }
+}
 
 
 /* *** animation for tutorial *** */
+
+.progress-table{
+  border-collapse: separate;
+}
 
 .progress-table tr{
   height: 20px;
@@ -315,7 +371,6 @@ tr.result-progress.found{
   100% { background-position: 0 0; }
 }
 
-.reg-tooltip-container.over-tutorial-overlay{
-  background: #98a3a9;/*linear-gradient(90deg,#8a8a8a7d,#91acbf) no-repeat fixed;*/
-  border-radius: 8px;
+.reg-tooltip-container.over-tutorial-overlay .bi.bi-question-circle{
+  color: #98a3a9;
 }

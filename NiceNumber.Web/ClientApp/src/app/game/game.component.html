@@ -1,6 +1,6 @@
-<p *ngIf="!number"><em>Загрузка...</em></p>
-
 <div *ngIf="difficultyLevel == 0 && game && tasks && currentTaskIndex < tasks.length" class="tutorial-overlay">
+</div>
+<div *ngIf="requestProgress" class="loading-overlay">
 </div>
 <table class='table table-striped game-table' aria-labelledby="tableLabel" *ngIf="number" style="margin-bottom: 0;">
   <tbody>
@@ -9,11 +9,11 @@
         <h2>Обучение. Уровень {{currentLevel.Level}}. {{currentLevel.Title}}</h2>
         <p><b>Задание уровня</b>: {{currentLevel.Text}}</p>
         <p>*Уровень содержит закономерности только тех типов, которые указаны в названии.</p>
-        <p>**Ниже расположены две полоски - прогресс уровней и задач:
+        <p>**Ниже расположены две полоски - прогресс прохождения уровней и выполнения задач:
           <span class="tutorial-progress complete">&nbsp;&nbsp;&nbsp;</span> - пройден(а)
           <span class="tutorial-progress current">&nbsp;&nbsp;&nbsp;</span> - текущий(ая)
           <span class="tutorial-progress incomplete">&nbsp;&nbsp;&nbsp;</span> - непройден(а)</p>
-        <div class="text-center"><b>Прогресс уровней:</b></div>
+        <div class="text-center"><b>Прогресс прохождения уровней:</b></div>
         <table class='table table-striped progress-table'>
           <tbody>
           <tr>
@@ -23,7 +23,7 @@
           </tr>
           </tbody>
         </table>
-        <div class="text-center"><b>Прогресс задач:</b></div>
+        <div class="text-center"><b>Прогресс выполнения задач:</b></div>
         <table class='table table-striped progress-table'>
           <tbody>
           <tr>
@@ -143,11 +143,11 @@
         <ul style="margin-top: 1rem;">
           <li>Нажмите на знак вопроса <i class="bi bi-question-circle"></i> в таблице, чтобы узнать, что означает число-посказка для выбранного типа закономерности.</li>
           <ng-container *ngIf="!endGame">
-            <li class="digits">Нажимайте на цифры выше, чтобы выделить <button disabled="disabled" style="width: 62px;" class="btn btn-selected text-center">5</button> или убрать выделение <button disabled="disabled" style="width: 62px;" class="btn btn-deselected text-center">5</button></li>
+            <li class="digits">Нажимайте на цифры в строке числа, чтобы выделить <button disabled="disabled" style="width: 62px;" class="btn btn-selected text-center">{{number[0].value}}</button> или убрать выделение <button disabled="disabled" style="width: 62px;" class="btn btn-deselected text-center">{{number[0].value}}</button></li>
             <li>После того, как цифры выделены, нажмите кнопку <button disabled="disabled" class="btn btn-info check">Проверить</button> нужного типа.</li>
             <li>Если вам необходима помощь, воспользуйтесь кнопкой подсказки. Подсказки — кнопки оранжевого цвета — бывают 3-х видов: полностью случайная, случайная для выбранного типа закономерности и с фиксированным числом-подсказкой <button disabled="disabled" class="btn btn-hint btn-small">?</button>
               За подсказанную закономерность очки не начисляются</li>
-            <li>Если вам мешают кнопки-подсказки, нажмите <button disabled="disabled" class="btn btn-info text-center">Убрать кнопки-подсказки</button> выше. Их можно будет вернуть в любое время в течение игры.</li>
+            <li>Если вам мешают кнопки-подсказки, нажмите кнопку <button disabled="disabled" class="btn btn-info text-center">Убрать кнопки-подсказки</button> над строкой числа. Их можно будет вернуть в любое время в течение игры.</li>
             <li>После завершения игры, по истечению времени либо нажатием кнопки <button disabled="disabled" class="btn btn-primary text-center">Завершить игру</button>, вы сможете просмотреть все ненайденные вами закономерности.</li>
             <li>Нажмите кнопку <button class="btn btn-info"
                                        [ngClass]="getTutorialClass('understand') ||
@@ -159,7 +159,6 @@
     </tr>
     <tr class="result-progress number">
       <td [colSpan]="positions.length + 1" style="padding: 10px 0!important;">
-        <div class="text-center"><b>Таблица прогресса</b></div>
         <b>Тип закономерности</b><br/>Число-подсказка</td>
     </tr>
     <ng-container *ngFor="let regType of filterByExists(regularityTypes); let i = index;">
@@ -171,7 +170,7 @@
             <b> {{regType.label}}</b> (найдено: {{filterByFound(game.ProgressRegularityInfos, regType.type).length}}/{{startGame.ExistRegularityTypeCounts[regType.type]}}),
             <span class="reg-tooltip-container"
                   [ngClass]="getTutorialClass('tooltip', i) ||
-                             'over-tutorial-overlay'"
+                             (difficultyLevel == 0 ? 'over-tutorial-overlay' : null)"
                   *ngIf="regType.regularityNumberHint">
               <i #tooltip="matTooltip"
                  matTooltip="Число-подсказка - {{regType.regularityNumberHint}}"

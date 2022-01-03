@@ -1,4 +1,5 @@
-﻿<p *ngIf="!totalLevels"><em>Загрузка...</em></p>
+﻿<div *ngIf="!totalLevels" class="loading-overlay">
+</div>
 <ng-container *ngIf="totalLevels">
   <div class="text-center">
     <span style="margin-right: 10px;">Обучение: {{totalLevels}} уровней, {{totalTasks}} задач, 5 минут</span>

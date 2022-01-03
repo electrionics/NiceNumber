@@ -17,7 +17,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 2, 'row', N'Подсвеченная строка таблицы прогресса содержит числа-подсказки и информацию о прогрессе для выбранного типа закономерности: количество найденных и общее количество закономерностей в числе. Нажмите на подсвеченную строку таблицы.', 
+VALUES (@LevelId, 2, 'row', N'Подсвеченная строка содержит числа-подсказки и их статус (найдено, не найдено, подсказано), количество найденных и общее количество закономерностей в числе данного типа. Нажмите на подсвеченную строку.', 
   NULL, NULL, 'fixedType', '1')
 END
 
@@ -445,7 +445,7 @@ BEGIN
 
 INSERT INTO [dbo].[TutorialTask]
 ([LevelId], [Order], [Name], [Text], [AnySubtask], [Subtasks], [ApplyCondition], [ConditionParameter])
-VALUES (@LevelId, 6, 'digitsAndBtnCheckSuccess', N'Выделите цифры, составляющие ненайденную закономерность и нажмите "Проверить", чтобы найти её. Обратите внимание на число-подсказку.',
+VALUES (@LevelId, 4, 'digitsAndBtnCheckSuccess', N'Выделите цифры, составляющие ненайденную закономерность и нажмите "Проверить", чтобы найти её. Обратите внимание на число-подсказку.',
     NULL, NULL, 'fixedType', '6')
 END
 

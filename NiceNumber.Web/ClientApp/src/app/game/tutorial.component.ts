@@ -77,6 +77,14 @@ export class TutorialComponent extends GameComponent{
     this.increaseTask('endGame');
   }
 
+  protected successEndOpenUpdateDialog() {
+    if (this.currentLevel.Level > 1){
+      this.showNotFound();
+    }
+    else {
+      super.successEndOpenUpdateDialog();
+    }
+  }
 
   protected successHintMode(result, regularityType) {
     super.successHintMode(result, regularityType);

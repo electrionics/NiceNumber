@@ -34,6 +34,7 @@ export class GameComponent implements OnInit, OnDestroy {
   public positions: { value: number; selected: boolean; }[];
 
   public timerSet: boolean;
+  public requestProgress: boolean;
 
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string, dialog: MatDialog, router: Router, dataService: PassGameParametersService) {
     this.initLists();
@@ -46,6 +47,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.http = http;
     this.baseUrl = baseUrl;
+
+    this.requestProgress = false;
   }
 
   ngOnInit() {
@@ -73,9 +76,12 @@ export class GameComponent implements OnInit, OnDestroy {
 
   public start(){
     let url = this.getStartUrl();
-    this.http.get<StartModel>(url).subscribe(result => {
-      this.successStart(result);
-    }, error => console.error(error));
+    if (!this.requestProgress) {
+      this.requestProgress = true;
+      this.http.get<StartModel>(url).subscribe(result => {
+        this.successStart(result);
+      }, error => console.error(error), () => this.requestProgress = false );
+    }
   }
 
   protected getStartUrl(){
@@ -149,32 +155,35 @@ export class GameComponent implements OnInit, OnDestroy {
   public check(regularityType){
     let selectedPositions = this.positions.filter(x => x.selected).map(x => x.value);
     if (selectedPositions.length > 1){
-      this.http.post<CheckResultModel>(this.baseUrl + 'Game/Check', {
-        GameId: this.startGame.GameId,
-        Type: regularityType,
-        Positions: selectedPositions
-      }).subscribe(result => {
-        if (result.Match){
-          let progressInfos = this.game.ProgressRegularityInfos[regularityType];
-          let info = progressInfos.find(x => x.RegularityNumber == result.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
+      if (!this.requestProgress){
+        this.requestProgress = true;
+        this.http.post<CheckResultModel>(this.baseUrl + 'Game/Check', {
+          GameId: this.startGame.GameId,
+          Type: regularityType,
+          Positions: selectedPositions
+        }).subscribe(result => {
+          if (result.Match){
+            let progressInfos = this.game.ProgressRegularityInfos[regularityType];
+            let info = progressInfos.find(x => x.RegularityNumber == result.RegularityNumber && x.FoundStatus == FoundStatus.NotFound);
 
-          info.Numbers = result.FoundNumbers;
-          info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
+            info.Numbers = result.FoundNumbers;
+            info.FoundStatus = result.Hinted ? FoundStatus.Hinted : FoundStatus.Found;
 
-          this.alertDialog(result.PointsAdded + ' очков заработано!', 'Поздравляем!', 'points-added-dialog', () =>{
-            this.successCongratulations(result, regularityType);
-          });
-        }
-        else {
-          let hintMessage = GameComponent.composeHintMessage(result);
-
-          if (hintMessage){
-            this.alertDialog(hintMessage, 'Автоподсказка!', null, () =>{
-              this.successAutoHint(regularityType);
+            this.alertDialog(result.PointsAdded + ' очков заработано!', 'Поздравляем!', 'points-added-dialog', () =>{
+              this.successCongratulations(result, regularityType);
             });
           }
-        }
-      }, error => console.error(error));
+          else {
+            let hintMessage = GameComponent.composeHintMessage(result);
+
+            if (hintMessage){
+              this.alertDialog(hintMessage, 'Автоподсказка!', null, () =>{
+                this.successAutoHint(regularityType);
+              });
+            }
+          }
+        }, error => console.error(error), () => this.requestProgress = false );
+      }
     }
     else {
       this.alertDialog("Выберите минимум 2 цифры.", 'Внимание!');
@@ -202,9 +211,13 @@ export class GameComponent implements OnInit, OnDestroy {
   public end(needConfirm){
     let self = this;
     let endBody = function(){
-      self.http.post<EndModel>(self.baseUrl + 'Game/End?gameId=' + self.startGame.GameId + '&remainingSeconds=' + self.game.TimerSeconds, null).subscribe(result => {
-        self.successEnd(result);
-      }, error => console.error(error));
+      if (!self.requestProgress) {
+        self.requestProgress = true;
+        self.http.post<EndModel>(self.baseUrl + 'Game/End?gameId=' + self.startGame.GameId + '&remainingSeconds=' + self.game.TimerSeconds, null).subscribe(result => {
+          self.successEnd(result);
+          self.successEndOpenUpdateDialog();
+        }, error => console.error(error), () => self.requestProgress = false );
+      }
     }
 
     if (!this.endGame){
@@ -225,7 +238,9 @@ export class GameComponent implements OnInit, OnDestroy {
     this.game.Score = this.endGame.TotalScore;
 
     this.clearSelections();
+  }
 
+  protected successEndOpenUpdateDialog(){
     this.dialog.open(UpdateRecordDialogComponent, {
       data: {
         gameId: this.startGame.GameId,
@@ -288,15 +303,18 @@ export class GameComponent implements OnInit, OnDestroy {
   public startHintMode(regularityType, regularityNumber, needConfirm){
     let self = this;
     let startHintModeBody = function (regularityType, regularityNumber){
-      self.http.post<HintResultModel>(self.baseUrl + 'Game/Hint', {
-        GameId: self.startGame.GameId,
-        Type: regularityType,
-        RegularityNumber: regularityNumber
-      }).subscribe(result => {
-        if (result) {
-          self.successHintMode(result, regularityType);
-        }
-      }, error => console.error(error));
+      if (!self.requestProgress) {
+        self.requestProgress = true;
+        self.http.post<HintResultModel>(self.baseUrl + 'Game/Hint', {
+          GameId: self.startGame.GameId,
+          Type: regularityType,
+          RegularityNumber: regularityNumber
+        }).subscribe(result => {
+          if (result) {
+            self.successHintMode(result, regularityType);
+          }
+        }, error => console.error(error), () => self.requestProgress = false );
+      }
     }
 
     if (!needConfirm){
