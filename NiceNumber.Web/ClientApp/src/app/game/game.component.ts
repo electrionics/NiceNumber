@@ -19,6 +19,8 @@ export class GameComponent implements OnInit, OnDestroy {
   protected dataService: PassGameParametersService;
   protected router: Router;
 
+  protected timerId: number;
+
   public regularityTypes: { type: number; enabled: boolean; label: string; shortLabel: string; regularityNumberHint: string; }[];
   public difficultyLevels: { type: number; label: string; timer: number; bonusTime: number; }[];
 
@@ -44,6 +46,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.dataService = dataService;
 
     this.timerSet = false;
+    this.timerId = null;
 
     this.http = http;
     this.baseUrl = baseUrl;
@@ -71,6 +74,9 @@ export class GameComponent implements OnInit, OnDestroy {
       difficultyLevel: this.difficultyLevel,
       totalTutorialLevels: null
     };
+    if (this.timerId !== null){
+      clearInterval(this.timerId);
+    }
   }
 
 
@@ -128,7 +134,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
     this.game.TimerSeconds = this.getCurrentDifficultyLevel().timer;
     if (!this.timerSet){
-      setInterval(() => {
+      if (this.timerId !== null){
+        clearInterval(this.timerId);
+      }
+      this.timerId = setInterval(() => {
         if (this.game && this.game.TimerSeconds && this.game.TimerSeconds > 0 && !this.endGame){
           if (--this.game.TimerSeconds == 0){
             this.end(false);
