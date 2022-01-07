@@ -109,13 +109,13 @@ namespace NiceNumber.Web.Controllers
         public async Task<CheckResultModel> Check(CheckModel data)
         {
             var sessionId = SessionId;
-            var hinted = HttpContext.Session.TryGetValue(NextCheckIsHintSessionKey, out _);
+            var hinted = HttpContext.Session.TryGetValue(NextCheckIsHintSessionKey + data.GameId, out _);
             
             var check = await _checkService.CheckRegularity(data.GameId, sessionId, data.Positions.Select(x => (byte)x).ToArray(), data.Type, hinted);
 
             if (hinted)
             {
-                HttpContext.Session.Remove(NextCheckIsHintSessionKey);
+                HttpContext.Session.Remove(NextCheckIsHintSessionKey + data.GameId);
             }
             
             if (check == null)
@@ -184,7 +184,7 @@ namespace NiceNumber.Web.Controllers
             var hint = await _checkService.GetRandomCheck(data.GameId, sessionId, data.Type, data.RegularityNumber);
             if (hint != null)
             {
-                HttpContext.Session.Set(NextCheckIsHintSessionKey, Array.Empty<byte>());
+                HttpContext.Session.Set(NextCheckIsHintSessionKey + data.GameId, Array.Empty<byte>());
 
                 return new HintResultModel
                 {
