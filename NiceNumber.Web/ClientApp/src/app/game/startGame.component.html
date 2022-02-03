@@ -1,8 +1,8 @@
-﻿<div *ngIf="!totalLevels" class="loading-overlay">
+<div *ngIf="!totalLevels" class="loading-overlay">
 </div>
 <ng-container *ngIf="totalLevels">
   <div class="text-center">
-    <span style="margin-right: 10px;">Обучение: {{totalLevels}} уровней, {{totalTasks}} задач, 5 минут</span>
+    <span style="margin-right: 10px;">Обучение: {{totalLevels}} уровней, {{totalTasks}} задач, 10 минут</span>
     <button class="btn btn-primary"
             [ngClass]="tutorialPassed ? '' : 'highlighted-control'"
             (click)="navigateTutorial()">Пройти обучение</button><br/>

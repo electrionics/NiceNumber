@@ -222,56 +222,58 @@ tr.result-progress.found{
   margin: 4px;
 }
 
-.loading-overlay{
+.loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 1000;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: url("loading.gif");
+  background-size: 48px 48px;
+  background-position: center;
+  background-repeat: no-repeat;
   animation: 5s loader;
 }
 
 @keyframes loader {
   0% {
-    background: rgba(0, 0, 0, 0) no-repeat center;
-    background-size: 48px 48px;
+    background-image: none;
   }
+
   10% {
-    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
-    background-size: 48px 48px;
+    background-image: url("loading.gif");
   }
+
   100% {
-    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
-    background-size: 48px 48px;
+    background-image: url("loading.gif");
   }
 }
 @-moz-keyframes loader {
   0% {
-    background: rgba(0, 0, 0, 0) no-repeat center;
-    background-size: 48px 48px;
+    background-image: none;
   }
+
   10% {
-    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
-    background-size: 48px 48px;
+    background-image: url("loading.gif");
   }
+
   100% {
-    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
-    background-size: 48px 48px;
+    background-image: url("loading.gif");
   }
 }
 @-webkit-keyframes loader {
   0% {
-    background: rgba(0, 0, 0, 0) no-repeat center;
-    background-size: 48px 48px;
+    background-image: none;
   }
+
   10% {
-    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
-    background-size: 48px 48px;
+    background-image: url("loading.gif");
   }
+
   100% {
-    background: rgba(0, 0, 0, 0) url("loading.gif") no-repeat center;
-    background-size: 48px 48px;
+    background-image: url("loading.gif");
   }
 }
 
