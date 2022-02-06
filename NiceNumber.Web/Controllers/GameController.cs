@@ -210,7 +210,7 @@ namespace NiceNumber.Web.Controllers
         [ApiRoute("Game/Records")]
         public async Task<List<RecordModel>> Records(int? days, DifficultyLevel? difficultyLevel)
         {
-            const int topRecords = 10;
+            const int topRecords = 15;
             var possibleDays = new int?[] {null, 1, 7, 30};
             var sessionId = SessionId;
             
