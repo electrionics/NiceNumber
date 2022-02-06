@@ -13,6 +13,7 @@ export class RecordsComponent {
   public selectedDays: number;
   public difficultyLevel: number;
   public difficultyLevels: { type: number; label: string; }[];
+  public requestProgress: boolean;
 
   constructor(http: HttpClient, @Inject('BASE_API_URL') baseUrl: string) {
     this.http = http;
@@ -49,16 +50,18 @@ export class RecordsComponent {
       let prependChar = this.selectedDays ? '&' : '?';
       url += prependChar + 'difficultyLevel=' + this.difficultyLevel;
     }
+    if (!this.requestProgress) {
+      this.requestProgress = true;
+      this.http.get<RecordModel[]>(url).subscribe(result => {
+        result.forEach((item) => {
+          if (item.Link && !item.Link.startsWith('http')) {
+            item.Link = '//' + item.Link;
+          }
+        });
 
-    this.http.get<RecordModel[]>(url).subscribe(result => {
-      result.forEach((item) => {
-        if (item.Link && !item.Link.startsWith('http')){
-          item.Link = '//' + item.Link;
-        }
-      });
-
-      this.records = result;
-    }, error => console.error(error));
+        this.records = result;
+      }, error => console.error(error), () => this.requestProgress = false);
+    }
   }
 }
 

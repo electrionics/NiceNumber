@@ -1,5 +1,6 @@
 <h1>Таблица рекордов</h1>
-
+<div *ngIf="requestProgress" class="loading-overlay">
+</div>
 <div style="margin: 10px auto;">
   <button *ngFor="let level of difficultyLevels" (click)="getRecordsByLevel(level.type)" class="btn text-center {{difficultyLevel == level.type ? 'btn-hint' : 'btn-secondary'}}">{{level.label}}</button>
   <button (click)="getRecordsByLevel(null)" class="btn text-center {{difficultyLevel == null ? 'btn-hint' : 'btn-secondary'}}">Все</button>
