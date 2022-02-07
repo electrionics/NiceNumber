@@ -178,9 +178,11 @@ namespace NiceNumber.Services.Implementation
             {
                 var minFinishTime = DateTime.Today.AddDays(1 - days.Value);
                 var maxStartTime = DateTime.Now.AddMinutes(-30);
+                var maxFinishTime = DateTime.Now;
                 
                 query = query.Where(x => x.FinishTime != null &&
-                                         x.FinishTime > minFinishTime || 
+                                         x.FinishTime > minFinishTime &&
+                                         x.FinishTime < DateTime.Now || // for virtual records
                                             x.FinishTime == null && 
                                             x.StartTime > minFinishTime && 
                                             x.StartTime < maxStartTime);
