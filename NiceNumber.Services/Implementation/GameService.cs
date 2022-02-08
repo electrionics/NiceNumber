@@ -213,5 +213,11 @@ namespace NiceNumber.Services.Implementation
 
             return games;
         }
+
+        public async Task AddVirtualGames(List<Game> games)
+        {
+            await _dbContext.Set<Game>().AddRangeAsync(games);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

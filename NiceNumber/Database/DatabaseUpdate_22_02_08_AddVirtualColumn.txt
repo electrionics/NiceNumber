@@ -1,0 +1,2 @@
+﻿ALTER TABLE Game
+    ADD VirtualRecord bit

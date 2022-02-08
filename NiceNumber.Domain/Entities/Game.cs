@@ -24,6 +24,8 @@ namespace NiceNumber.Domain.Entities
         public string PlayerName { get; set; }
         
         public string PlayerLink { get; set; }
+
+        public bool VirtualRecord { get; set; }
         
         
         public Number Number { get; set; }

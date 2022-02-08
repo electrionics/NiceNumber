@@ -22,16 +22,19 @@ namespace NiceNumber
             var serviceProvider = new ServiceCollection()
                 .AddScoped<INumberService, NumberService>()
                 .AddScoped<IRegularityService, RegularityService>()
+                .AddScoped<IGameService, GameService>()
                 .AddDbContext<NumberDataContext>(builder => 
                     builder.UseSqlServer("server=.;database=numio;trusted_connection=true;"))//server=93.125.99.108;database=nummiesr_numio;User Id=nummiesr_prod;Password=__aquila899FU3P!!!;
                 .BuildServiceProvider();
 
             var numberService = serviceProvider.GetService<INumberService>();
             var regularityService = serviceProvider.GetService<IRegularityService>();
+            var gameService = serviceProvider.GetService<IGameService>();
 
             //await AddNumbers.Run(numberService, regularityService);
-            await UpdateRegularities.Run(numberService, regularityService);
+            //await UpdateRegularities.Run(numberService, regularityService);
             //await UpdateRegularitiesPlayable.Run(regularityService);
+            await AddRecords.Run(gameService, numberService);
 
             //Test4();
             //Test3();
