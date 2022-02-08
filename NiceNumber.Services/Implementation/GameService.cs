@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 using NiceNumber.Core;
 using NiceNumber.Domain;
@@ -173,19 +174,12 @@ namespace NiceNumber.Services.Implementation
         public async Task<List<Game>> GetTopResults(int? days, DifficultyLevel? difficultyLevel, int count)
         {
             var query = _dbContext.Set<Game>()
-                .Where(x => x.Score > 0);
+                .Where(x => x.Score > 0 && x.StartTime < DateTime.Now);
             if (days != null)
             {
-                var minFinishTime = DateTime.Today.AddDays(1 - days.Value);
-                var maxStartTime = DateTime.Now.AddMinutes(-30);
-                var maxFinishTime = DateTime.Now;
+                var minStartTime = DateTime.Today.AddDays(1 - days.Value);
                 
-                query = query.Where(x => x.FinishTime != null &&
-                                         x.FinishTime > minFinishTime &&
-                                         x.FinishTime < DateTime.Now || // for virtual records
-                                            x.FinishTime == null && 
-                                            x.StartTime > minFinishTime && 
-                                            x.StartTime < maxStartTime);
+                query = query.Where(x => x.StartTime > minStartTime);
             }
 
             if (difficultyLevel != null)
@@ -197,19 +191,12 @@ namespace NiceNumber.Services.Implementation
                 query = query.Where(x => x.DifficultyLevel != DifficultyLevel.Tutorial);
             }
 
-            var games = await query
-                .OrderByDescending(x => x.Score)
-                .ThenByDescending(x => x.FinishTime)
-                .Take(count)
-                .ToListAsync();
+            List<Game> games;
 
-            foreach (var game in games)
-            {
-                if (string.IsNullOrWhiteSpace(game.PlayerName))
-                {
-                    game.PlayerName = "Игрок";
-                }
-            }
+            games = await query
+                    .OrderByDescending(x => x.Score)
+                    .Take(count)
+                    .ToListAsync();
 
             return games;
         }

@@ -186,7 +186,8 @@ namespace NiceNumber
                     var random = new Random();
                     for (var i = 0; i < first3HoursNumberOfPlayers; i++)
                     {
-                        var time = averageInterval * i + new TimeSpan(10 * random.Next(maximumAddition.TotalMilliseconds.ToInt()));
+                        var addMilliseconds = random.Next(maximumAddition.TotalMilliseconds.ToInt());
+                        var time = averageInterval * i + TimeSpan.FromMilliseconds(addMilliseconds);
                         dateTimeCollection.Add(new DateTime(currDate.Year, currDate.Month, currDate.Day) + time);
                     }
 
@@ -196,7 +197,8 @@ namespace NiceNumber
                     maximumAddition = averageInterval / 2;
                     for (var i = 0; i < afterFirst3HoursNumberOfPlayers; i++)
                     {
-                        var time = averageInterval * i + new TimeSpan(10 * random.Next(maximumAddition.TotalMilliseconds.ToInt()));
+                        var addMilliseconds = random.Next(maximumAddition.TotalMilliseconds.ToInt());
+                        var time = averageInterval * i + TimeSpan.FromMilliseconds(addMilliseconds);
                         dateTimeCollection.Add(new DateTime(currDate.Year, currDate.Month, currDate.Day) + time);
                     }
 

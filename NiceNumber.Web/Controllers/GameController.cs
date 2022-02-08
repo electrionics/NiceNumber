@@ -230,7 +230,7 @@ namespace NiceNumber.Web.Controllers
                 Position = i + 1,
                 CurrentPlayer = game.SessionId == sessionId,
                 Score = game.Score,
-                Player = game.PlayerName,
+                Player = game.PlayerName ?? "Игрок",
                 Link = game.PlayerLink
             }).ToList();
 

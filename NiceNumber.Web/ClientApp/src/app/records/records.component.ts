@@ -27,6 +27,8 @@ export class RecordsComponent {
 
     this.difficultyLevel = 1;
     this.getRecordsByDays(1);
+
+    this.requestProgress = false;
   }
 
   public getRecordsByLevel(level){

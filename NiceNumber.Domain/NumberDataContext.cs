@@ -17,6 +17,15 @@ namespace NiceNumber.Domain
                 entity.HasOne(x => x.Number)
                     .WithMany(x => x.Games)
                     .HasForeignKey(x => x.NumberId);
+
+                //entity.HasIndex(x => new { 
+                //    x.DifficultyLevel, 
+                //    x.StartTime, 
+                //    x.Score }, "IX_Game_Records");
+
+                //entity.HasIndex(x => new {
+                //    x.Id,
+                //    x.SessionId }, "IX_Game_Id-SessionId");
             });
 
             modelBuilder.Entity<Regularity>(entity =>
