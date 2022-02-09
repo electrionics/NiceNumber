@@ -201,10 +201,10 @@ export class TutorialComponent extends GameComponent{
 
     function postProcessTasks(that){
       if (that.currentLevel.Level < that.countLevels){
-        that.tasks.push(createTask('nextLevel', 'Нажмите кнопку "Следующий уровень", чтобы перейти на следующий уровень.'));
+        that.tasks.push(createTask('nextLevel', 'Нажмите кнопку "Следующий уровень", чтобы продолжить обучение.'));
       }
       if (that.currentLevel.Level == that.countLevels) {
-        that.tasks.push(createTask('endTutorial', 'Нажмите кнопку "Завершить обучение", чтобы завершить обучение.'));
+        that.tasks.push(createTask('endTutorial', 'Нажмите кнопку "Завершить обучение", чтобы выйти.'));
       }
 
       for (let i = 0; i < that.tasks.length; i++){

@@ -27,7 +27,10 @@
   <tbody *ngIf="records.length">
     <tr *ngFor="let record of records" class="{{record.CurrentPlayer ? 'current' : ''}}">
       <td>
-        {{record.Position}}
+        <img *ngIf="record.Position == 1" height="24" src="gold-medal-min.png" />
+        <img *ngIf="record.Position == 2" height="24" src="silver-medal-min.png" />
+        <img *ngIf="record.Position == 3" height="24" src="bronze-medal-min.png" />
+        <span *ngIf="record.Position > 3">&nbsp;{{record.Position}}</span>
       </td>
       <td>
         <span *ngIf="!record.Link">{{record.Player}}</span>
