@@ -98,7 +98,7 @@ namespace NiceNumber
 
         public static async Task Run(IGameService gameService, INumberService numberService)
         {
-            var startDate = new DateTime(2022, 02, 08);
+            var startDate = new DateTime(2022, 02, 09);
             var endDate = new DateTime(2022, 02, 28);
             
             #region Initialize Points Probabilities

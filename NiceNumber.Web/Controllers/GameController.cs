@@ -342,5 +342,33 @@ namespace NiceNumber.Web.Controllers
         }
 
         #endregion
+
+
+        #region Personal Records
+
+        [HttpGet]
+        [ApiRoute("Game/PersonalRecords")]
+        public async Task<List<PersonalRecordModel>> PersonalRecords(int? days)
+        {
+            var possibleDays = new int?[] { null, 1, 7, 30 };
+            var sessionId = SessionId;
+
+            if (!possibleDays.Contains(days))
+            {
+                days = null;
+            }
+
+            var games = await _gameService.GetPresonalTop1Results(days, sessionId);
+            var model = games.Select(game => new PersonalRecordModel
+            {
+                Score = game.Score,
+                Player = game.PlayerName ?? "Игрок",
+                DifficultyLevel = game.DifficultyLevel
+            }).OrderBy(x => x.DifficultyLevel).ToList();
+
+            return model;
+        }
+
+        #endregion
     }
 }

@@ -10,6 +10,8 @@ export class RecordsComponent {
   private http: HttpClient;
   private baseUrl: string;
   public records: RecordModel[];
+  public personals: PersonalRecordModel[];
+  public nickName: string;
   public selectedDays: number;
   public difficultyLevel: number;
   public difficultyLevels: { type: number; label: string; }[];
@@ -19,6 +21,7 @@ export class RecordsComponent {
     this.http = http;
     this.baseUrl = baseUrl;
     this.records = [];
+    this.personals = [];
 
     this.difficultyLevels = [];
     this.difficultyLevels.push({type: 1, label: "Лёгкий"});
@@ -27,34 +30,40 @@ export class RecordsComponent {
 
     this.difficultyLevel = 1;
     this.getRecordsByDays(1);
-
-    this.requestProgress = false;
   }
 
   public getRecordsByLevel(level){
     this.difficultyLevel = level;
 
-    this.getRecordsBody();
+    this.getRecordsBody(false);
   }
 
   public getRecordsByDays(days) {
     this.selectedDays = days;
 
-    this.getRecordsBody();
+    this.getRecordsBody(true);
+    this.getPersonalRecordsBody();
   }
 
-  private getRecordsBody(){
-    let url = this.baseUrl + 'Game/Records';
+  private getRecordsBody(dayCouldBeChanged){
+    let urlRecords = this.baseUrl + 'Game/Records';
+    let urlPersonal = this.baseUrl + 'Game/PersonalRecords';
     if (this.selectedDays) {
-      url += '?days=' + this.selectedDays;
+      urlRecords += '?days=' + this.selectedDays;
+      urlPersonal += '?days=' + this.selectedDays;
     }
     if (this.difficultyLevel){
       let prependChar = this.selectedDays ? '&' : '?';
-      url += prependChar + 'difficultyLevel=' + this.difficultyLevel;
+      urlRecords += prependChar + 'difficultyLevel=' + this.difficultyLevel;
     }
     if (!this.requestProgress) {
       this.requestProgress = true;
-      this.http.get<RecordModel[]>(url).subscribe(result => {
+      let requestCounter = 1;
+      if (dayCouldBeChanged) {
+        requestCounter += 1;
+      }
+
+      this.http.get<RecordModel[]>(urlRecords).subscribe(result => {
         result.forEach((item) => {
           if (item.Link && !item.Link.startsWith('http')) {
             item.Link = '//' + item.Link;
@@ -62,8 +71,33 @@ export class RecordsComponent {
         });
 
         this.records = result;
-      }, error => console.error(error), () => this.requestProgress = false);
+      }, error => console.error(error), () => {
+        requestCounter--;
+        if (requestCounter == 0) {
+          this.requestProgress = false
+        }
+      });
+
+      if (dayCouldBeChanged) {
+        this.http.get<PersonalRecordModel[]>(urlPersonal).subscribe(result => {
+          result.forEach((item) => {
+            item.DifficultyLevelStr = this.difficultyLevels.find(x => x.type == item.DifficultyLevel).label;
+          });
+
+          this.nickName = result[0].Player;
+          this.personals = result;
+        }, error => console.error(error), () => {
+          requestCounter--;
+          if (requestCounter == 0) {
+            this.requestProgress = false
+          }
+        });
+      }
     }
+  }
+
+  private getPersonalRecordsBody() {
+
   }
 }
 
@@ -73,4 +107,11 @@ interface RecordModel {
   CurrentPlayer: boolean;
   Player: string;
   Link:string;
+}
+
+interface PersonalRecordModel {
+  Score: number;
+  Player: string;
+  DifficultyLevel: number;
+  DifficultyLevelStr: string;
 }

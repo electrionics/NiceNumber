@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Transactions;
 using Microsoft.EntityFrameworkCore;
-using NiceNumber.Core;
 using NiceNumber.Domain;
 using NiceNumber.Domain.Entities;
 using NiceNumber.Services.Interfaces;
@@ -199,6 +197,54 @@ namespace NiceNumber.Services.Implementation
                     .ToListAsync();
 
             return games;
+        }
+
+        public async Task<List<Game>> GetPresonalTop1Results(int? days, string sessionId)
+        {
+            var query = _dbContext.Set<Game>().Where(x => 
+                x.Score > 0 && 
+                x.StartTime < DateTime.Now && 
+                x.DifficultyLevel != DifficultyLevel.Tutorial &&
+                x.SessionId == sessionId);
+
+            if (days != null)
+            {
+                var minStartTime = DateTime.Today.AddDays(1 - days.Value);
+
+                query = query.Where(x => x.StartTime > minStartTime);
+            }
+
+            var nameQuery = query.Where(x => x.PlayerName != null).OrderByDescending(x => x.StartTime);
+
+            var games = await query
+                .ToListAsync();
+            var nameProvider = await nameQuery.FirstOrDefaultAsync();
+
+            var name = nameProvider?.PlayerName;
+
+            var results = games
+                .GroupBy(x => x.DifficultyLevel)
+                .Where(x => x.Any())
+                .Select(x =>
+            {
+                return new
+                {
+                    MaxScore = x.Max(y => y.Score),
+                    DifficultyLevel = x.Key
+                };
+            });
+
+            var difficultyLevels = Enum.GetValues<DifficultyLevel>().Where(x => x != DifficultyLevel.Tutorial);
+            return difficultyLevels.Select(x => 
+            {
+                var result = results.FirstOrDefault(y => y.DifficultyLevel == x);
+                return new Game
+                {
+                    Score = result?.MaxScore ?? 0,
+                    PlayerName = name,
+                    DifficultyLevel = x
+                };
+            }).ToList();
         }
 
         public async Task AddVirtualGames(List<Game> games)
