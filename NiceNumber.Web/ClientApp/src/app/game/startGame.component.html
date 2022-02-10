@@ -5,7 +5,7 @@
     Посмотреть <a [routerLink]="['/about']">обучающее видео</a>
   </div>
   <div class="text-center">
-    <span style="margin-right: 10px;">Обучение: {{totalLevels}} уровней, {{totalTasks}} задач, 10 минут</span>
+    <span style="margin-right: 10px;">Обучение: {{totalLevels}} уровней, {{totalTasks}} простых заданий, 10 минут</span>
     <button class="btn btn-primary"
             [ngClass]="tutorialPassed ? '' : 'highlighted-control'"
             (click)="navigateTutorial()">

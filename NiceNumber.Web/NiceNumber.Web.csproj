@@ -17,6 +17,10 @@
         <PackageReference Include="FluentValidation" Version="10.3.3" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.3" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.4" />
+        <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.5.3">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -27,8 +31,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="ClientApp\src\app\game\startGameRedirect.component.ts" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\NiceNumber.Core\NiceNumber.Core.csproj" />
       <ProjectReference Include="..\NiceNumber.Services\NiceNumber.Services.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <TypeScriptCompile Include="ClientApp\src\app\game\startGameRedirect.component.ts" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

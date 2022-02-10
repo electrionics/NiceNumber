@@ -6,6 +6,7 @@ import {UpdateRecordDialogComponent} from "./updateRecordDialog.component";
 import {ConfirmDialogComponent} from "../common/confirm.component";
 import {AlertDialogComponent} from "../common/alert.component";
 import {PassGameParametersService} from "./passGameParametersService";
+import {StartGameDialogComponent} from './startGameDialog.component';
 
 @Component({
   selector: 'app-game',
@@ -266,6 +267,14 @@ export class GameComponent implements OnInit, OnDestroy {
   public endSession(){
     this.confirmDialog('Завершить сеанс и вернуться на главную страницу?', () => {
       this.successEndSession();
+    });
+  }
+
+  public newGame() {
+    this.dialog.open(StartGameDialogComponent, {
+      data: {
+        previousDifficultyLevel: this.difficultyLevel
+      }
     });
   }
 

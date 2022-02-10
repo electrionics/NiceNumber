@@ -76,7 +76,7 @@
                   (click)="startHintMode(null, null, false)"
                   [ngClass]="getTutorialClass('hintRandom')"
                   class="btn btn-hint text-center">Подсказать</button>
-          <button *ngIf="endGame" (click)="endSession()" class="btn btn-primary text-center">Завершить сеанс</button>
+          <button *ngIf="endGame" (click)="newGame()" class="btn btn-primary text-center">Новая игра</button>
           <button *ngIf="endGame && !endGame.HintsIterated"
                   (click)="showNotFound()"
                   [ngClass]="getTutorialClass('showNotFound')"

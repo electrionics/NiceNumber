@@ -16,6 +16,8 @@ import { RecordsComponent } from "./records/records.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UpdateRecordDialogComponent } from "./game/updateRecordDialog.component";
+import { StartGameDialogComponent } from "./game/startGameDialog.component";
+import { StartGameRedirectComponent } from "./game/startGameRedirect.component";
 import { MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmDialogComponent } from "./common/confirm.component";
@@ -36,6 +38,8 @@ import { TutorialComponent } from "./game/tutorial.component";
     GameComponent,
     TutorialComponent,
     UpdateRecordDialogComponent,
+    StartGameDialogComponent,
+    StartGameRedirectComponent,
     RecordsComponent,
     ConfirmDialogComponent,
     AlertDialogComponent
@@ -47,6 +51,7 @@ import { TutorialComponent } from "./game/tutorial.component";
     RouterModule.forRoot([
       {path: '', component: StartGameComponent, pathMatch: 'full'},
       {path: 'game', component: GameComponent},
+      {path: 'gameRedirect', component: StartGameRedirectComponent},
       {path: 'tutorial', component: TutorialComponent},
       {path: 'records', component: RecordsComponent},
       {path: 'about', component: AboutComponent},
@@ -60,6 +65,7 @@ import { TutorialComponent } from "./game/tutorial.component";
   ],
   entryComponents: [
     UpdateRecordDialogComponent,
+    StartGameDialogComponent,
     ConfirmDialogComponent,
     AlertDialogComponent
   ],

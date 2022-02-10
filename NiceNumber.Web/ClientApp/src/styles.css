@@ -195,11 +195,11 @@ tr.result-progress.found{
   background-color: #c4fec440!important;
 }
 
-.update-record-dialog mat-dialog-container{
+.update-record-dialog mat-dialog-container, .start-game-dialog mat-dialog-container {
   background: linear-gradient(#ffce75,#683c3c);
 }
 
-.update-record-dialog .btn{
+.update-record-dialog .btn, .start-game-dialog .btn {
   margin: 0 auto;
 }
 
