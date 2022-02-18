@@ -20,29 +20,19 @@
         [ngClass]="{ show: isExpanded }"
       >
         <ul class="navbar-nav flex-grow">
-          <li
-            class="nav-item"
-            [routerLinkActive]="['link-active']"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            <a class="nav-link text-dark" [routerLink]="['/']"
-              >Играть!</a
-            >
+          <li class="nav-item"
+              [routerLinkActive]="['link-active']"
+              [routerLinkActiveOptions]="{ exact: true }">
+            <a class="nav-link text-dark" [routerLink]="['/']">Играть!</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/about']"
-              >Об игре</a
-            >
+            <a class="nav-link text-dark" [routerLink]="['/about']">Об игре</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/author']"
-              >Об авторе</a
-            >
+            <a class="nav-link text-dark" [routerLink]="['/records']">Рекорды</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">
-            <a class="nav-link text-dark" [routerLink]="['/records']"
-              >Рекорды</a
-            >
+            <a class="nav-link text-dark" [routerLink]="['/author']">Об авторе</a>
           </li>
         </ul>
       </div>
