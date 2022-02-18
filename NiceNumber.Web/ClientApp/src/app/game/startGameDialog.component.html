@@ -1,7 +1,7 @@
 <h2 mat-dialog-title class="text-center">Начать новую игру</h2>
 <mat-dialog-content>
   <div class="form-group text-center">
-    <label for="DifficultyLevel" class="control-label">Выбкрите уровень сложности:</label>
+    <label for="DifficultyLevel" class="control-label">Выберите уровень сложности:</label>
     <div class="col-sm-12">
       <select [(ngModel)]="difficultyLevel" name="DifficultyLevel" style="margin: 0 10px; background: none;">
         <option *ngFor="let dl of difficultyLevels" [value]="dl.type">{{dl.label}}</option>
